@@ -21,3 +21,6 @@ dist-ssr
 *.njsprojr
 *.sln
 *.sw?
+
+*.env
+*.env.local
