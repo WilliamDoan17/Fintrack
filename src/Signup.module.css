@@ -1,0 +1,66 @@
+header {
+    margin-bottom: 1rem;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: blue;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    width: 100%;
+}
+
+form {
+    width: 50%;
+}
+
+form p {
+    margin: 0 0 .75rem;
+}
+
+label {
+    margin: 0 0 .5rem 0;
+    display: block;
+    font-size: 1.75rem;
+    font-weight: bold;
+}
+
+input {
+    border: none;
+    border-radius: 12px;
+    padding: .75rem 1rem;
+    display: block;
+    background-color: whitesmoke;
+    width: 100%;
+    font-size: 1.25rem;
+}
+
+input:focus {
+    outline: none;
+}
+
+.submit {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
+    border: none;
+    border-radius: 1rem;
+    padding: .75rem 1.5rem;
+    box-sizing: content-box;
+    background-color: greenyellow;
+    width: 30%;
+    font-size: 1.125rem;
+    cursor: pointer;
+}
