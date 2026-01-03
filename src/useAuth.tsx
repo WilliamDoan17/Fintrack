@@ -29,15 +29,6 @@
             }
         }, [])
 
-        useEffect(() => {
-            console.log('Session updated:', session);
-            if (session?.user) {
-                console.log('User:', session.user);
-                console.log('User ID:', session.user.id);
-                console.log('User email:', session.user.email);
-            }
-        }, [session]);
-
         const signUpWithEmailAndPassword = async (email : string, password : string) => {
             return await supabase.auth.signUp({
                 email: email,

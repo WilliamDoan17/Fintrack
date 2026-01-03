@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import styles from './Signup.module.css'
 import { AuthContext } from "./useAuth";
 
+
 const Signup = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
