@@ -1,8 +1,4 @@
-header {
-    margin-bottom: 1rem;
-}
-
-h1 {
+.signupH1 {
     text-align: center;
     font-size: 2.5rem;
     font-weight: bold;
@@ -10,30 +6,30 @@ h1 {
     color: blue;
 }
 
-main {
+.signupMain {
     display: flex;
     flex-direction: column;
     justify-content: start;
     align-items: center;
     width: 100%;
 }
-
-form {
+    
+.signupForm {
     width: 50%;
 }
 
-form p {
+.signupForm p {
     margin: 0 0 .75rem;
 }
 
-label {
+.signupLabel {
     margin: 0 0 .5rem 0;
     display: block;
     font-size: 1.75rem;
     font-weight: bold;
 }
 
-input {
+.signupInput {
     border: none;
     border-radius: 12px;
     padding: .75rem 1rem;
@@ -43,18 +39,18 @@ input {
     font-size: 1.25rem;
 }
 
-input:focus {
+.signupInput:focus {
     outline: none;
 }
 
-.submit {
+.signupSubmit {
     margin-top: 1.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-button {
+.signupButton {
     border: none;
     border-radius: 1rem;
     padding: .75rem 1.5rem;

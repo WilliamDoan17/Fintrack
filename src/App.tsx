@@ -4,6 +4,7 @@ import { supabase } from '../supabaseConfig.ts'
 import { AuthProvider } from './useAuth.tsx'
 import Signup from './Signup.tsx'
 import { Routes, Route, useNavigate } from "react-router-dom";
+import Signin from './Signin.tsx'
 
 const RouteProvider = () => {
   const navigate = useNavigate();
@@ -24,6 +25,14 @@ const RouteProvider = () => {
   )
 }
 
+const TestElement = () => {
+  return (
+    <>
+      <Signup></Signup>
+    </>
+  )
+}
+
 function App() {
   return (
     <>
@@ -31,8 +40,10 @@ function App() {
         <div
           className = "app-container"
         >
-          <RouteProvider>
-          </RouteProvider>
+          {/* <RouteProvider>
+          </RouteProvider> */}
+          <TestElement>
+          </TestElement>
         </div>
       </AuthProvider>
       

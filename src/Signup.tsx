@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
-import styles from './Signup.module.css'
 import { AuthContext } from "./useAuth";
-
+import { Routes, Route } from "react-router-dom";
+import styles from './Signup.module.css'
 
 const Signup = () => {
     const [email, setEmail] = useState("");
@@ -32,25 +32,29 @@ const Signup = () => {
 
     return (
         <>
-            <header
-            >
+            <header>
                 <h1
+                    className = {styles.signupH1}
                 >
                     Sign Up
                 </h1>
-                
             </header>
-            <main>
+            <main
+                className = {styles.signupMain}
+            >
                 <form
+                    className = {styles.signupForm}
                     onSubmit = {handleSignUp}
                 >
                     <p>
                         <label
+                            className = {styles.signupLabel}
                             htmlFor = "email"
                         >
                             Email
                         </label>
                         <input
+                            className = {styles.signupInput}
                             type = "email"
                             name = "email"
                             id = "email"
@@ -61,11 +65,13 @@ const Signup = () => {
                     </p>
                     <p>
                         <label
+                            className = {styles.signupLabel}
                             htmlFor = "password"
                         >
                             Password
                         </label>
                         <input
+                            className = {styles.signupInput}
                             type = "password"
                             name = "password"
                             id = "password"
@@ -76,11 +82,13 @@ const Signup = () => {
                     </p>
                     <p>
                         <label
+                            className = {styles.signupLabel}
                             htmlFor = "confirm-password"
                         >
                             Confirm Your Password
                         </label>
                         <input
+                            className = {styles.signupInput}
                             type = "password"
                             name = "confirm-password"
                             id = "confirm-password"
@@ -90,9 +98,10 @@ const Signup = () => {
                         ></input>
                     </p>
                     <p
-                        className = {`${styles["submit"]}`}
+                        className = {styles.signupSubmit}
                     >
                         <button
+                            className = {styles.signupButton}
                             type = "submit"
                         >
                             Create Account
