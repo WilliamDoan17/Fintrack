@@ -1,4 +1,4 @@
-.signupH1 {
+.authH1 {
     text-align: center;
     font-size: 2.5rem;
     font-weight: bold;
@@ -6,7 +6,7 @@
     color: blue;
 }
 
-.signupMain {
+.authMain {
     display: flex;
     flex-direction: column;
     justify-content: start;
@@ -14,22 +14,22 @@
     width: 100%;
 }
     
-.signupForm {
+.authForm {
     width: 50%;
 }
 
-.signupForm p {
+.authForm p {
     margin: 0 0 .75rem;
 }
 
-.signupLabel {
+.authLabel {
     margin: 0 0 .5rem 0;
     display: block;
     font-size: 1.75rem;
     font-weight: bold;
 }
 
-.signupInput {
+.authInput {
     border: none;
     border-radius: 12px;
     padding: .75rem 1rem;
@@ -39,18 +39,18 @@
     font-size: 1.25rem;
 }
 
-.signupInput:focus {
+.authInput:focus {
     outline: none;
 }
 
-.signupSubmit {
+.authSubmit {
     margin-top: 1.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.signupButton {
+.authButton {
     border: none;
     border-radius: 1rem;
     padding: .75rem 1.5rem;
