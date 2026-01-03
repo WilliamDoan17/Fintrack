@@ -29,17 +29,28 @@
             }
         }, [])
 
-        const signUpWithEmailAndPassword = async (email : string, password : string) => {
+        const signUpWithEmailAndPassword = async (email: string, password: string) => {
             return await supabase.auth.signUp({
                 email: email,
                 password: password,
             })
         }
 
+        const signInWithEmailAndPassword = async (email: string, password: string) => {
+            return await supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
+            })
+        }
+
+        const signOut = async () => await supabase.auth.signOut();
+
         const value = {
             session,
             email,
-            signUpWithEmailAndPassword
+            signUpWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut,
         }
 
         return (
