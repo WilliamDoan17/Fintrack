@@ -1,5 +1,5 @@
     import { useState, useEffect, createContext, Provider, Children } from 'react'
-    import { supabase } from '../supabaseConfig';
+    import { supabase } from '../../supabaseConfig';
 
     export const AuthContext = createContext();
 
@@ -11,13 +11,11 @@
 
         useEffect(() => {
             supabase.auth.getSession().then(({ data: { session } }) => {
-                console.log('Initial session:', session);
                 setSession(session);
             });
 
             const {data: { subscription }} = supabase.auth.onAuthStateChange(
                 (event, session) => {
-                    console.log(event, session);
                     if (event === 'SIGNED_OUT') {
                         setSession(null)
                     } else if (session) {

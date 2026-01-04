@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
 import { supabase } from '../supabaseConfig.ts'
-import { AuthProvider } from './useAuth.tsx'
-import Signup from './Signup.tsx'
+import { AuthProvider } from './Auth/useAuth.tsx'
+import Signup from './Auth/Signup.tsx'
 import { Routes, Route, useNavigate } from "react-router-dom";
-import Signin from './Signin.tsx'
+import Signin from './Auth/Signin.tsx'
 
 const RouteProvider = () => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const RouteProvider = () => {
 const TestElement = () => {
   return (
     <>
-      <Signin></Signin>
+      <Signin ></Signin>
     </>
   )
 }
