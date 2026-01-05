@@ -3,5 +3,40 @@
 }
 
 .transactionTable {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
     width: 100%;
+    background-color: whitesmoke;
+    text-align: center;
 }
+
+.transactionTable .emptyTable {
+    padding: .75rem 1rem;
+}
+
+.transactionTable :not(:first-child) {
+    border-top: none;
+}
+
+.transactionRow {
+    border: 1px solid black;
+    display: flex;
+    flex-direction: row;
+}
+
+.transactionRow :not(:first-child) {
+    border-left: 1px solid rgb(185, 95, 95);
+}
+
+.transactionCell {
+    margin: 0;
+}
+
+.transactionRow .transactionCell {
+    padding: .5rem .75rem;
+    flex: 1;
+    text-align: center;
+    text-transform: capitalize;
+}
+
