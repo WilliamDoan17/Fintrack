@@ -24,5 +24,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "supabaseConfig.tsx"]
+  "include": ["src", "supabaseConfig.tsx", "supabase/auth/useAuth.tsx"]
 }

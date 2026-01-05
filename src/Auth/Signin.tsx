@@ -1,11 +1,13 @@
 import { useState, useContext } from 'react'
 import styles from './Auth.module.css'
-import { AuthContext } from './useAuth'
+import { AuthContext } from '../../supabase/auth/useAuth'
+import { useNavigate } from 'react-router-dom'
 
 const Signin = () => {
     const { signInWithEmailAndPassword } = useContext(AuthContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const handleSignin = async (e) => {
         e.preventDefault();
@@ -13,7 +15,7 @@ const Signin = () => {
         if (error) {
             console.error(error);
         } else {
-            console.log('Logged in successfully');
+            navigate('/dashboard');
         }
     }
 

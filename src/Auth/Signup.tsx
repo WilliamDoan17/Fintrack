@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { AuthContext } from "./useAuth";
+import { AuthContext } from "../../supabase/auth/useAuth";
 import { Routes, Route } from "react-router-dom";
 import styles from './Auth.module.css'
 

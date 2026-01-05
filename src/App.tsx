@@ -1,17 +1,25 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import './App.css'
-import { supabase } from '../supabaseConfig.ts'
-import { AuthProvider } from './Auth/useAuth.tsx'
+import { supabase } from '../supabase/supabaseConfig.ts'
+import { AuthContext, AuthProvider } from '../supabase/auth/useAuth.tsx'
 import Signup from './Auth/Signup.tsx'
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Signin from './Auth/Signin.tsx'
+import Dashboard from './protected/Dashboard.tsx'
+import { DataProvider } from '../supabase/database/useDatabase.tsx'
 
-const RouteProvider = () => {
+const AppRoutes = () => {
   const navigate = useNavigate();
 
+  const { user, loading } = useContext(AuthContext)
+
   useEffect(() => {
-    navigate("/signup");
-  }, [])
+    if (loading) return;
+    if (!user) {
+      console.log('No User found');
+      navigate('/signin')
+    }
+  }, [user, loading])
 
   return (
     <>
@@ -19,6 +27,15 @@ const RouteProvider = () => {
         <Route
           path = "/signup"
           element = {<Signup></Signup>}
+        ></Route>
+        <Route
+          path = "/signin"
+          element = {<Signin></Signin>}
+        >
+        </Route>
+        <Route
+          path = "/dashboard"
+          element = {<Dashboard></Dashboard>}
         ></Route>
       </Routes>
     </>
@@ -28,7 +45,7 @@ const RouteProvider = () => {
 const TestElement = () => {
   return (
     <>
-      <Signin ></Signin>
+      <Signin></Signin>
     </>
   )
 }
@@ -37,14 +54,14 @@ function App() {
   return (
     <>
       <AuthProvider>
-        <div
-          className = "app-container"
-        >
-          {/* <RouteProvider>
-          </RouteProvider> */}
-          <TestElement>
-          </TestElement>
-        </div>
+        <DataProvider>
+          <div
+            className = "app-container"
+          >
+            <AppRoutes>
+            </AppRoutes>
+          </div>
+        </DataProvider>
       </AuthProvider>
       
     </>
