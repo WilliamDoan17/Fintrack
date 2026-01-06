@@ -18,6 +18,11 @@ const AddTransactionModal = ({ displaying, setDisplaying, setTransactions }) => 
         setter(value);
     }
 
+    const clearInput = () => {
+        setValue(0);
+        setPurpose("");
+    }
+
     const handleAddTransaction = async (e) => {
         e.preventDefault();
         if (!value) {
@@ -33,6 +38,8 @@ const AddTransactionModal = ({ displaying, setDisplaying, setTransactions }) => 
                 newTransaction,
                 ...transactions
             ]);
+            clearInput();
+            handleCloseModal(e);
         }
     }
 
@@ -132,7 +139,19 @@ const TransactionColRow = ({ columns }) => {
     )
 }
 
-const TransactionDataRow = ({ transaction, columns }) => {
+const TransactionDataRow = ({ transaction, columns, setTransactions }) => {
+
+    const { deleteTransaction } = useContext(DataContext);
+
+    const handleDeleteTransaction = async (e) => {
+        const targetTransaction = await deleteTransaction(transaction);
+        if (targetTransaction) setTransactions(transactions => transactions.filter(
+            _transaction => {
+                return _transaction.id !== targetTransaction.id;
+            }
+        ));
+    }
+
     return (
         <>
             <div
@@ -161,6 +180,7 @@ const TransactionDataRow = ({ transaction, columns }) => {
                     </button>
                     <button
                         className = {styles.transactionUtilDelete}
+                        onClick = {handleDeleteTransaction}
                     >
                         Delete
                     </button>
@@ -243,6 +263,7 @@ const Dashboard = () => {
                                         key = {transaction.id}
                                         transaction = {transaction}
                                         columns = {transactionDisplayColumns}
+                                        setTransactions = {setTransactions}
                                     >
                                     </TransactionDataRow>
                                 )

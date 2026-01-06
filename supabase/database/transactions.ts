@@ -55,12 +55,12 @@ export const addTransaction = async (user: User, transactionInput: transactionIn
   }
 }
 
-export const deleteTransaction = async (transactionId) => {
+export const deleteTransaction = async (transaction) => {
   try {
-    const { data, erorr } = await supabase
+    const { data, error } = await supabase
       .from('transactions')
       .delete()
-      .eq('id', transactionId)
+      .eq('id', transaction.id)
       .select()
       .single();
     if (error) {

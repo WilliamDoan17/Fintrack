@@ -1,4 +1,4 @@
-import { transaction, transactionInput, getTransactions, addTransaction } from "./transactions";
+import { transaction, transactionInput, getTransactions, addTransaction, deleteTransaction } from "./transactions";
 import { useState, createContext, Provider, Children, useContext } from 'react';
 import { AuthContext } from '../auth/useAuth';
 
@@ -9,7 +9,8 @@ export const DataProvider = ({ children }) => {
 
     const value = { 
         getTransactions,
-        addTransaction
+        addTransaction,
+        deleteTransaction
     }
 
     return (
