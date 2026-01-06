@@ -32,3 +32,25 @@ export const getTransactions = async (user: User) => {
     return [];
   }
 };
+
+export const addTransaction = async (user: User, transactionInput: transactionInput) => {
+  try  {
+    if (!user?.id) return;
+    const newTransaction = {
+      ...transactionInput,
+      user_id: user.id,
+    }
+    const { data, error } = await supabase
+      .from('transactions')
+      .insert([newTransaction])
+      .select()
+      .single();
+    if (error) {
+      console.error(error);
+    } else {
+      return data;
+    }
+  } catch(error) {
+    console.error(error);
+  }
+}
