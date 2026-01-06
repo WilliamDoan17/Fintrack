@@ -42,7 +42,7 @@ export const addTransaction = async (user: User, transactionInput: transactionIn
     }
     const { data, error } = await supabase
       .from('transactions')
-      .insert([newTransaction])
+      .insert(newTransaction)
       .select()
       .single();
     if (error) {
@@ -51,6 +51,24 @@ export const addTransaction = async (user: User, transactionInput: transactionIn
       return data;
     }
   } catch(error) {
+    console.error(error);
+  }
+}
+
+export const deleteTransaction = async (transactionId) => {
+  try {
+    const { data, erorr } = await supabase
+      .from('transactions')
+      .delete()
+      .eq('id', transactionId)
+      .select()
+      .single();
+    if (error) {
+      console.error(error);
+    } else {
+      return data;
+    }
+  } catch (error) {
     console.error(error);
   }
 }

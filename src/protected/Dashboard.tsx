@@ -141,17 +141,30 @@ const TransactionDataRow = ({ transaction, columns }) => {
                 {
                     columns.map(column => {
                         return (
-                            <>
-                                <p
-                                    key = {column} 
-                                    className = {`${styles.transactionCell} ${styles.dataCell} ${styles[column]}`}
-                                >
-                                    {transaction[column]}
-                                </p>
-                            </>
+                            <p
+                                key = {column} 
+                                className = {`${styles.transactionCell} ${styles.dataCell} ${styles[column]}`}
+                            >
+                                {transaction[column]}
+                            </p>
                         )
                     })
+
                 }
+                <div
+                    className = {styles.transactionUtilContainer}
+                >
+                    <button
+                        className = {styles.transactionUtilUpdate}
+                    >
+                        Update
+                    </button>
+                    <button
+                        className = {styles.transactionUtilDelete}
+                    >
+                        Delete
+                    </button>
+                </div>
             </div>
         </>
     )

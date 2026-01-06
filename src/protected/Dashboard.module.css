@@ -20,6 +20,7 @@
 }
 
 .transactionRow {
+    position: relative;
     border: 1px solid black;
     display: flex;
     flex-direction: row;
@@ -39,6 +40,25 @@
 
 .dataCell {
     text-transform: none;
+}
+
+.transactionRow .transactionUtilContainer {
+    position: absolute;
+    left: 100%;
+    border-left: none;
+    padding: .25rem .5rem;
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+    height: 100%;
+}
+
+.transactionRow .transactionUtilContainer button {
+    border: none;
+}
+
+.transactionUtilContainer button:hover {
+    background-color: lightgray;
 }
 
 .addTransactionBtn {
