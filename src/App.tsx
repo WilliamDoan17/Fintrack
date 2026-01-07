@@ -5,8 +5,9 @@ import { AuthContext, AuthProvider } from '../supabase/auth/useAuth.tsx'
 import Signup from './Auth/Signup.tsx'
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Signin from './Auth/Signin.tsx'
-import Dashboard from './protected/Dashboard.tsx'
+import TransactionPage from './protected/TransactionPage.tsx'
 import { DataProvider } from '../supabase/database/useDatabase.tsx'
+import BudgetListPage from './protected/BudgetListPage.tsx'
 
 const AppRoutes = () => {
   const navigate = useNavigate();
@@ -34,8 +35,12 @@ const AppRoutes = () => {
         >
         </Route>
         <Route
-          path = "/dashboard"
-          element = {<Dashboard></Dashboard>}
+          path = "/transactions"
+          element = {<TransactionPage></TransactionPage>}
+        ></Route>
+        <Route
+          path = "/budgets"
+          element = {<BudgetListPage></BudgetListPage>}
         ></Route>
       </Routes>
     </>

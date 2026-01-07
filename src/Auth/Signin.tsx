@@ -15,7 +15,7 @@ const Signin = () => {
         if (error) {
             console.error(error);
         } else {
-            navigate('/dashboard');
+            navigate('/transactions');
         }
     }
 

@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import styles from './Dashboard.module.css'
+import styles from './TransactionPage.module.css'
 import { AuthContext } from "../../supabase/auth/useAuth";
 import { DataContext } from '../../supabase/database/useDatabase';
 
@@ -316,7 +316,7 @@ const TransactionDataRow = ({ transaction, columns, setTransactions, setUpdating
     )
 }
 
-const Dashboard = () => {
+const TransactionPage = () => {
     const { user, loading: authLoading } = useContext(AuthContext);
     const { getTransactions } = useContext(DataContext);
     
@@ -351,7 +351,7 @@ const Dashboard = () => {
                 <h1
                     className = {styles.headerH1}
                 >
-                    Dashboard
+                    Transactions
                 </h1>
             </header>
             <main
@@ -418,4 +418,4 @@ const Dashboard = () => {
     )
 }
 
-export default Dashboard;
+export default TransactionPage;
