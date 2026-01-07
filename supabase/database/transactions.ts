@@ -55,6 +55,25 @@ export const addTransaction = async (user: User, transactionInput: transactionIn
   }
 }
 
+export const updateTransaction = async (user, targetTransaction, transactionInput) => {
+  try {
+    if (!user?.id) return;
+    const { data, error } = await supabase.
+      from('transactions')
+      .update(transactionInput)
+      .eq('id', targetTransaction.id)
+      .select()
+      .single();
+    if (error) {
+      console.error(error);
+    } else {
+      return data;
+    }
+  } catch(error) {
+    console.error(error);
+  }
+}
+
 export const deleteTransaction = async (transaction) => {
   try {
     const { data, error } = await supabase

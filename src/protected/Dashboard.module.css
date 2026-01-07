@@ -67,7 +67,7 @@
     margin-bottom: .75rem;
 }
 
-.addTransactionModalContainer {
+.addTransactionModalContainer, .updateTransactionModalContainer {
     position: absolute;
     z-index: 10001;
     display: flex;
@@ -78,56 +78,56 @@
     background-color: rgba(0, 0, 0, 0.7);
 }
 
-.addTransactionModal {
+.addTransactionModal, .updateTransactionModal {
     border-radius: 1rem;
     padding: .25rem .5rem;
     width: 50%;
     background-color: white;
 }
 
-.addTransactionModal h2 {
+.addTransactionModal h2, .updateTransactionModal h2 {
     margin: .75rem 0 0;
     text-align: center;
 }
 
-.addTransactionForm {
+.addTransactionForm, .updateTransactionForm {
     margin: 0 auto;
     padding: .25rem .75rem;
     width: 70%;
 }
 
-.addTransactionForm label {
+.addTransactionForm label, .updateTransaction label {
     margin-bottom: .25rem;
     display: block;
 }
 
-.addTransactionForm input {
+.addTransactionForm input, .updateTransactionForm input {
     display: block;
     width: 100%;
 }
 
-.addTransactionValueField {
+.addTransactionValueField, .updateTransactionValueField {
     display: flex;
     justify-content: space-between;
 }
 
-.addTransactionValueField input {
+.addTransactionValueField input, .updateTransactionValueField input {
     width: 67px;
 }
 
-.addTransactionFormButtonRow {
+.addTransactionFormButtonRow, .updateTransactionFormButtonRow {
     display: flex;
     justify-content: flex-end;
     gap: .75rem;
 }
 
-.addTransactionFormButtonRow button {
+.addTransactionFormButtonRow button, .updateTransactionForm buton {
     padding: .375rem;
     border: none;
     border-radius: .25rem;
 }
 
-.addTransactionSubmitButton {
+.addTransactionSubmitButton, .updateTransactionSubmitButton {
     background-color: cornflowerblue;
     color: white;
 }

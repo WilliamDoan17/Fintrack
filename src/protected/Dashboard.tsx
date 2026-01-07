@@ -120,6 +120,126 @@ const AddTransactionModal = ({ displaying, setDisplaying, setTransactions }) => 
     ) 
 }
 
+const UpdateTransactionModal = ({ displaying, setDisplaying, setTransactions, transactionUpdate, setTransactionUpdate }) => {
+    const { user } = useContext(AuthContext);
+    const { updateTransaction } = useContext(DataContext);
+
+    const [purpose, setPurpose] = useState(transactionUpdate?.purpose);
+    const [value, setValue] = useState(transactionUpdate?.value);
+
+    useEffect(() => {
+        if (transactionUpdate) {
+            setPurpose(transactionUpdate.purpose);
+            setValue(transactionUpdate.value);
+        }
+    }, [transactionUpdate]);
+
+    const handleCloseModal = () => {
+        setDisplaying(false);
+        setTransactionUpdate(null);
+    }
+
+    const handleChangeInput = (value, setter) => {
+        setter(value);
+    }
+
+    const handleUpdateTransaction = async (e) => {
+        e.preventDefault();
+        const transactionInput = {
+            purpose: purpose,
+            value: value,
+        }
+        const newTransaction = await updateTransaction(user, transactionUpdate, transactionInput);
+        if (newTransaction) {
+            setTransactions(transactions => transactions.map(
+                transaction => {
+                    if (transaction.id === transactionUpdate.id) {
+                        return newTransaction;
+                    }
+                    return transaction;
+                }
+            ))
+        }
+        handleCloseModal();
+    }
+
+    return (
+        <>
+            <div
+                className = {styles.updateTransactionModalContainer}
+                style = {
+                    {
+                        display: displaying ? 'flex' : 'none',
+                    }
+                }
+                onClick = {handleCloseModal}
+            >
+                <div
+                    className = {styles.updateTransactionModal}
+                    onClick = {(e) => e.stopPropagation()}
+                >
+                    <h2>
+                        Update Transaction
+                    </h2>
+                    <form
+                        className = {styles.updateTransactionForm}
+                        onSubmit = {handleUpdateTransaction}
+                    >
+                        <p>
+                            <label
+                                htmlFor = "transactionPurpose"
+                            >
+                                Purpose
+                            </label>
+                            <input
+                                type = "text"
+                                name = "transactionPurpose"
+                                id = "transactionPurpose"
+                                value = {purpose}
+                                onChange = {(e) => handleChangeInput(e.target.value, setPurpose)}
+                            ></input>
+                        </p>
+                        <p
+                            className = {styles.updateTransactionValueField}
+                        >
+                            <label
+                                htmlFor =  "transactionValue"
+                            >
+                                Value
+                            </label>
+                            <input
+                                type = "number"
+                                name = "transactionValue"
+                                id = "transactionValue"
+                                value = {value}
+                                onChange = {(e) => handleChangeInput(e.target.value, setValue)}
+                            >
+                            </input>
+                        </p>
+                        <p
+                            className = {styles.updateTransactionFormButtonRow}
+                        >
+                            <button
+                                type = "button"
+                                className = {styles.updateTransactionCancelButton}
+                                onClick = {handleCloseModal}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className = {styles.updateTransactionSubmitButton}
+                                type = "submit"
+                            >
+                                Update Transaction
+                            </button>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </>
+    )
+}
+
 const TransactionColRow = ({ columns }) => {
     return (
         <div
@@ -139,9 +259,14 @@ const TransactionColRow = ({ columns }) => {
     )
 }
 
-const TransactionDataRow = ({ transaction, columns, setTransactions }) => {
+const TransactionDataRow = ({ transaction, columns, setTransactions, setUpdatingTransaction, setTransactionUpdate }) => {
 
     const { deleteTransaction } = useContext(DataContext);
+
+    const handleUpdateTransaction = () => {
+        setUpdatingTransaction(true);
+        setTransactionUpdate(transaction);
+    }
 
     const handleDeleteTransaction = async (e) => {
         const targetTransaction = await deleteTransaction(transaction);
@@ -175,6 +300,7 @@ const TransactionDataRow = ({ transaction, columns, setTransactions }) => {
                 >
                     <button
                         className = {styles.transactionUtilUpdate}
+                        onClick = {handleUpdateTransaction}
                     >
                         Update
                     </button>
@@ -196,6 +322,8 @@ const Dashboard = () => {
     
     const [transactions, setTransactions] = useState([]);
     const [addingTransaction, setAddingTransaction] = useState(false);
+    const [updatingTransaction, setUpdatingTransaction] = useState(false);
+    const [transactionUpdate, setTransactionUpdate] = useState(null);
     
     useEffect(() => {
         if (authLoading) return;
@@ -203,7 +331,6 @@ const Dashboard = () => {
         const loadTransactions = async () => {
             const data = await getTransactions(user);
             setTransactions(data);
-            console.log(data);
         }
 
         loadTransactions();
@@ -264,6 +391,8 @@ const Dashboard = () => {
                                         transaction = {transaction}
                                         columns = {transactionDisplayColumns}
                                         setTransactions = {setTransactions}
+                                        setUpdatingTransaction = {setUpdatingTransaction}
+                                        setTransactionUpdate = {setTransactionUpdate}
                                     >
                                     </TransactionDataRow>
                                 )
@@ -278,6 +407,13 @@ const Dashboard = () => {
                 setTransactions = {setTransactions}
             >
             </AddTransactionModal> 
+            <UpdateTransactionModal
+                displaying = {updatingTransaction}
+                setDisplaying = {setUpdatingTransaction}
+                transactionUpdate = {transactionUpdate}
+                setTransactionUpdate = {setTransactionUpdate}
+                setTransactions = {setTransactions}
+            ></UpdateTransactionModal>
         </>
     )
 }
