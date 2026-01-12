@@ -4,13 +4,33 @@ import { DataContext } from '../../supabase/database/useDatabase'
 import styles from './BudgetListPage.module.css'
 
 const BudgetListPage = () => {
+    const BudgetCard = ({ budget }) => {
+        return (
+            <>
+                <div
+                    className = {styles.budgetCard}
+                >
+                    <h2>
+                        {budget.name}
+                    </h2>
+                </div>
+            </>
+        )
+    }
 
     const BudgetTable = () => {
         return (
             <div
-                className = {styles.BudgetTable}
+                className = {styles.budgetTable}
             >
-                
+                {budgets.map(budget => {
+                    return (
+                        <BudgetCard
+                            key = {budget.id}
+                            budget = {budget}
+                        ></BudgetCard>
+                    )
+                })}
             </div>
         )
     }
@@ -31,26 +51,24 @@ const BudgetListPage = () => {
 
     return (
         <>
-            <div>
-                <header
-                    className = {styles.header}
+            <header
+                className = {styles.header}
+            >
+                <h1
+                    className = {styles.h1}
                 >
-                    <h1
-                        className = {styles.h1}
-                    >
-                        Your Budgets
-                    </h1>
-                </header>
-                <main
-                    className = {styles.main}
+                    Your Budgets
+                </h1>
+            </header>
+            <main
+                className = {styles.main}
+            >
+                <div
+                    className = {styles.budgetList}
                 >
-                    <div
-                        className = {styles.budgetList}
-                    >
-
-                    </div>
-                </main>
-            </div>
+                    <BudgetTable></BudgetTable>
+                </div>
+            </main>
         </>
     )
 }

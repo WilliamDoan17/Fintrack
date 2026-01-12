@@ -1,5 +1,27 @@
-.budgetTable {
+.main {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.budgetList {
     padding: 1rem .75rem;
     width: 70%;
     background-color: whitesmoke;
+}
+
+.budgetTable {
+    margin: 0 auto;
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.budgetCard {
+    padding: .5rem .75rem;
+    width: 12rem;
+    height: 16rem;
+    background-color: lightgray;
 }
