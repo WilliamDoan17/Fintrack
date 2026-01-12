@@ -18,14 +18,46 @@ const BudgetListPage = () => {
         )
     }
 
+    const [displayAddBudgetModal, setDisplayBudgetModal] = useState(false);
+
     const AddBudgetButton = () => {
+        const handleClick = (e) => {
+            e.preventDefault();
+            setDisplayBudgetModal(true);
+        }
+
         return (
             <>
                 <button
                     className = {styles.addBudgetButton}
+                    onClick = {handleClick}
                 >
                     <h2>+</h2>
                 </button>
+            </>
+        )
+    }
+
+    const AddBudgetModal = () => {
+        const containerStyle = {
+        };
+
+        if (displayAddBudgetModal === false) containerStyle.display = "none";
+
+        const handleCloseModal = (e) => {
+            e.preventDefault();
+            setDisplayBudgetModal(false);
+        }
+
+        return (
+            <>
+                <div
+                    className = {styles.addBudgetModalContainer}
+                    style = {containerStyle}
+                    onClick = {handleCloseModal}
+                >
+                    
+                </div>
             </>
         )
     }
@@ -82,6 +114,7 @@ const BudgetListPage = () => {
                     <BudgetTable></BudgetTable>
                 </div>
             </main>
+            <AddBudgetModal></AddBudgetModal>
         </>
     )
 }

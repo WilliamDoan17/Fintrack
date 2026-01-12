@@ -5,7 +5,7 @@
 }
 
 .budgetList {
-    padding: 1rem .75rem;
+    padding: 1rem 1.25rem;
     width: 70%;
     background-color: whitesmoke;
 }
@@ -47,5 +47,17 @@
     margin: 0;
     box-sizing: border-box;
     text-align: center;
+    font-size: 3rem;
+    font-weight: 100;
     line-height: 15rem;
+}
+
+.addBudgetModalContainer {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
 }
