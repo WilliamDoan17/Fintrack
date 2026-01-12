@@ -61,3 +61,33 @@
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.8);
 }
+
+.addBudgetModal {
+    padding: 1rem 1.5rem;
+    background-color: white;
+}
+
+.addBudgetForm p {
+    margin: .5rem;
+}
+
+.addBudgetForm .addBudgetName {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+}
+
+.addBudgetName label {
+    font-size: 1.25rem;
+}
+
+.addBudgetName input {
+    padding: .5rem;
+    font-size: 1.25rem;
+}
+
+.addBudgetSubmit {
+    float: right;
+    display: flex;
+    gap: .5rem;
+}

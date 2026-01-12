@@ -56,7 +56,45 @@ const BudgetListPage = () => {
                     style = {containerStyle}
                     onClick = {handleCloseModal}
                 >
-                    
+                    <div
+                        className = {styles.addBudgetModal}
+                        onClick = {(e) => e.stopPropagation()}
+                    >
+                        <form
+                            className = {styles.addBudgetForm}
+                        >
+                            <p
+                                className = {styles.addBudgetName}
+                            >
+                                <label
+                                    htmlFor = "budgetName"
+                                >
+                                    Name of your budget:
+                                </label>
+                                <input
+                                    type = "text"
+                                    id = "budgetName"
+                                    name = "budgetName"
+                                    placeholder = "Your budget name"
+                                >
+                                </input>
+                            </p>
+                            <p
+                                className = {styles.addBudgetSubmit}
+                            >
+                                <button
+                                    type = "button"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type = "submit"
+                                >
+                                    Add Budget
+                                </button>
+                            </p>
+                        </form>
+                    </div>
                 </div>
             </>
         )
