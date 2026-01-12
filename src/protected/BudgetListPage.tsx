@@ -4,6 +4,17 @@ import { DataContext } from '../../supabase/database/useDatabase'
 import styles from './BudgetListPage.module.css'
 
 const BudgetListPage = () => {
+
+    const BudgetTable = () => {
+        return (
+            <div
+                className = {styles.BudgetTable}
+            >
+                
+            </div>
+        )
+    }
+
     const { user } = useContext(AuthContext);
     const { getBudgets } = useContext(DataContext);
     const [budgets, setBudgets] = useState([]);
