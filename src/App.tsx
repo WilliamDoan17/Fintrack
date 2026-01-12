@@ -63,8 +63,9 @@ function App() {
           <div
             className = "app-container"
           >
-            <AppRoutes>
-            </AppRoutes>
+            {/* <AppRoutes>
+            </AppRoutes> */}
+            <TestElement></TestElement>
           </div>
         </DataProvider>
       </AuthProvider>
