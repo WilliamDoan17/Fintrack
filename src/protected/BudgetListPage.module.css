@@ -24,4 +24,28 @@
     width: 12rem;
     height: 16rem;
     background-color: lightgray;
+    cursor: pointer;
+}
+
+.budgetCard h2 {
+    margin: 0;
+    box-sizing: border-box;
+    text-align: center;
+    line-height: 15rem;
+}
+
+.addBudgetButton {
+    border: none;
+    padding: .5rem .75rem;
+    width: 12rem;
+    height: 16rem;
+    background-color: lightgray;
+    cursor: pointer;
+}
+
+.addBudgetButton h2 {
+    margin: 0;
+    box-sizing: border-box;
+    text-align: center;
+    line-height: 15rem;
 }

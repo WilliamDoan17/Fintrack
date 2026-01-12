@@ -18,11 +18,24 @@ const BudgetListPage = () => {
         )
     }
 
+    const AddBudgetButton = () => {
+        return (
+            <>
+                <button
+                    className = {styles.addBudgetButton}
+                >
+                    <h2>+</h2>
+                </button>
+            </>
+        )
+    }
+
     const BudgetTable = () => {
         return (
             <div
                 className = {styles.budgetTable}
             >
+                <AddBudgetButton></AddBudgetButton>
                 {budgets.map(budget => {
                     return (
                         <BudgetCard
