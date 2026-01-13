@@ -5,8 +5,14 @@ import styles from './BudgetListPage.module.css'
 
 const BudgetListPage = () => {
     const BudgetCard = ({ budget }) => {
-        const handleDelete = (e) => {
-            
+        const { deleteBudget } = useContext(DataContext);
+
+        const handleDelete = async (e) => {
+            e.preventDefault();
+            const data = await deleteBudget(budget);
+            if (data) {
+                setBudgets(oldBudgets => oldBudgets.filter(({ id }) => id !== data.id))
+            }
         }
 
         return (

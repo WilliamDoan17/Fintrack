@@ -48,3 +48,20 @@ export const addBudget = async (user, budgetInput : budgetInput) => {
     }
 }
 
+export const deleteBudget = async (targetBudget) => {
+    try {
+        const { data, error } = await supabase
+            .from('budgets')
+            .delete()
+            .eq('id', targetBudget.id)
+            .select()
+            .single();
+        if (error) {
+            console.error(error);
+        } else {
+            return data;
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}

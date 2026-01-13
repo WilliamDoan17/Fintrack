@@ -1,7 +1,7 @@
 import { getTransactions, addTransaction, deleteTransaction, updateTransaction } from "./transactions";
 import { useState, createContext, Provider, Children, useContext } from 'react';
 import { AuthContext } from '../auth/useAuth';
-import { getBudgets, addBudget } from './budgets'
+import { getBudgets, addBudget, deleteBudget } from './budgets'
 
 export const DataContext = createContext();
 
@@ -13,7 +13,8 @@ export const DataProvider = ({ children }) => {
         deleteTransaction,
         updateTransaction,
         getBudgets,
-        addBudget
+        addBudget,
+        deleteBudget,
     }
 
     return (
