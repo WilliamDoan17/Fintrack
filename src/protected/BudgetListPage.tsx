@@ -5,11 +5,27 @@ import styles from './BudgetListPage.module.css'
 
 const BudgetListPage = () => {
     const BudgetCard = ({ budget }) => {
+        const handleDelete = (e) => {
+            
+        }
+
         return (
             <>
                 <div
                     className = {styles.budgetCard}
                 >
+                    <div
+                        className = {styles.budgetCardButtonContainer}
+                    >
+                        <button>
+                            Update
+                        </button>
+                        <button
+                            onClick = {handleDelete}
+                        >
+                            Delete
+                        </button>
+                    </div>
                     <h2>
                         {budget.name}
                     </h2>
@@ -39,16 +55,44 @@ const BudgetListPage = () => {
     }
 
     const AddBudgetModal = () => {
-        const containerStyle = {
-        };
+        const containerStyle = {};
 
         if (displayAddBudgetModal === false) containerStyle.display = "none";
 
         const handleCloseModal = (e) => {
             e.preventDefault();
+            clearInputs();
             setDisplayBudgetModal(false);
         }
 
+        const [name, setName] = useState("");
+
+        const handleChangeInput = (value, setter) => {
+            setter(value);
+        }
+
+        const clearInputs = () => {
+            setName("");
+        }
+
+        const { addBudget } = useContext(DataContext);
+
+        const handleAddBudget = async (e) => {
+            e.preventDefault();
+            const newBudget = {
+                name: name,
+            }
+            const data = await addBudget(user, newBudget);
+            if (data) {
+                console.log(data);
+                setBudgets(oldBudgets => [
+                    ...oldBudgets,
+                    data
+                ]);
+                handleCloseModal(e);
+            }
+        }
+        
         return (
             <>
                 <div
@@ -62,6 +106,7 @@ const BudgetListPage = () => {
                     >
                         <form
                             className = {styles.addBudgetForm}
+                            onSubmit = {handleAddBudget}
                         >
                             <p
                                 className = {styles.addBudgetName}
@@ -76,6 +121,7 @@ const BudgetListPage = () => {
                                     id = "budgetName"
                                     name = "budgetName"
                                     placeholder = "Your budget name"
+                                    onChange = {(e) => handleChangeInput(e.target.value, setName)}
                                 >
                                 </input>
                             </p>

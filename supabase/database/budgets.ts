@@ -26,3 +26,25 @@ export const getBudgets = async (user) => {
         console.error(error);
     }
 }
+
+export const addBudget = async (user, budgetInput : budgetInput) => {
+    try {
+        const newBudget = {
+            ...budgetInput,
+            user_id: user.id,
+        };
+        const { data, error } = await supabase
+            .from('budgets')
+            .insert(newBudget)
+            .select()
+            .single();
+        if (error) {
+            console.error(error);
+        } else {
+            return data;
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
