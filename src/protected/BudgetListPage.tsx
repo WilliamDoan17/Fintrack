@@ -84,6 +84,7 @@ const BudgetListPage = () => {
                             >
                                 <button
                                     type = "button"
+                                    onClick = {handleCloseModal}
                                 >
                                     Cancel
                                 </button>
