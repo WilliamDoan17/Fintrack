@@ -93,6 +93,10 @@ const BudgetListPage = () => {
 
         const handleAddBudget = async (e) => {
             e.preventDefault();
+            if (name === "") {
+                console.error("Cannot add new blank budget with no name");
+                return;
+            }
             const newBudget = {
                 name: name,
             }
