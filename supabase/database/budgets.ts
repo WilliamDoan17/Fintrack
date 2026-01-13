@@ -65,3 +65,21 @@ export const deleteBudget = async (targetBudget) => {
         console.error(error);
     }
 }
+
+export const updateBudget = async (targetBudget, updatedBudget) => {
+    try {
+        const { data, error } = await supabase
+            .from('budgets')
+            .update(updatedBudget)
+            .eq('id', targetBudget.id)
+            .select()
+            .single();
+        if (error) {
+            console.error(error);
+        } else {
+            return data;
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}

@@ -41,7 +41,7 @@
 }
 
 .budgetCardButtonContainer button {
-    
+
 }
 
 .budgetCard h2 {
@@ -70,7 +70,7 @@
     line-height: 15rem;
 }
 
-.addBudgetModalContainer {
+.addBudgetModalContainer, .updateBudgetModalContainer {
     position: absolute;
     display: flex;
     justify-content: center;
@@ -80,31 +80,31 @@
     background-color: rgba(0, 0, 0, 0.8);
 }
 
-.addBudgetModal {
+.addBudgetModal, .updateBudgetModal {
     padding: 1rem 1.5rem;
     background-color: white;
 }
 
-.addBudgetForm p {
+.addBudgetForm p, .updateBudgetForm p {
     margin: .5rem;
 }
 
-.addBudgetForm .addBudgetName {
+.addBudgetForm .addBudgetName, .updateBudgetForm .updateBudgetName {
     display: flex;
     flex-direction: column;
     gap: .25rem;
 }
 
-.addBudgetName label {
+.addBudgetName label, .updateBudgetForm label {
     font-size: 1.25rem;
 }
 
-.addBudgetName input {
+.addBudgetName input, .updateBudgetName input {
     padding: .5rem;
     font-size: 1.25rem;
 }
 
-.addBudgetSubmit {
+.addBudgetSubmit, .updateBudgetSubmit {
     float: right;
     display: flex;
     gap: .5rem;
