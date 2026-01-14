@@ -4,19 +4,26 @@ export interface budget {
     id: string,
     created_at: string,
     user_id: string,
-    children_ids: string[],
-    transaction_ids: string[],
+    parent_id: string,
 }
 
-export type budgetInput = Omit<budget, 'id' | 'created_at' | 'user_id'>
+export type budgetInput = Omit<budget, 'id' | 'created_at' | 'user_id' | 'parent_id'>
 
-export const getBudgets = async (user) => {
+export const getBudgets = async (user, parent = null) => {
     try {
-        const { data, error } = await supabase
+        let query = supabase
             .from('budgets')
             .select('*')
             .eq('user_id', user.id)
             .order('created_at', { ascending: true });
+
+        if (parent === null) {
+            query = query.is('parent_id', null);
+        } else {
+            query = query.eq('parent_id', parent.id);
+        }
+
+        const { data, error } = await query;
         if (error) {
             console.error(error);
         } else {
@@ -27,11 +34,12 @@ export const getBudgets = async (user) => {
     }
 }
 
-export const addBudget = async (user, budgetInput : budgetInput) => {
+export const addBudget = async (user, budgetInput : budgetInput, parent = null) => {
     try {
         const newBudget = {
             ...budgetInput,
             user_id: user.id,
+            parent_id: parent.id,
         };
         const { data, error } = await supabase
             .from('budgets')

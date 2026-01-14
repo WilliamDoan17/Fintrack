@@ -2,8 +2,11 @@ import { useState, useEffect, useContext } from 'react'
 import { AuthContext } from '../../supabase/auth/useAuth'
 import { DataContext } from '../../supabase/database/useDatabase'
 import styles from './BudgetListPage.module.css'
+import { useNavigate } from 'react-router-dom'
 
 const BudgetListPage = () => {
+    const navigate = useNavigate();
+
     const BudgetCard = ({ budget }) => {
         const { deleteBudget } = useContext(DataContext);
 
@@ -17,25 +20,37 @@ const BudgetListPage = () => {
 
         const handleUpdate = async(e) => {
             e.preventDefault();
-            setDisplayUpdateBudgetModal(true);
             setTargetUpdateBudget(budget);
+            setDisplayUpdateBudgetModal(true);
         }
 
         return (
             <>
                 <div
                     className = {styles.budgetCard}
+                    onClick = {() => 
+                        navigate(`/budget/${budget.id}`, {
+                            state: {
+                                budget: budget
+                            }
+                        })}
                 >
                     <div
                         className = {styles.budgetCardButtonContainer}
                     >
                         <button
-                            onClick = {handleUpdate}
+                            onClick = {(e) => {
+                                e.stopPropagation();
+                                handleUpdate(e);
+                            }}
                         >
                             Update
                         </button>
                         <button
-                            onClick = {handleDelete}
+                            onClick = {(e) => {
+                                e.stopPropagation();
+                                handleDelete(e);
+                            }}
                         >
                             Delete
                         </button>
@@ -102,7 +117,6 @@ const BudgetListPage = () => {
             }
             const data = await addBudget(user, newBudget);
             if (data) {
-                console.log(data);
                 setBudgets(oldBudgets => [
                     ...oldBudgets,
                     data
@@ -295,7 +309,6 @@ const BudgetListPage = () => {
         const loadBudgets = async () => {
             const data = await getBudgets(user);
             setBudgets(data);
-            console.log(data);
         }
         loadBudgets();
     }, [user])
