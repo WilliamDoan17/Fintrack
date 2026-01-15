@@ -8,8 +8,24 @@ export const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
 
-    const getAllTransactionsByBudget = async (budget) => {
-        
+    const getAllTransactionsByBudget = async (user, budget) => {
+        try {
+            const allBudgetIds = (await getAllSubBudgets(user, budget)).map(budget => budget.id);
+            const query = supabase
+                .from('transactions')
+                .select('*')
+                .eq('user_id', user.id)
+                .in('budget_id', allBudgetIds)
+                .order('created_at', { ascending: false });
+            const { data, error } = await query;
+            if (error) {
+                console.error(error);
+            }
+            return data || [];
+        } catch (error) {
+            console.error('Error getting transactions:', error);
+            return [];
+        }
     }
 
     const value = { 

@@ -11,20 +11,26 @@ export interface transaction {
 
 export type transactionInput = Omit<transaction, 'id' | 'user_id' | 'created_at'>
 
-export const getTransactions = async (user: User) => {
+export const getTransactions = async (user: User, budget = null) => {
   try {
     if (!user?.id) return [];
 
-    const { data, error } = await supabase
+    let query = supabase
       .from('transactions')
       .select('*')
       .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+      .order('created_at', {ascending: false});
+
+    if (budget !== null) {
+      query = query.eq('budget_id', budget.id);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('Supabase error fetching transactions:', error);
-      return [];
     }
+    return data || [];
 
     return data ?? [];
   } catch (err) {

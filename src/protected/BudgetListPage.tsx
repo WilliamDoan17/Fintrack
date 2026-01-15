@@ -177,7 +177,7 @@ const BudgetListPage = () => {
                 </div>
             </>
         )
-    }
+    } 
 
     const [displayUpdateBudgetModal, setDisplayUpdateBudgetModal] = useState(false);
     const [targetupdateBudget, setTargetUpdateBudget] = useState(null);

@@ -24,8 +24,6 @@ const BudgetPage = () => {
 
         const loadSubBudgets = async () => {
             const subBudgets = await getBudgets(user, budget);
-            const allSubBudgets = await getAllSubBudgets(user, budget);
-            console.log(allSubBudgets);
             setSubBudgets(subBudgets);
         };
         
@@ -239,6 +237,8 @@ const BudgetPage = () => {
                 }
             }
         }
+
+        
         
         return (
             <>
@@ -299,6 +299,48 @@ const BudgetPage = () => {
         setDisplayAddBudgetModal(true);
     }
 
+    const TransactionHistory = () => {
+        const { getAllTransactionsByBudget } = useContext(DataContext);
+        const [transactions, setTransactions] = useState([]);
+
+        useEffect(() => {
+            if (!user || !budget) return;
+
+            const loadAllTransactions = async () => {
+                const data = await getAllTransactionsByBudget(user, budget);
+                setTransactions(data);
+            }
+
+            loadAllTransactions();
+        }, [user]);
+
+        return (
+            <>
+                <h2>
+                    Transactions
+                </h2>
+                <div
+                    className = {styles.transactionHistoryContainer}
+                >
+                    {
+                        transactions === [] ?
+                            <p>You have no transactions</p> :
+                            transactions.map(transaction => {
+                                return (
+                                    <div
+                                        className = {styles.transactionCard}
+                                    >
+                                        <span>{transaction.purpose}</span>
+                                        <span>{transaction.value}</span>
+                                    </div>
+                                )
+                            })
+                    }
+                </div>
+            </>
+        )
+    }
+
     return (
         <>
             <header
@@ -311,11 +353,7 @@ const BudgetPage = () => {
             <main
                 className = {styles.main}
             >
-                <div
-                    className = {styles.transactionContainer}
-                >
-                    
-                </div>
+                <TransactionHistory></TransactionHistory>
                 <h2>
                     SubBudgets
                 </h2>
