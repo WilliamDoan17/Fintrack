@@ -41,6 +41,15 @@
     font-weight: 100;
 }
 
+.budgetCardButtonContainer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: .5rem;
+    display: flex;
+    gap: .25rem;
+}
+
 .budgetCard h2 {
     margin: 0;
     width: 100%;
@@ -48,7 +57,6 @@
     text-align: center;
     overflow-wrap: break-word;
 }
-
 
 .addBudgetModalContainer, .updateBudgetModalContainer {
     position: absolute;

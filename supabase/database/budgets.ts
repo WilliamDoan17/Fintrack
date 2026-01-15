@@ -39,7 +39,7 @@ export const addBudget = async (user, budgetInput : budgetInput, parent = null) 
         const newBudget = {
             ...budgetInput,
             user_id: user.id,
-            parent_id: parent.id,
+            parent_id: parent?.id,
         };
         const { data, error } = await supabase
             .from('budgets')

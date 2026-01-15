@@ -15,23 +15,22 @@ const BudgetPage = () => {
     useEffect(() => {
         setSubBudgets([]);
         if (state?.budget) {
-            setBudget(state.budget)
+            setBudget(state.budget);
         }
     }, [state]);
 
     useEffect(() => {
         if (!user || !budget) return;
 
-        const loadSubbudgets = async () => {
+        const loadSubBudgets = async () => {
             const subBudgets = await getBudgets(user, budget);
             setSubBudgets(subBudgets);
         };
         
-        loadSubbudgets();
+        loadSubBudgets();
     }, [user]);
 
     const BudgetCard = ({ budget }) => {
-
         const handleClick = (e) => {
             navigate(`/budget/${budget.id}`,
                 {
@@ -42,12 +41,48 @@ const BudgetPage = () => {
             )
         };
 
+        const { deleteBudget } = useContext(DataContext);
+
+        const handleDelete = async (e) => {
+            e.preventDefault();
+            const data = await deleteBudget(budget);
+            if (data) {
+                setSubBudgets(oldSubBudgets => oldSubBudgets.filter(({ id }) => id !== data.id))
+            }
+        }
+
+        const handleUpdate = async(e) => {
+            e.preventDefault();
+            setTargetUpdateBudget(budget);
+            setDisplayUpdateBudgetModal(true);
+        }
+
         return (
             <>
                 <div
                     className = {styles.budgetCard}
                     onClick = {handleClick}
                 >
+                    <div
+                        className = {styles.budgetCardButtonContainer}
+                    >
+                        <button
+                            onClick = {(e) => {
+                                e.stopPropagation();
+                                handleUpdate(e);
+                            }}
+                        >
+                            Update
+                        </button>
+                        <button
+                            onClick = {(e) => {
+                                e.stopPropagation();
+                                handleDelete(e);
+                            }}
+                        >
+                            Delete
+                        </button>
+                    </div>
                     <h2>
                         {budget.name}
                     </h2>
@@ -154,6 +189,109 @@ const BudgetPage = () => {
         )
     }
 
+    const [displayUpdateBudgetModal, setDisplayUpdateBudgetModal] = useState(false);
+    const [targetupdateBudget, setTargetUpdateBudget] = useState(null);
+
+    const UpdateBudgetModal = () => {
+        const containerStyle = {};
+
+        if (displayUpdateBudgetModal === false) containerStyle.display = "none";
+
+        const handleCloseModal = (e) => {
+            e.preventDefault();
+            clearInputs();
+            setDisplayUpdateBudgetModal(false);
+        }
+
+        const [name, setName] = useState("");
+
+        const handleChangeInput = (value, setter) => {
+            setter(value);
+        }
+
+        const clearInputs = () => {
+            setName("");
+            setTargetUpdateBudget(null);
+        }
+
+        const { updateBudget } = useContext(DataContext);
+
+        const handleUpdateBudget = async (e) => {
+            e.preventDefault();
+            if (name === "") {
+                console.error('Cannot update to blank name!');
+            } else {
+                const newBudget = {
+                    name: name,
+                }
+                const data = await updateBudget(targetupdateBudget, newBudget);
+                if (data) {
+                    setSubBudgets(oldSubBudgets => oldSubBudgets.map((budget) => {
+                        if (budget.id === data.id) {
+                            return data;
+                        } else {
+                            return budget;
+                        }
+                    }))
+                    handleCloseModal(e);
+                }
+            }
+        }
+        
+        return (
+            <>
+                <div
+                    className = {styles.updateBudgetModalContainer}
+                    style = {containerStyle}
+                    onClick = {handleCloseModal}
+                >
+                    <div
+                        className = {styles.updateBudgetModal}
+                        onClick = {(e) => e.stopPropagation()}
+                    >
+                        <form
+                            className = {styles.updateBudgetForm}
+                            onSubmit = {handleUpdateBudget}
+                        >
+                            <p
+                                className = {styles.updateBudgetName}
+                            >
+                                <label
+                                    htmlFor = "budgetName"
+                                >
+                                    Name of your budget:
+                                </label>
+                                <input
+                                    type = "text"
+                                    id = "budgetName"
+                                    name = "budgetName"
+                                    placeholder = "Your budget name"
+                                    onChange = {(e) => handleChangeInput(e.target.value, setName)}
+                                >
+                                </input>
+                            </p>
+                            <p
+                                className = {styles.updateBudgetSubmit}
+                            >
+                                <button
+                                    type = "button"
+                                    onClick = {handleCloseModal}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type = "submit"
+                                >
+                                    Update Budget
+                                </button>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </>
+        )
+    }
+
     const handleAddBudget = (e) => {
         e.preventDefault();
         setDisplayAddBudgetModal(true);
@@ -197,6 +335,7 @@ const BudgetPage = () => {
                 </div>
             </main>
             <AddBudgetModal></AddBudgetModal>
+            <UpdateBudgetModal></UpdateBudgetModal>
         </>
     )
 }
