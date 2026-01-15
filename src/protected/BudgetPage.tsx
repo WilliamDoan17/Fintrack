@@ -8,7 +8,7 @@ const BudgetPage = () => {
     const { state } = useLocation();
     const { user } = useContext(AuthContext);
     const [budget, setBudget] = useState(state?.budget || null);
-    const { getBudgets } = useContext(DataContext);
+    const { getBudgets, getAllSubBudgets } = useContext(DataContext);
     const [subBudgets, setSubBudgets] = useState([]);
     const navigate = useNavigate();
 
@@ -24,6 +24,8 @@ const BudgetPage = () => {
 
         const loadSubBudgets = async () => {
             const subBudgets = await getBudgets(user, budget);
+            const allSubBudgets = await getAllSubBudgets(user, budget);
+            console.log(allSubBudgets);
             setSubBudgets(subBudgets);
         };
         
@@ -314,6 +316,9 @@ const BudgetPage = () => {
                 >
                     
                 </div>
+                <h2>
+                    SubBudgets
+                </h2>
                 <div
                     className = {styles.subbudgetsContainer}
                 >

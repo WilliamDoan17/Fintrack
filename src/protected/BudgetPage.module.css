@@ -1,9 +1,16 @@
 .header h1 {
+    margin: .5rem;
     font-size: 3.25rem;
 }
 
 .main {
     width: 100%;
+}
+
+.main h2 {
+    margin: .375rem;
+    text-align: center;
+    font-size: 2rem;
 }
 
 .transactionContainer {

@@ -26,9 +26,8 @@ export const getBudgets = async (user, parent = null) => {
         const { data, error } = await query;
         if (error) {
             console.error(error);
-        } else {
-            return data || [];
         }
+        return data || [];
     } catch (error) {
         console.error(error);
     }
@@ -90,4 +89,66 @@ export const updateBudget = async (targetBudget, updatedBudget) => {
     } catch (error) {
         console.error(error);
     }
+}
+
+class Node {
+    constructor(data) {
+        this.next = null;
+        this.data = data;
+    }
+};
+
+class Queue {
+    constructor() {
+        this.front = null;
+        this.tail = null;
+        this.size = 0;
+    }
+
+    isEmpty() {
+        return this.size === 0;
+    }
+
+    push(data) {
+        const newNode = new Node(data);
+        if (this.isEmpty()) {
+            this.front = newNode;
+            this.tail = newNode;
+        } else {
+            this.tail.next = newNode;
+            this.tail = newNode;
+        }
+        this.size++;
+        return newNode;
+    }
+
+    getFront(data) {
+        return this.isEmpty() ? null : this.front;
+    }
+
+    pop(data) {
+        const targetNode = this.getFront();
+        if (targetNode !== null) {
+            this.front = targetNode.next;
+            this.size--;
+        }
+        return targetNode;
+    }
+}
+
+
+export const getAllSubBudgets = async (user, budget) => {
+    let result = [budget];
+    const queue = new Queue();
+    queue.push(budget);
+    while (!queue.isEmpty()) {
+        const currentBudget = queue.pop().data;
+        const data = await getBudgets(user, currentBudget);
+        data.forEach(budget => queue.push(budget));
+        result = [
+            ...result,
+            ...data,
+        ]
+    }
+    return result;
 }
