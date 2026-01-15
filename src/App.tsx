@@ -8,6 +8,7 @@ import Signin from './Auth/Signin.tsx'
 import TransactionPage from './protected/TransactionPage.tsx'
 import { DataProvider } from '../supabase/database/useDatabase.tsx'
 import BudgetListPage from './protected/BudgetListPage.tsx'
+import BudgetPage from './protected/BudgetPage.tsx'
 
 const AppRoutes = () => {
   const navigate = useNavigate();
@@ -42,18 +43,15 @@ const AppRoutes = () => {
           path = "/budgets"
           element = {<BudgetListPage></BudgetListPage>}
         ></Route>
+        <Route
+          path = "/budget/:id"
+          element = {<BudgetPage></BudgetPage>}
+        ></Route>
       </Routes>
     </>
   )
 }
 
-const TestElement = () => {
-  return (
-    <>
-      <Signin></Signin>
-    </>
-  )
-}
 
 function App() {
   return (

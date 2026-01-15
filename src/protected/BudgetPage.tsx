@@ -1,20 +1,53 @@
-import { useState, useEffect, useContext } from 'react'
-import { AuthContext } from '../../supabase/auth/useAuth'
+import { useState, useContext, useEffect } from 'react'
 import { DataContext } from '../../supabase/database/useDatabase'
-import styles from './BudgetListPage.module.css'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import styles from './BudgetPage.module.css'
+import { AuthContext } from '../../supabase/auth/useAuth'
 
-const BudgetListPage = () => {
+const BudgetPage = () => {
+    const { state } = useLocation();
+    const { user } = useContext(AuthContext);
+    const [budget, setBudget] = useState(state?.budget || null);
+    const { getBudgets } = useContext(DataContext);
+    const [subBudgets, setSubBudgets] = useState([]);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        setSubBudgets([]);
+        if (state?.budget) {
+            setBudget(state.budget);
+        }
+    }, [state]);
+
+    useEffect(() => {
+        if (!user || !budget) return;
+
+        const loadSubBudgets = async () => {
+            const subBudgets = await getBudgets(user, budget);
+            setSubBudgets(subBudgets);
+        };
+        
+        loadSubBudgets();
+    }, [user]);
+
     const BudgetCard = ({ budget }) => {
+        const handleClick = (e) => {
+            navigate(`/budget/${budget.id}`,
+                {
+                    state: {
+                        budget: budget,
+                    },
+                }
+            )
+        };
+
         const { deleteBudget } = useContext(DataContext);
 
         const handleDelete = async (e) => {
             e.preventDefault();
             const data = await deleteBudget(budget);
             if (data) {
-                setBudgets(oldBudgets => oldBudgets.filter(({ id }) => id !== data.id))
+                setSubBudgets(oldSubBudgets => oldSubBudgets.filter(({ id }) => id !== data.id))
             }
         }
 
@@ -28,12 +61,7 @@ const BudgetListPage = () => {
             <>
                 <div
                     className = {styles.budgetCard}
-                    onClick = {() => 
-                        navigate(`/budget/${budget.id}`, {
-                            state: {
-                                budget: budget
-                            }
-                        })}
+                    onClick = {handleClick}
                 >
                     <div
                         className = {styles.budgetCardButtonContainer}
@@ -64,24 +92,6 @@ const BudgetListPage = () => {
     }
 
     const [displayAddBudgetModal, setDisplayAddBudgetModal] = useState(false);
-
-    const AddBudgetButton = () => {
-        const handleClick = (e) => {
-            e.preventDefault();
-            setDisplayAddBudgetModal(true);
-        }
-
-        return (
-            <>
-                <button
-                    className = {styles.addBudgetButton}
-                    onClick = {handleClick}
-                >
-                    <h2>+</h2>
-                </button>
-            </>
-        )
-    }
 
     const AddBudgetModal = () => {
         const containerStyle = {};
@@ -115,10 +125,10 @@ const BudgetListPage = () => {
             const newBudget = {
                 name: name,
             }
-            const data = await addBudget(user, newBudget);
+            const data = await addBudget(user, newBudget, budget);
             if (data) {
-                setBudgets(oldBudgets => [
-                    ...oldBudgets,
+                setSubBudgets(oldSubBudgets => [
+                    ...oldSubBudgets,
                     data
                 ]);
                 handleCloseModal(e);
@@ -216,7 +226,7 @@ const BudgetListPage = () => {
                 }
                 const data = await updateBudget(targetupdateBudget, newBudget);
                 if (data) {
-                    setBudgets(oldBudget => oldBudget.map((budget) => {
+                    setSubBudgets(oldSubBudgets => oldSubBudgets.map((budget) => {
                         if (budget.id === data.id) {
                             return data;
                         } else {
@@ -282,55 +292,46 @@ const BudgetListPage = () => {
         )
     }
 
-    const BudgetTable = () => {
-        return (
-            <div
-                className = {styles.budgetTable}
-            >
-                <AddBudgetButton></AddBudgetButton>
-                {budgets.map(budget => {
-                    return (
-                        <BudgetCard
-                            key = {budget.id}
-                            budget = {budget}
-                        ></BudgetCard>
-                    )
-                })}
-            </div>
-        )
+    const handleAddBudget = (e) => {
+        e.preventDefault();
+        setDisplayAddBudgetModal(true);
     }
-
-    const { user } = useContext(AuthContext);
-    const { getBudgets } = useContext(DataContext);
-    const [budgets, setBudgets] = useState([]);
-
-    useEffect(() => {
-        if (!user) return;
-        const loadBudgets = async () => {
-            const data = await getBudgets(user);
-            setBudgets(data);
-        }
-        loadBudgets();
-    }, [user])
 
     return (
         <>
             <header
                 className = {styles.header}
             >
-                <h1
-                    className = {styles.h1}
-                >
-                    Your Budgets
+                <h1>
+                    {budget.name}
                 </h1>
-            </header>
+            </header>  
             <main
                 className = {styles.main}
             >
                 <div
-                    className = {styles.budgetList}
+                    className = {styles.transactionContainer}
                 >
-                    <BudgetTable></BudgetTable>
+                    
+                </div>
+                <div
+                    className = {styles.subbudgetsContainer}
+                >
+                    <button
+                        className = {`${styles.budgetCard} ${styles.addBudgetButton}`}
+                        onClick = {handleAddBudget}
+                    >
+                        +
+                    </button>
+                    {subBudgets.map( subBudget => {
+                        return (
+                            <BudgetCard
+                                key = {subBudget.id}
+                                budget = {subBudget}
+                            >
+                            </BudgetCard>
+                        )
+                    })}
                 </div>
             </main>
             <AddBudgetModal></AddBudgetModal>
@@ -339,4 +340,4 @@ const BudgetListPage = () => {
     )
 }
 
-export default BudgetListPage;
+export default BudgetPage;
