@@ -121,7 +121,6 @@ const AddTransactionModal = ({ displaying, setDisplaying, setTransactions }) => 
 }
 
 const UpdateTransactionModal = ({ displaying, setDisplaying, setTransactions, transactionUpdate, setTransactionUpdate }) => {
-    const { user } = useContext(AuthContext);
     const { updateTransaction } = useContext(DataContext);
 
     const [purpose, setPurpose] = useState(transactionUpdate?.purpose);
@@ -149,7 +148,7 @@ const UpdateTransactionModal = ({ displaying, setDisplaying, setTransactions, tr
             purpose: purpose,
             value: value,
         }
-        const newTransaction = await updateTransaction(user, transactionUpdate, transactionInput);
+        const newTransaction = await updateTransaction(transactionUpdate, transactionInput);
         if (newTransaction) {
             setTransactions(transactions => transactions.map(
                 transaction => {

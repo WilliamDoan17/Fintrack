@@ -326,6 +326,12 @@ const BudgetPage = () => {
                 }
             }
 
+            const handleUpdateTransaction = (e) => {
+                e.preventDefault();
+                setDisplayUpdateTransactionModal(true);
+                setTargetUpdatingTransaction(transaction);
+            }
+
             return (
                 <>
                     <div
@@ -340,7 +346,9 @@ const BudgetPage = () => {
                         <div
                             className = {styles.transactionCardButtonContainer}
                         >
-                            <button>
+                            <button
+                                onClick = {handleUpdateTransaction}
+                            >
                                 Update
                             </button>
                             <button
@@ -479,6 +487,128 @@ const BudgetPage = () => {
             setDisplayAddTransactionModal(true);
         }
 
+        const [targetUpdatingTransaction, setTargetUpdatingTransaction] = useState(null);
+        const [displayUpdateTransactionModal, setDisplayUpdateTransactionModal] = useState(false);
+
+        const UpdateTransactionModal = () => {
+            const { updateTransaction } = useContext(DataContext);
+
+            const [purpose, setPurpose] = useState("");
+            const [value, setValue] = useState(0);
+
+            useEffect(() => {
+                if (targetUpdatingTransaction !== null) {
+                    setPurpose(targetUpdatingTransaction.purpose);
+                    setValue(targetUpdatingTransaction.value);
+                }
+            }, [targetUpdatingTransaction]);
+
+            const handleCloseModal = () => {
+                setDisplayUpdateTransactionModal(false);
+                setTargetUpdatingTransaction(null);
+            }
+
+            const handleChangeInput = (value, setter) => {
+                setter(value);
+            }
+
+            const handleUpdateTransaction = async (e) => {
+                e.preventDefault();
+                const transactionInput = {
+                    purpose: purpose,
+                    value: value,
+                }
+                const newTransaction = await updateTransaction(targetUpdatingTransaction, transactionInput);
+                if (newTransaction) {
+                    setTransactions(transactions => transactions.map(
+                        transaction => {
+                            if (transaction.id === targetUpdatingTransaction.id) {
+                                return newTransaction;
+                            }
+                            return transaction;
+                        }
+                    ))
+                }
+                handleCloseModal();
+            }
+
+            const containerStyles = {};
+
+            if (displayUpdateTransactionModal === false) containerStyles.display = 'none';
+
+            return (
+                <>
+                    <div
+                        className = {styles.updateTransactionModalContainer}
+                        style = {containerStyles}
+                        onClick = {handleCloseModal}
+                    >
+                        <div
+                            className = {styles.updateTransactionModal}
+                            onClick = {(e) => e.stopPropagation()}
+                        >
+                            <h2>
+                                Update Transaction
+                            </h2>
+                            <form
+                                className = {styles.updateTransactionForm}
+                                onSubmit = {handleUpdateTransaction}
+                            >
+                                <p>
+                                    <label
+                                        htmlFor = "transactionPurpose"
+                                    >
+                                        Purpose
+                                    </label>
+                                    <input
+                                        type = "text"
+                                        name = "transactionPurpose"
+                                        id = "transactionPurpose"
+                                        value = {purpose}
+                                        onChange = {(e) => handleChangeInput(e.target.value, setPurpose)}
+                                    ></input>
+                                </p>
+                                <p
+                                    className = {styles.updateTransactionValueField}
+                                >
+                                    <label
+                                        htmlFor =  "transactionValue"
+                                    >
+                                        Value
+                                    </label>
+                                    <input
+                                        type = "number"
+                                        name = "transactionValue"
+                                        id = "transactionValue"
+                                        value = {value}
+                                        onChange = {(e) => handleChangeInput(e.target.value, setValue)}
+                                    >
+                                    </input>
+                                </p>
+                                <p
+                                    className = {styles.updateTransactionFormButtonRow}
+                                >
+                                    <button
+                                        type = "button"
+                                        className = {styles.updateTransactionCancelButton}
+                                        onClick = {handleCloseModal}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        className = {styles.updateTransactionSubmitButton}
+                                        type = "submit"
+                                    >
+                                        Update Transaction
+                                    </button>
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+                </>
+            )
+        }
+
         return (
             <>
                 <h2>
@@ -509,6 +639,7 @@ const BudgetPage = () => {
                     }
                 </div>
                 <AddTransactionModal></AddTransactionModal>
+                <UpdateTransactionModal></UpdateTransactionModal>
             </>
         )
     }
