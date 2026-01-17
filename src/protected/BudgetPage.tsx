@@ -314,7 +314,18 @@ const BudgetPage = () => {
             loadAllTransactions();
         }, [user]);
 
+
         const TransactionCard = ({ transaction }) => {
+            const { deleteTransaction } = useContext(DataContext);
+
+            const handleDeleteTransaction = async (e) => {
+                e.preventDefault();
+                const data = await deleteTransaction(transaction);
+                if (data) {
+                    setTransactions(transactions => transactions.filter(transaction => transaction.id !== data.id));
+                }
+            }
+
             return (
                 <>
                     <div
@@ -332,7 +343,9 @@ const BudgetPage = () => {
                             <button>
                                 Update
                             </button>
-                            <button>
+                            <button
+                                onClick = {handleDeleteTransaction}
+                            >
                                 Delete
                             </button>
                         </div>
