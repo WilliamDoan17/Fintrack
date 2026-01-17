@@ -39,12 +39,13 @@ export const getTransactions = async (user: User, budget = null) => {
   }
 };
 
-export const addTransaction = async (user: User, transactionInput: transactionInput) => {
+export const addTransaction = async (user: User, transactionInput: transactionInput, budget = null) => {
   try  {
     if (!user?.id) return;
     const newTransaction = {
       ...transactionInput,
       user_id: user.id,
+      budget_id: budget?.id,
     }
     const { data, error } = await supabase
       .from('transactions')

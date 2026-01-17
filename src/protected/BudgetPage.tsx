@@ -314,6 +314,158 @@ const BudgetPage = () => {
             loadAllTransactions();
         }, [user]);
 
+        const TransactionCard = ({ transaction }) => {
+            return (
+                <>
+                    <div
+                        className = {styles.transactionCard}
+                    >   
+                        <div
+                            className = {styles.transactionCardInfoContainer}
+                        >
+                            <span>{transaction.purpose}</span>
+                            <span>{transaction.value}</span>
+                        </div>
+                        <div
+                            className = {styles.transactionCardButtonContainer}
+                        >
+                            <button>
+                                Update
+                            </button>
+                            <button>
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )
+        }
+
+        const [displayAddTransactionModal, setDisplayAddTransactionModal] = useState(false);
+
+        const AddTransactionModal = () => {
+            const { user } = useContext(AuthContext);
+            const { addTransaction } = useContext(DataContext);
+
+            const [purpose, setPurpose] = useState("");
+            const [value, setValue] = useState(0);
+
+            const handleCloseModal = (e) => {
+                setDisplayAddTransactionModal(false);
+            }
+
+            const handleChangeInput = (value, setter) => {
+                setter(value);
+            }
+
+            const clearInput = () => {
+                setValue(0);
+                setPurpose("");
+            }
+
+            const handleAddTransaction = async (e) => {
+                e.preventDefault();
+                if (!value) {
+                    console.error('Cannot add transaction with value as 0!')
+                } else {
+                    const newTransactionInput = {
+                        purpose: purpose,
+                        value: value,
+                    }
+                    const newTransaction = await addTransaction(user, newTransactionInput, budget);
+
+                    if (newTransaction) setTransactions(transactions => [
+                        newTransaction,
+                        ...transactions
+                    ]);
+                    clearInput();
+                    handleCloseModal(e);
+                }
+            }
+
+            const ContainerStyles = {
+            };
+
+            if (displayAddTransactionModal === false) ContainerStyles.display = 'none'; 
+
+            return (
+                <>
+                    <div
+                        className = {styles.addTransactionModalContainer}
+                        onClick = {handleCloseModal}
+                        style = {ContainerStyles}
+                    >
+                        <div
+                            className = {styles.addTransactionModal}
+                            onClick = {(e) => e.stopPropagation()}
+                        >
+                            <h2>
+                                Add Transaction
+                            </h2>
+                            <form
+                                className = {styles.addTransactionForm}
+                                onSubmit = {handleAddTransaction}
+                            >
+                                <p>
+                                    <label
+                                        htmlFor = "transactionPurpose"
+                                    >
+                                        Purpose
+                                    </label>
+                                    <input
+                                        type = "text"
+                                        name = "transactionPurpose"
+                                        id = "transactionPurpose"
+                                        value = {purpose}
+                                        onChange = {(e) => handleChangeInput(e.target.value, setPurpose)}
+                                    ></input>
+                                </p>
+                                <p
+                                    className = {styles.addTransactionValueField}
+                                >
+                                    <label
+                                        htmlFor =  "transactionValue"
+                                    >
+                                        Value
+                                    </label>
+                                    <input
+                                        type = "number"
+                                        name = "transactionValue"
+                                        id = "transactionValue"
+                                        value = {value}
+                                        onChange = {(e) => handleChangeInput(e.target.value, setValue)}
+                                    >
+                                    </input>
+                                </p>
+                                <p
+                                    className = {styles.addTransactionFormButtonRow}
+                                >
+                                    <button
+                                        type = "button"
+                                        className = {styles.addTransactionCancelButton}
+                                        onClick = {handleCloseModal}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        className = {styles.addTransactionSubmitButton}
+                                        type = "submit"
+                                    >
+                                        Add Transaction
+                                    </button>
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+                </>
+            ) 
+        }
+
+        const handleAddTransactionButtonClicked = (e) => {
+            e.preventDefault();
+            setDisplayAddTransactionModal(true);
+        }
+
         return (
             <>
                 <h2>
@@ -322,27 +474,34 @@ const BudgetPage = () => {
                 <div
                     className = {styles.transactionHistoryContainer}
                 >
+                    <div>
+                        <button
+                            className = {styles.addTransactionButton}
+                            onClick = {handleAddTransactionButtonClicked}
+                        >
+                            + Add Transaction
+                        </button>
+                    </div>
                     {
                         transactions === [] ?
                             <p>You have no transactions</p> :
                             transactions.map(transaction => {
                                 return (
-                                    <div
-                                        className = {styles.transactionCard}
-                                    >
-                                        <span>{transaction.purpose}</span>
-                                        <span>{transaction.value}</span>
-                                    </div>
+                                    <TransactionCard
+                                        key = {transaction.id}
+                                        transaction= {transaction}
+                                    ></TransactionCard>
                                 )
                             })
                     }
                 </div>
+                <AddTransactionModal></AddTransactionModal>
             </>
         )
     }
 
     return (
-        <>
+        <>                         
             <header
                 className = {styles.header}
             >

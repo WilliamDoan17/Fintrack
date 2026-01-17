@@ -111,7 +111,7 @@
     display: flex;
     flex-direction: column;
     justify-content: start;
-    gap: 2rem;
+    gap: .5rem;
     flex-wrap: wrap;
     width: 70%;
     background-color: whitesmoke;
@@ -120,7 +120,90 @@
 .transactionCard {
     padding: .5rem;
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+    gap: .5rem;
     width: 100%;
     background-color: lightgray;
+}
+
+.transactionCardInfoContainer {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+}
+
+.transactionCardButtonContainer {
+    display: flex;
+    gap: .25rem;
+    flex: 0;
+}
+
+.addTransactionButton {
+    float: right;
+}
+
+.addTransactionModalContainer, .updateTransactionModalContainer {
+    position: absolute;
+    top: 0;
+    z-index: 10001;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.addTransactionModal, .updateTransactionModal {
+    border-radius: 1rem;
+    padding: .25rem .5rem;
+    width: 50%;
+    background-color: white;
+}
+
+.addTransactionModal h2, .updateTransactionModal h2 {
+    margin: .75rem 0 0;
+    text-align: center;
+}
+
+.addTransactionForm, .updateTransactionForm {
+    margin: 0 auto;
+    padding: .25rem .75rem;
+    width: 70%;
+}
+
+.addTransactionForm label, .updateTransaction label {
+    margin-bottom: .25rem;
+    display: block;
+}
+
+.addTransactionForm input, .updateTransactionForm input {
+    display: block;
+    width: 100%;
+}
+
+.addTransactionValueField, .updateTransactionValueField {
+    display: flex;
+    justify-content: space-between;
+}
+
+.addTransactionValueField input, .updateTransactionValueField input {
+    width: 67px;
+}
+
+.addTransactionFormButtonRow, .updateTransactionFormButtonRow {
+    display: flex;
+    justify-content: flex-end;
+    gap: .75rem;
+}
+
+.addTransactionFormButtonRow button, .updateTransactionForm buton {
+    padding: .375rem;
+    border: none;
+    border-radius: .25rem;
+}
+
+.addTransactionSubmitButton, .updateTransactionSubmitButton {
+    background-color: cornflowerblue;
+    color: white;
 }
