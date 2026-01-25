@@ -71,6 +71,7 @@
   padding: .5rem;
   flex: 2;
   background-color: whitesmoke;
+  height: 100%;
 }
 
 .transactionHistory h2 {
@@ -78,8 +79,16 @@
 }
 
 .transactionTable {
+  padding: .5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  background-color: lightgray;
+}
+
+.transactionCard {
   padding: .25rem;
   display: flex;
-  flex-diretion: column;
-  gap: .5rem;
-}
+  justify-content: space-between;
+  background-color: white;
+}             

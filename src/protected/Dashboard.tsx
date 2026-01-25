@@ -207,7 +207,8 @@ const Dashboard = () => {
           <div
             className={styles.transactionCard}
           >
-
+            <span>{transaction.purpose}</span>
+            <span>{transaction.value}</span>
           </div>
         </>
       )
@@ -262,6 +263,8 @@ const Dashboard = () => {
           style={{
             display: 'flex',
             gap: '3rem',
+            maxHeight: '300px',
+            overflowY: 'hidden',
           }}
         >
           <TransactionHistory></TransactionHistory>
