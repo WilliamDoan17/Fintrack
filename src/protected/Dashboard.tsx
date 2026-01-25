@@ -16,8 +16,9 @@ const Dashboard = () => {
 
       const loadBudgets = async () => {
         const budgets = await getBudgets(user);
-        console.log(budgets);
-        setBudgets(budgets);
+        if (budgets) {
+          setBudgets(budgets);
+        }
       }
 
       loadBudgets();
@@ -72,7 +73,6 @@ const Dashboard = () => {
       const handleAddBudget = async (e) => {
         e.preventDefault();
 
-        console.log("Attempting to add budget ", name, "...");
 
         if (name === "") {
           console.error("Cannot add budget with blank name");
@@ -153,28 +153,96 @@ const Dashboard = () => {
     }
 
     return (
-      <article
-        className={styles.budgetContainer}
+      <div
+        className={styles.budgetsContainer}
       >
-        <AddBudgetButton>
-        </AddBudgetButton>
-        {
-          budgets.map(budget =>
-            <BudgetCard
-              key={budget.id}
-              budget={budget}
-            >
-            </BudgetCard>
-          )
-        }
-        {
-          displayAddBudgetModal === true ?
+        <h2>
+          Budgets
+        </h2>
+        <div
+          className={styles.budgetsGrid}
+        >
+          <AddBudgetButton>
+          </AddBudgetButton>
+          {
+            budgets.map(budget =>
+              <BudgetCard
+                key={budget.id}
+                budget={budget}
+              >
+              </BudgetCard>
+            )
+          }
+          {
+            displayAddBudgetModal &&
             <AddBudgetModal>
             </AddBudgetModal>
-            :
-            <></>
+          }
+        </div>
+      </div>
+    )
+  }
+
+  const TransactionHistory = () => {
+    const { getTransactions } = useContext(DataContext);
+
+    const [transactions, setTransactions] = useState([]);
+
+    useEffect(() => {
+      if (!user) return;
+
+      const loadTransactions = async () => {
+        const data = await getTransactions(user);
+        if (data) {
+          setTransactions(data);
         }
-      </article>
+      }
+
+      loadTransactions();
+    }, [user])
+
+    const TransactionCard = ({ transaction }) => {
+      return (
+        <>
+          <div
+            className={styles.transactionCard}
+          >
+
+          </div>
+        </>
+      )
+    }
+
+    return (
+      <>
+        <div
+          className={styles.transactionHistory}
+        >
+          <h2>
+            Transactions
+          </h2>
+          <div
+            className={styles.transactionTable}
+          >
+            {
+              transactions.map(transaction =>
+                <TransactionCard
+                  key={transaction.id}
+                  transaction={transaction}
+                >
+                </TransactionCard>
+              )
+            }
+          </div>
+        </div>
+      </>
+    )
+  }
+
+  const Stats = () => {
+    return (
+      <>
+      </>
     )
   }
 
@@ -190,8 +258,17 @@ const Dashboard = () => {
       <main
         className={styles.main}
       >
+        <div
+          style={{
+            display: 'flex',
+            gap: '3rem',
+          }}
+        >
+          <TransactionHistory></TransactionHistory>
+          <Stats></Stats>
+        </div>
         <BudgetsContainer></BudgetsContainer>
-      </main>
+      </main >
     </>
   )
 }

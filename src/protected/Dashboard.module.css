@@ -1,22 +1,32 @@
 .main {
-  width: 100%;
+  margin: 0 auto;
+  width: 70%;
 }
 
-.budgetContainer {
+.budgetsContainer {
+  padding: 1px;
+  margin: .75rem auto;
+  width: 100%;
+  background-color: whitesmoke;
+}
+
+.budgetsContainer h2 {
+  text-align: center;
+}
+
+.budgetsGrid {
   margin: 0 auto;
   padding: 1rem;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 1.5rem;
-  width: 70%;
-  background-color: whitesmoke;
+  width: 100%;
 }
 
 .budgetCard {
   padding: .5rem;
   background-color: lightgray;
 }
-
 .budgetCard h3 {
   text-align: center;
 }
@@ -54,5 +64,22 @@
 
 .addBudgetModal .modalButtonContainer {
   float: right;
+  gap: .5rem;
+}
+
+.transactionHistory {
+  padding: .5rem;
+  flex: 2;
+  background-color: whitesmoke;
+}
+
+.transactionHistory h2 {
+  text-align: center;
+}
+
+.transactionTable {
+  padding: .25rem;
+  display: flex;
+  flex-diretion: column;
   gap: .5rem;
 }

@@ -12,6 +12,8 @@ stage 2: updating on balance, basic UI
 + has good UI
 - BudgetPage:
 + shows the total balance, income, expenses
++ can only add transaction directly to the budget
++ update name, delete budget feature
 + each budget shows their balance
 + shows latest transactions
 + has good UI
