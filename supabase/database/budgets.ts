@@ -137,7 +137,7 @@ class Queue {
 }
 
 
-export const getAllSubBudgets = async (user, budget) => {
+export const getAllSubBudgets = async (user, budget = null) => {
     let result = [budget];
     const queue = new Queue();
     queue.push(budget);

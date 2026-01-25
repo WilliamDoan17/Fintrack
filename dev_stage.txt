@@ -1,0 +1,25 @@
+stage 1: basic crud on budgets, transactions
+stage 2: updating on balance, basic UI
+- Dashboard:
++ shows the total balance, income, expenses
+-- redo the dashboard with three sections:
+--- stats (now gives us the total balance)
+--- recent transactions
+--- budgets (done)
++ each budget shows their balance
++ shows latest transactions
++ cannot have adding transaction in the dashboard
++ has good UI
+- BudgetPage:
++ shows the total balance, income, expenses
++ each budget shows their balance
++ shows latest transactions
++ has good UI
+stage 3: transaction modifications:
+type: withdraw/add 
+- warning when the budget goes under 0
+date: now() (default) or exact time to minute
+repeated transactions: (set up modes)
+stage 4: set up income (tricky)
+stage 5: set up shares (tricky)
+

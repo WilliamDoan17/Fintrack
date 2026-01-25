@@ -9,43 +9,40 @@ import TransactionPage from './protected/TransactionPage.tsx'
 import { DataProvider } from '../supabase/database/useDatabase.tsx'
 import BudgetListPage from './protected/BudgetListPage.tsx'
 import BudgetPage from './protected/BudgetPage.tsx'
+import Dashboard from './protected/Dashboard.tsx'
 
 const AppRoutes = () => {
   const navigate = useNavigate();
 
   const { user, loading } = useContext(AuthContext)
 
-  useEffect(() => {
-    if (loading) return;
-    if (!user) {
-      console.log('No User found');
-      navigate('/signin')
-    }
-  }, [user, loading])
-
   return (
     <>
       <Routes>
         <Route
-          path = "/signup"
-          element = {<Signup></Signup>}
+          path="/signup"
+          element={<Signup></Signup>}
         ></Route>
         <Route
-          path = "/signin"
-          element = {<Signin></Signin>}
+          path="/signin"
+          element={<Signin></Signin>}
         >
         </Route>
         <Route
-          path = "/transactions"
-          element = {<TransactionPage></TransactionPage>}
+          path="/transactions"
+          element={<TransactionPage></TransactionPage>}
         ></Route>
         <Route
-          path = "/budgets"
-          element = {<BudgetListPage></BudgetListPage>}
+          path="/budgets"
+          element={<BudgetListPage></BudgetListPage>}
         ></Route>
         <Route
-          path = "/budget/:id"
-          element = {<BudgetPage></BudgetPage>}
+          path="/budget/:id"
+          element={<BudgetPage></BudgetPage>}
+        ></Route>
+        <Route
+          path="/dashboard"
+          element={<Dashboard></Dashboard>}
         ></Route>
       </Routes>
     </>
@@ -59,14 +56,14 @@ function App() {
       <AuthProvider>
         <DataProvider>
           <div
-            className = "app-container"
+            className="app-container"
           >
             <AppRoutes>
             </AppRoutes>
           </div>
         </DataProvider>
       </AuthProvider>
-      
+
     </>
   )
 }

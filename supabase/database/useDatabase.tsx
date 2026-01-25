@@ -8,7 +8,7 @@ export const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
 
-    const getAllTransactionsByBudget = async (user, budget) => {
+    const getAllTransactions = async (user, budget) => {
         try {
             const allBudgetIds = (await getAllSubBudgets(user, budget)).map(budget => budget.id);
             const query = supabase
@@ -37,7 +37,7 @@ export const DataProvider = ({ children }) => {
         addBudget,
         deleteBudget,
         updateBudget,
-        getAllTransactionsByBudget,
+        getAllTransactions,
         getAllSubBudgets,
     }
 
