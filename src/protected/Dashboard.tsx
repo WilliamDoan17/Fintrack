@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react'
 import { DataContext } from '../../supabase/database/useDatabase'
 import { AuthContext } from '../../supabase/auth/useAuth'
 import styles from "./Dashboard.module.css"
+import { useNavigate } from 'react-router-dom'
 
 
 const Dashboard = () => {
@@ -22,13 +23,24 @@ const Dashboard = () => {
       }
 
       loadBudgets();
-    }, [user])
+    }, [user]);
 
     const BudgetCard = ({ budget }) => {
+      const navigate = useNavigate();
+
+      const handleCardClicked = (e) => {
+        navigate(`/budget/${budget.id}`, {
+          state: {
+            budget: budget,
+          }
+        })
+      }
+
       return (
         <>
           <div
             className={styles.budgetCard}
+            onClick={handleCardClicked}
           >
             <h3>
               {budget.name}
@@ -241,8 +253,73 @@ const Dashboard = () => {
   }
 
   const Stats = () => {
+    const [transactions, setTransactions] = useState([]);
+    const { getAllTransactionsFromBudget } = useContext(DataContext);
+
+    useEffect(() => {
+      if (!user) return;
+
+      const loadTransactions = async () => {
+        const data = await getAllTransactionsFromBudget();
+        if (data) {
+          setTransactions(data);
+        }
+        else return;
+      }
+
+      loadTransactions();
+    }, [user]);
+
+    const [balance, setBalance] = useState(0);
+    const [income, setIncome] = useState(0);
+    const [expense, setExpense] = useState(0);
+
     return (
       <>
+        <div
+          className={styles.stats}
+        >
+          <h2>
+            Stats
+          </h2>
+          <div
+            className={styles.balanceStat}
+          >
+            <h3>
+              Balance
+            </h3>
+            <span>
+              {balance}
+            </span>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              gap: '.5rem'
+            }}
+          >
+            <div
+              className={styles.incomeStat}
+            >
+              <h3>
+                Income
+              </h3>
+              <span>
+                {income}
+              </span>
+            </div>
+            <div
+              className={styles.expenseStat}
+            >
+              <h3>
+                Expense
+              </h3>
+              <span>
+                {expense}
+              </span>
+            </div>
+          </div>
+        </div>
       </>
     )
   }
@@ -261,9 +338,9 @@ const Dashboard = () => {
       >
         <div
           style={{
-            display: 'flex',
-            gap: '3rem',
-            maxHeight: '300px',
+            display: 'grid',
+            gap: '1.5rem',
+            gridTemplateColumns: '2fr 1fr',
             overflowY: 'hidden',
           }}
         >
@@ -277,6 +354,3 @@ const Dashboard = () => {
 }
 
 export default Dashboard;
-
-
-

@@ -26,6 +26,7 @@
 .budgetCard {
   padding: .5rem;
   background-color: lightgray;
+  cursor: pointer;
 }
 .budgetCard h3 {
   text-align: center;
@@ -71,7 +72,6 @@
   padding: .5rem;
   flex: 2;
   background-color: whitesmoke;
-  height: 100%;
 }
 
 .transactionHistory h2 {
@@ -91,4 +91,37 @@
   display: flex;
   justify-content: space-between;
   background-color: white;
-}             
+} 
+
+.stats {
+  padding: .5rem;
+  flex: 1;
+  background-color: whitesmoke;
+}
+
+.stats h2 {
+  text-align: center;
+}
+
+.balanceStat {
+  margin-bottom: .5rem;
+}
+
+.balanceStat, .incomeStat, .expenseStat {
+  padding: .5rem;
+  background-color: lightgray;
+}
+
+.incomeStat, .expenseStat {
+  flex: 1;
+}
+
+.balanceStat h3, .incomeStat h3, .expenseStat h3 {
+  text-align: center;
+}
+
+.balanceStat span, .incomeStat span, .expenseStat span {
+  display: block;
+  text-align: center;
+}
+
