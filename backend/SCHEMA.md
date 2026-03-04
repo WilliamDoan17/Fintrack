@@ -10,36 +10,35 @@ This document states the data schema for Fintrack project
 
 #### Properties
 - id:
-  -- primary key
-  -- type: uuid
+  - primary key
+  - type: uuid
 - user_id:
-  -- foreign key (references auth.users)
-  -- type: uuid
-  -- constraints:
-    --- not null
-    --- on delete cascade
-  -- Tells us which user the transaction belongs to
+  - foreign key (references auth.users)
+  - type: uuid
+  - constraints:
+    - not null
+    - on delete cascade
+  - Tells us which user the transaction belongs to
 - type:
-  -- type: transaction_type (ENUM('add', 'withdraw'))
-  -- defaults to 'add'
-  -- Determines if the transaction is an addition or withdrawal
+  - type: transaction_type (ENUM('add', 'withdraw'))
+  - defaults to 'add'
+  - Determines if the transaction is an addition or withdrawal
 - amount:
-  -- type: numeric(15, 2)
-  -- constraints:
-    --- not null
-    --- check: amount > 0
-  -- Value of the transaction, with 2 decimal places precision
+  - type: numeric(15, 2)
+  - constraints:
+    - not null
+    - check: amount > 0
+  - Value of the transaction, with 2 decimal places precision
 - name:
-  -- type: text
-  -- constraints:
-    --- not null
-    --- check: name <> ''
-  -- Name of the transaction, could be about purpose or message
+  - type: text
+  - constraints:
+    - not null
+    - check: name <> ''
+  - Name of the transaction, could be about purpose or message
 - created_at:
-  -- type: timestamptz
-  -- defaults to now()
-  -- Records when the transaction was logged
-
+  - type: timestamptz
+  - defaults to now()
+  - Records when the transaction was logged
 #### Implementation
 ```postgres
 create type transaction_type as ENUM ('add', 'withdraw');
