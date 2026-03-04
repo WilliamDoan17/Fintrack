@@ -7,7 +7,6 @@ This document states the data schema for Fintrack project
 ## Data Schema
 
 ### budgets
-### budgets
 #### Properties
 - id:
   - type: uuid
