@@ -8,6 +8,23 @@ This document shapes the services for features of Fintrack app
 - Mutations (`create`, `update`, `delete`) return `void` on success, throw an error on failure
 - UI uses optimistic updates: state is updated immediately, refetch reconciles with server, rollback on failure via try/catch
 
+## auth
+
+### Services
+- **signup_with_email_and_password(email, password)** → `void`
+  - throws on failure
+  - parameters:
+    - `email`: string
+    - `password`: string
+- **login_with_email_and_password(email, password)** → `void`
+  - throws on failure
+  - parameters:
+    - `email`: string
+    - `password`: string
+- **logout()** → `void`
+  - throws on failure
+- **get_current_user()** → `User`
+
 ## budgets
 
 ### Interfaces
