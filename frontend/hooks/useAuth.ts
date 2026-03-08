@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
-import { getCurrentUser } from '../../backend/services/auth'
-import { supabase } from "../../backend/supabase";
+import { getCurrentUser } from '../src/backend/services/auth'
+import { supabase } from "../src/backend/supabase";
 import { User } from '@supabase/supabase-js'
 
 const useAuth = () => {

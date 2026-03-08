@@ -46,6 +46,7 @@ const SignupForm = () => {
     } else {
       setLoading(true)
       signupWithEmailAndPassword(email, password)
+        .then(() => setError(null))
         .catch(error => setError(error))
         .finally(() => setLoading(false))
     }
@@ -106,6 +107,7 @@ const LoginForm = () => {
     e.preventDefault()
     setLoading(true)
     loginWithEmailAndPassword(email, password)
+      .then(() => setError(null))
       .catch((error) => setError(error))
       .finally(() => setLoading(false))
   }
