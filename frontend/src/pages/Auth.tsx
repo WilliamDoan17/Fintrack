@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { loginWithEmailAndPassword, signupWithEmailAndPassword } from '../backend/services/auth.ts'
+import { useNavigate } from 'react-router-dom'
 
 type Tab = 'login' | 'signup'
 
@@ -37,6 +38,7 @@ const SignupForm = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<Error | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
+  const navigate = useNavigate();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,7 +48,10 @@ const SignupForm = () => {
     } else {
       setLoading(true)
       signupWithEmailAndPassword(email, password)
-        .then(() => setError(null))
+        .then(() => {
+          setError(null)
+          navigate("/dashboard")
+        })
         .catch(error => setError(error))
         .finally(() => setLoading(false))
     }
@@ -102,13 +107,18 @@ const LoginForm = () => {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | null>(null)
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     loginWithEmailAndPassword(email, password)
       .then(() => setError(null))
-      .catch((error) => setError(error))
+      .catch((error) => {
+        setError(error)
+        navigate("/dashboard")
+
+      })
       .finally(() => setLoading(false))
   }
 
