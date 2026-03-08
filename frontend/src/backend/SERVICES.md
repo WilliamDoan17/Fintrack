@@ -11,19 +11,19 @@ This document shapes the services for features of Fintrack app
 ## auth
 
 ### Services
-- **signup_with_email_and_password(email, password)** → `void`
+- **signupWithEmailAndPassword(email, password)** → `void`
   - throws on failure
   - parameters:
     - `email`: string
     - `password`: string
-- **login_with_email_and_password(email, password)** → `void`
+- **loginWithEmailAndPassword(email, password)** → `void`
   - throws on failure
   - parameters:
     - `email`: string
     - `password`: string
 - **logout()** → `void`
   - throws on failure
-- **get_current_user()** → `User`
+- **getCurrentUser()** → `User`
 
 ## budgets
 
@@ -32,28 +32,29 @@ This document shapes the services for features of Fintrack app
   - interface object defining what a budget object looks like
 - **BudgetInput**
   - interface object defining what a budget object passed to mutation functions looks like
-  - usage: `create_budget`, `update_budget`
+  - usage: `createBudget`, `updateBudget`
 
 ### Services
-- **create_budget(BudgetInput)** → `void`
+- **createBudget(BudgetInput)** → `void`
   - throws on failure
-- **update_budget(budget_id, BudgetInput)** → `void`
+- **updateBudget(budget_id, BudgetInput)** → `void`
   - throws on failure
   - parameters:
     - `budget_id`: uuid
     - `BudgetInput`: BudgetInput
-- **delete_budget(budget_id)** → `void`
+- **deleteBudget(budget_id)** → `void`
   - throws on failure
   - parameters:
     - `budget_id`: uuid
-- **get_budget(budget_id)** → `Budget`
+- **getBudget(budget_id)** → `Budget`
   - parameters:
     - `budget_id`: uuid
-- **get_all_budgets()** → `Budget[]`
-- **get_root_budgets()** → `Budget[]`
-- **get_child_budgets(parent_id)** → `Budget[]`
+- **getAllBudgets()** → `Budget[]`
+- **getRootBudgets()** → `Budget[]`
+- **getChildBudgets(parent_id)** → `Budget[]`
   - parameters:
     - `parent_id`: uuid
+
 ## transactions
 
 ### Interfaces
@@ -61,25 +62,25 @@ This document shapes the services for features of Fintrack app
   - interface object defining what a transaction object looks like
 - **TransactionInput**
   - interface object defining what a transaction object passed to mutation functions looks like
-  - usage: `create_transaction`, `update_transaction`
+  - usage: `createTransaction`, `updateTransaction`
 
 ### Services
-- **create_transaction(TransactionInput)** → `void`
+- **createTransaction(TransactionInput)** → `void`
   - throws on failure
-- **update_transaction(transaction_id, TransactionInput)** → `void`
+- **updateTransaction(transaction_id, TransactionInput)** → `void`
   - throws on failure
   - parameters:
     - `transaction_id`: uuid
     - `TransactionInput`: TransactionInput
-- **delete_transaction(transaction_id)** → `void`
+- **deleteTransaction(transaction_id)** → `void`
   - throws on failure
   - parameters:
     - `transaction_id`: uuid
-- **get_transaction(transaction_id)** → `Transaction`
+- **getTransaction(transaction_id)** → `Transaction`
   - parameters:
     - `transaction_id`: uuid
-- **get_all_transactions()** → `Transaction[]`
-- **get_budget_transactions(budget_id)** → `Transaction[]`
+- **getAllTransactions()** → `Transaction[]`
+- **getBudgetTransactions(budget_id)** → `Transaction[]`
   - fetches all transactions from the budget and all its sub-budgets recursively
   - parameters:
     - `budget_id`: uuid

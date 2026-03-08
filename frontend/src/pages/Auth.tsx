@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { loginWithEmailAndPassword, signupWithEmailAndPassword } from '../backend/services/auth.ts'
 
 type Tab = 'login' | 'signup'
 
@@ -11,8 +12,8 @@ const TabBar = ({ tab, setTab }: { tab: Tab, setTab: (tab: Tab) => void }) => {
       <div
         onClick={() => handleTabClicked('login')}
         className={`flex-1 text-center py-2 cursor-pointer transition-all ${tab === 'login'
-            ? 'text-emerald-400 border-b-2 border-emerald-400'
-            : 'text-gray-400 hover:text-gray-200'
+          ? 'text-emerald-400 border-b-2 border-emerald-400'
+          : 'text-gray-400 hover:text-gray-200'
           }`}
       >
         Log In
@@ -20,8 +21,8 @@ const TabBar = ({ tab, setTab }: { tab: Tab, setTab: (tab: Tab) => void }) => {
       <div
         onClick={() => handleTabClicked('signup')}
         className={`flex-1 text-center py-2 cursor-pointer transition-all ${tab === 'signup'
-            ? 'text-emerald-400 border-b-2 border-emerald-400'
-            : 'text-gray-400 hover:text-gray-200'
+          ? 'text-emerald-400 border-b-2 border-emerald-400'
+          : 'text-gray-400 hover:text-gray-200'
           }`}
       >
         Sign Up
@@ -34,9 +35,20 @@ const SignupForm = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [error, setError] = useState<Error | null>(null)
+  const [loading, setLoading] = useState<boolean>(false)
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (password !== confirmPassword) {
+      setError(new Error("Passwords do not match"))
+      return
+    } else {
+      setLoading(true)
+      signupWithEmailAndPassword(email, password)
+        .catch(error => setError(error))
+        .finally(() => setLoading(false))
+    }
   }
 
   return (
@@ -74,10 +86,12 @@ const SignupForm = () => {
       </div>
       <button
         type='submit'
-        className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium py-2 rounded mt-2 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
+        className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium py-2 rounded mt-2 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={loading}
       >
         Sign Up
       </button>
+      {error && <p className="text-red-400 text-sm mt-2">{error.message}</p>}
     </form>
   )
 }
@@ -85,9 +99,15 @@ const SignupForm = () => {
 const LoginForm = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<Error | null>(null)
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    setLoading(true)
+    loginWithEmailAndPassword(email, password)
+      .catch((error) => setError(error))
+      .finally(() => setLoading(false))
   }
 
   return (
@@ -115,11 +135,13 @@ const LoginForm = () => {
       </div>
       <button
         type='submit'
-        className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium py-2 rounded mt-2 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
+        className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium py-2 rounded mt-2 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={loading}
       >
         Log In
       </button>
-    </form>
+      {error && <p className="text-red-400 text-sm mt-2">{error.message}</p>}
+    </form >
   )
 }
 

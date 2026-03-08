@@ -8,10 +8,10 @@ Users can:
 - View their budgets
 - Log, update, delete transactions in a budget
 - View recent transactions
-- View their balance and stats
+- View their balance
 
 ## Development Philosophy
-- Vertical slices — one complete feature at a time
+- Vertical phases — one complete feature at a time
 - CR (Create + Read) before UD (Update + Delete)
 - Backend (RLS + services) before frontend (UI)
 - Optimistic updates on the frontend — rollback on failure via try/catch
@@ -21,10 +21,10 @@ Users can:
 
 ### Phase 1: Auth
 **Services:**
-- `signup_with_email_and_password(email, password)` → void
-- `login_with_email_and_password(email, password)` → void
+- `signupWithEmailAndPassword(email, password)` → void
+- `loginWithEmailAndPassword(email, password)` → void
 - `logout()` → void
-- `get_current_user()` → User
+- `getCurrentUser()` → User
 
 **Tasks:**
 - Link Supabase to the project
@@ -38,8 +38,8 @@ Users can:
 
 ### Phase 2: Create + View Budgets
 **Services:**
-- `create_budget(BudgetInput)` → void
-- `get_root_budgets()` → Budget[]
+- `createBudget(BudgetInput)` → void
+- `getRootBudgets()` → Budget[]
 
 **Tasks:**
 - Write RLS policies for budget INSERT, SELECT
@@ -52,8 +52,8 @@ Users can:
 
 ### Phase 3: Budget Detail
 **Services:**
-- `get_budget(budget_id)` → Budget
-- `get_child_budgets(parent_id)` → Budget[]
+- `getBudget(budget_id)` → Budget
+- `getChildBudgets(parent_id)` → Budget[]
 
 **Tasks:**
 - Write budget services
@@ -65,9 +65,9 @@ Users can:
 
 ### Phase 4: Create + View Transactions + Balance
 **Services:**
-- `create_transaction(TransactionInput)` → void
-- `get_budget_transactions(budget_id)` → Transaction[]
-- `get_all_transactions()` → Transaction[]
+- `createTransaction(TransactionInput)` → void
+- `getBudgetTransactions(budget_id)` → Transaction[]
+- `getAllTransactions()` → Transaction[]
 
 **Tasks:**
 - Write RLS policies for transaction INSERT, SELECT
@@ -81,8 +81,8 @@ Users can:
 
 ### Phase 5: Update + Delete Budgets
 **Services:**
-- `update_budget(budget_id, BudgetInput)` → void
-- `delete_budget(budget_id)` → void
+- `updateBudget(budget_id, BudgetInput)` → void
+- `deleteBudget(budget_id)` → void
 
 **Tasks:**
 - Write RLS policies for budget UPDATE, DELETE
@@ -96,8 +96,8 @@ Users can:
 
 ### Phase 6: Update + Delete Transactions
 **Services:**
-- `update_transaction(transaction_id, TransactionInput)` → void
-- `delete_transaction(transaction_id)` → void
+- `updateTransaction(transaction_id, TransactionInput)` → void
+- `deleteTransaction(transaction_id)` → void
 
 **Tasks:**
 - Write RLS policies for transaction UPDATE, DELETE
