@@ -30,10 +30,19 @@ const BudgetContainer = ({ budgetQuery: { budgets, loading, error } }: { budgetQ
 
 const CreateBudgetModal = ({ budgetQuery: { refetch } }: { budgetQuery: ReturnType<typeof useBudgets> }) => {
   const [name, setName] = useState<string>('');
-  const handleSubmit = async () => {
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<Error | null>(null)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
     createBudget({
       name: name,
+      parent_id: null,
     })
+      .then(() => refetch())
+      .catch(setError)
+      .finally(() => setLoading(false))
+
   }
   return (
     <div

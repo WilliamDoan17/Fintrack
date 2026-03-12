@@ -51,3 +51,13 @@ export const getChildBudgets = async (parentId: string): Promise<Budget[]> => {
   if (error) throw error
   return data ?? []
 }
+
+export const getBudget = async (id: string): Promise<Budget | null> => {
+  const { data, error } = await supabase
+    .from('budgets')
+    .select('*')
+    .eq('id', id)
+    .single()
+  if (error) throw error
+  return data
+}
