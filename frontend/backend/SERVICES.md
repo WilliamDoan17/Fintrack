@@ -37,11 +37,11 @@ This document shapes the services for features of Fintrack app
 ### Services
 - **createBudget(BudgetInput)** → `void`
   - throws on failure
-- **updateBudget(budget_id, BudgetInput)** → `void`
+- **updateBudget(budget_id, updates)** → `void`
   - throws on failure
   - parameters:
     - `budget_id`: uuid
-    - `BudgetInput`: BudgetInput
+    - `updates`: Partial<BudgetInput>
 - **deleteBudget(budget_id)** → `void`
   - throws on failure
   - parameters:
@@ -67,11 +67,11 @@ This document shapes the services for features of Fintrack app
 ### Services
 - **createTransaction(TransactionInput)** → `void`
   - throws on failure
-- **updateTransaction(transaction_id, TransactionInput)** → `void`
+- **updateTransaction(transaction_id, updates)** → `void`
   - throws on failure
   - parameters:
     - `transaction_id`: uuid
-    - `TransactionInput`: TransactionInput
+    - `updates`: Partial<TransactionInput>
 - **deleteTransaction(transaction_id)** → `void`
   - throws on failure
   - parameters:
