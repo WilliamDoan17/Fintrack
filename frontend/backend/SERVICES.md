@@ -35,7 +35,7 @@ This document shapes the services for features of Fintrack app
   - usage: `createBudget`, `updateBudget`
 
 ### Services
-- **createBudget(BudgetInput)** → `void`
+- **createBudget(input)** → `void`
   - throws on failure
 - **updateBudget(budget_id, updates)** → `void`
   - throws on failure
@@ -49,7 +49,6 @@ This document shapes the services for features of Fintrack app
 - **getBudget(budget_id)** → `Budget`
   - parameters:
     - `budget_id`: uuid
-- **getAllBudgets()** → `Budget[]`
 - **getRootBudgets()** → `Budget[]`
 - **getChildBudgets(parent_id)** → `Budget[]`
   - parameters:

@@ -1,48 +1,25 @@
-// ### budgets
-// #### Properties
-// - id:
-//   - type: uuid
-//   - primary key
-//   - defaults to gen_random_uuid()
-//   - Unique identifier for each budget
-// - user_id:
-//   - type: uuid
-//   - foreign key, references auth.users(id)
-//   - constraints:
-//     - not null
-//     - on delete cascade
-//   - Tells us which user the budget belongs to
-// - created_at:
-//   - type: timestamptz
-//   - defaults to now()
-//   - constraints:
-//     - not null
-//   - Records when the budget was created
-// - name:
-//   - type: text
-//   - constraints:
-//     - not null
-//     - check: name <> ''
-//   - The display name of the budget
-// - parent_id:
-//   - type: uuid
-//   - foreign key, references budgets(id)
-//   - defaults to null
-//   - constraints:
-//     - on delete cascade
-//   - References the parent budget, null if this is a root budget
-// #### Implementation
-// ```postgres
-// create table budgets (
-//   id uuid default gen_random_uuid() primary key,
-//   user_id uuid not null references auth.users(id) on delete cascade,
-//   created_at timestamptz default now() not null,
-//   name text not null check(name <> ''),
-//   parent_id uuid references budgets(id) on delete cascade
-// );
+// ### Services
+//   - ** createBudget(BudgetInput) ** → `void`
+//     - throws on failure
+//       - ** updateBudget(budget_id, updates) ** → `void`
+//         - throws on failure
+//           - parameters:
+// - `budget_id`: uuid
+//   - `updates`: Partial < BudgetInput >
+// - ** deleteBudget(budget_id) ** → `void`
+//   - throws on failure
+//     - parameters:
+// - `budget_id`: uuid
+//   - ** getBudget(budget_id) ** → `Budget`
+//     - parameters:
+// - `budget_id`: uuid
+//   - ** getAllBudgets() ** → `Budget[]`
+//     - ** getRootBudgets() ** → `Budget[]`
+//       - ** getChildBudgets(parent_id) ** → `Budget[]`
+//         - parameters:
+// - `parent_id`: uuid
 //
-//
-//
+import { supabase } from '../supabase'
 
 export interface Budget {
   id: string,
@@ -53,3 +30,29 @@ export interface Budget {
 }
 
 export type BudgetInput = Omit<Budget, 'id' | 'created_at'>;
+
+export const createBudget = async (input: BudgetInput) => {
+  const { error } = await supabase
+    .from('budgets')
+    .insert(input)
+  if (error) throw error
+}
+
+export const getAllBudgets = async (): Promise<Budget[]> => {
+  const { data, error } = await supabase
+    .from('budgets')
+    .select('*')
+
+  if (error) throw error
+  return data ?? []
+}
+
+export const getRootBudgets = async (): Promise<Budget[]> => {
+  const { data, error } = await supabase
+    .from('budgets')
+    .select('*')
+    .is('parent_id', null)
+
+  if (error) throw error
+  return data ?? []
+}
