@@ -1,24 +1,3 @@
-// ### Services
-//   - ** createBudget(BudgetInput) ** → `void`
-//     - throws on failure
-//       - ** updateBudget(budget_id, updates) ** → `void`
-//         - throws on failure
-//           - parameters:
-// - `budget_id`: uuid
-//   - `updates`: Partial < BudgetInput >
-// - ** deleteBudget(budget_id) ** → `void`
-//   - throws on failure
-//     - parameters:
-// - `budget_id`: uuid
-//   - ** getBudget(budget_id) ** → `Budget`
-//     - parameters:
-// - `budget_id`: uuid
-//   - ** getAllBudgets() ** → `Budget[]`
-//     - ** getRootBudgets() ** → `Budget[]`
-//       - ** getChildBudgets(parent_id) ** → `Budget[]`
-//         - parameters:
-// - `parent_id`: uuid
-//
 import { supabase } from '../supabase'
 
 export interface Budget {
@@ -52,6 +31,16 @@ export const getRootBudgets = async (): Promise<Budget[]> => {
     .from('budgets')
     .select('*')
     .is('parent_id', null)
+
+  if (error) throw error
+  return data ?? []
+}
+
+export const getChildBudgets = async (parentId: string): Promise<Budget[]> => {
+  const { data, error } = await supabase
+    .from('budgets')
+    .select('*')
+    .eq('parent_id', parentId)
 
   if (error) throw error
   return data ?? []
