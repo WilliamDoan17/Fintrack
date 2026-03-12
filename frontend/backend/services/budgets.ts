@@ -8,12 +8,18 @@ export interface Budget {
   parent_id: string | null,
 }
 
-export type BudgetInput = Omit<Budget, 'id' | 'created_at'>;
+export type BudgetInput = Omit<Budget, 'id' | 'created_at' | 'user_id'>;
 
 export const createBudget = async (input: BudgetInput) => {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+
   const { error } = await supabase
     .from('budgets')
-    .insert(input)
+    .insert({
+      ...input,
+      user_id: user.id,
+    })
   if (error) throw error
 }
 

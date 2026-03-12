@@ -1,5 +1,7 @@
 import useBudgets from '../../hooks/useBudgets'
+import { createBudget } from '../../backend/services/budgets'
 import type { Budget } from '../../backend/services/budgets'
+import { useState } from 'react'
 
 const BudgetCard = ({ budget }: { budget: Budget }) => {
   return (
@@ -22,6 +24,25 @@ const BudgetContainer = ({ budgetQuery: { budgets, loading, error } }: { budgetQ
           />
         ))
       }
+    </div>
+  )
+}
+
+const CreateBudgetModal = ({ budgetQuery: { refetch } }: { budgetQuery: ReturnType<typeof useBudgets> }) => {
+  const [name, setName] = useState<string>('');
+  const handleSubmit = async () => {
+    createBudget({
+      name: name,
+    })
+  }
+  return (
+    <div
+    >
+      <form
+        onSubmit={handleSubmit}
+      >
+
+      </form>
     </div>
   )
 }
