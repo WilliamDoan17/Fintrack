@@ -2,8 +2,10 @@ import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom
 import './App.css'
 import Auth from './pages/Auth'
 import { useContext } from 'react'
-import { AuthContext, AuthProvider } from '../contexts/AuthContext'
 import PageLoader from '../components/PageLoader'
+import Dashboard from './pages/Dashboard'
+import AuthProvider from '../providers/AuthProvider'
+import AuthContext from '../contexts/AuthContext'
 
 const ProtectedRoutes = () => {
   const { user, loading, error } = useContext(AuthContext);
@@ -51,6 +53,7 @@ function App() {
             >
               <Route
                 path="/dashboard"
+                element={<Dashboard />}
               >
               </Route>
             </Route>

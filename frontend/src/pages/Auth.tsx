@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { loginWithEmailAndPassword, signupWithEmailAndPassword } from '../backend/services/auth.ts'
+import { loginWithEmailAndPassword, signupWithEmailAndPassword } from '../../backend/services/auth.ts'
 import { useNavigate } from 'react-router-dom'
 
 type Tab = 'login' | 'signup'
