@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { getRootBudgets, getChildBudgets, Budget } from '../backend/services/budgets'
 
-const useBudgets = (parentId: string | null) => {
+const useBudgets = (parentId: string | null = null) => {
   const [budgets, setBudgets] = useState<Budget[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<Error | null>(null)
