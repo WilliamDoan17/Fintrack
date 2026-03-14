@@ -6,6 +6,7 @@ import PageLoader from '../components/PageLoader'
 import Dashboard from './pages/Dashboard'
 import AuthProvider from '../providers/AuthProvider'
 import AuthContext from '../contexts/AuthContext'
+import BudgetDetail from './pages/BudgetDetail'
 
 const ProtectedRoutes = () => {
   const { user, loading, error } = useContext(AuthContext);
@@ -35,32 +36,35 @@ const PublicRoutes = () => {
 
 function App() {
   return (
-    <>
-      <AuthProvider>
-        <BrowserRouter>
-          <Routes>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            element={<PublicRoutes />}
+          >
             <Route
-              element={<PublicRoutes />}
+              path="/auth"
+              element={<Auth />}
             >
-              <Route
-                path="/auth"
-                element={<Auth />}
-              >
-              </Route>
+            </Route>
+          </Route>
+          <Route
+            element={<ProtectedRoutes />}
+          >
+            <Route
+              path="/dashboard"
+              element={<Dashboard />}
+            >
             </Route>
             <Route
-              element={<ProtectedRoutes />}
+              path="/budget/:id"
+              element={<BudgetDetail />}
             >
-              <Route
-                path="/dashboard"
-                element={<Dashboard />}
-              >
-              </Route>
             </Route>
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider >
   )
 }
 
