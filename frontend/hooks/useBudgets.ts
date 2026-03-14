@@ -7,6 +7,7 @@ const useBudgets = (parentId: string | null = null) => {
   const [error, setError] = useState<Error | null>(null)
 
   const fetchBudgets = useCallback(async (): Promise<void> => {
+    setLoading(true)
     if (parentId) {
       getChildBudgets(parentId)
         .then(setBudgets)

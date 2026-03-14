@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react"
+import { type Dispatch, type SetStateAction } from "react"
 
 const CreateBudgetButton = ({ setOpenModal }: { setOpenModal: Dispatch<SetStateAction<boolean>> }) => {
   return (
