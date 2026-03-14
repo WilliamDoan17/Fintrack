@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getBudget, type Budget } from "../../backend/services/budgets";
 import useBudgets from "../../hooks/useBudgets";
 import PageLoader from "../../components/PageLoader";
@@ -15,13 +15,23 @@ const BudgetDetail = () => {
   const [openCreateBudgetModal, setOpenCreateBudgetModal] = useState<boolean>(false);
   const budgetQuery = useBudgets(budgetId ?? null);
 
-  useEffect(() => {
-    if (budgetId)
-      getBudget(budgetId)
-        .then(setBudgetInfo)
-        .catch(setError)
-        .finally(() => setLoading(false))
+  const fetchBudgetInfo = useCallback(async () => {
+    setLoading(true)
+    if (budgetId) {
+      try {
+        const data = await getBudget(budgetId);
+        setBudgetInfo(data);
+      } catch (err) {
+        setError(err as Error);
+      } finally {
+        setLoading(false)
+      }
+    }
   }, [budgetId])
+
+  useEffect(() => {
+    fetchBudgetInfo()
+  }, [fetchBudgetInfo])
 
   if (loading) return <PageLoader />
   if (error) return (

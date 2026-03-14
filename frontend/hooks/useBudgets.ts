@@ -6,22 +6,18 @@ const useBudgets = (parentId: string | null = null) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<Error | null>(null)
 
+
   const fetchBudgets = useCallback(async (): Promise<void> => {
     setLoading(true)
-    if (parentId) {
-      getChildBudgets(parentId)
-        .then(setBudgets)
-        .catch(setError)
-        .finally(() => {
-          setLoading(false)
-        })
-    } else {
-      getRootBudgets()
-        .then(setBudgets)
-        .catch(setError)
-        .finally(() => {
-          setLoading(false)
-        })
+    try {
+      const data = parentId
+        ? await getChildBudgets(parentId)
+        : await getRootBudgets()
+      setBudgets(data)
+    } catch (err) {
+      setError(err as Error)
+    } finally {
+      setLoading(false)
     }
   }, [parentId])
 
