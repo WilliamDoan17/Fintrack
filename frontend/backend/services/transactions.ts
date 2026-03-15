@@ -28,7 +28,7 @@ export const createTransaction = async (input: TransactionInput): Promise<void> 
   if (error) throw error
 }
 
-export const getAllTransactions = async (limit = 10): Promise<Transaction[]> => {
+export const getAllTransactions = async (): Promise<Transaction[]> => {
   const { data, error } = await supabase
     .from('transactions')
     .select('*')
@@ -37,9 +37,10 @@ export const getAllTransactions = async (limit = 10): Promise<Transaction[]> => 
   return data ?? []
 }
 
-export const getBudgetTransactions = async (budgetId: string, limit: number = 10): Promise<Transaction[]> => {
+export const getBudgetTransactions = async (budgetId: string): Promise<Transaction[]> => {
   const { data, error } = await supabase
     .rpc("get_budget_transactions", { 'budget_id': budgetId })
+    .order('created_at', { ascending: false })
 
   if (error) throw error
   return data ?? []

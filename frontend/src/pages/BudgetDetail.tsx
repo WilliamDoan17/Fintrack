@@ -8,6 +8,8 @@ import CreateBudgetButton from "../../components/budgets/CreateBudgetButton";
 import BudgetContainer from "../../components/budgets/BudgetContainer";
 import CreateBudgetModal from "../../components/budgets/CreateBudgetModal";
 import TransactionContainer from "../../components/transactions/TransactionContainer";
+import AddTransactionModal from '../../components/transactions/AddTransactionModal'
+import AddTransactionButton from '../../components/transactions/AddTransactionButton'
 
 const BudgetDetail = () => {
   const { id: budgetId } = useParams();
@@ -15,6 +17,8 @@ const BudgetDetail = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [openCreateBudgetModal, setOpenCreateBudgetModal] = useState<boolean>(false);
+  const [openAddTransactionModal, setOpenAddTransactionModal] = useState<boolean>(false);
+
   const budgetQuery = useBudgets(budgetId ?? null);
   const transactionQuery = useTransactions(budgetId ?? null);
 
@@ -58,7 +62,8 @@ const BudgetDetail = () => {
           {/* Transactions Section */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-gray-400 text-sm uppercase tracking-widest">Transactions</h2>
+              <h2 className="text-gray-400 text-sm uppercase tracking-widest">Recent Transactions</h2>
+              <AddTransactionButton setOpenModal={setOpenAddTransactionModal}></AddTransactionButton>
             </div>
             <TransactionContainer transactionQuery={transactionQuery} />
           </div>
@@ -72,7 +77,6 @@ const BudgetDetail = () => {
             <BudgetContainer budgetQuery={budgetQuery} />
           </div>
 
-
         </div>
       </div>
 
@@ -81,6 +85,13 @@ const BudgetDetail = () => {
           budgetQuery={budgetQuery}
           parentId={budgetId}
           setIsOpen={setOpenCreateBudgetModal}
+        />
+      )}
+      {openAddTransactionModal && budgetId && (
+        <AddTransactionModal
+          transactionQuery={transactionQuery}
+          budgetId={budgetId}
+          setIsOpen={setOpenAddTransactionModal}
         />
       )}
     </div>

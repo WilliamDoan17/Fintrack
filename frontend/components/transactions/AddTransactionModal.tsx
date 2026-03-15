@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react'
+import { type Dispatch, type SetStateAction, useState } from 'react'
 import useTransactions from '../../hooks/useTransactions'
 import { type TransactionType, createTransaction } from '../../backend/services/transactions';
 
@@ -52,8 +52,8 @@ const AddTransactionModal = ({ transactionQuery: { refetch }, setIsOpen, budgetI
                 type="button"
                 onClick={() => setType('add')}
                 className={`flex-1 py-2 rounded border transition-all cursor-pointer ${type === 'add'
-                    ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
-                    : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
+                  ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
+                  : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
                   }`}
               >
                 + Add
@@ -62,8 +62,8 @@ const AddTransactionModal = ({ transactionQuery: { refetch }, setIsOpen, budgetI
                 type="button"
                 onClick={() => setType('withdraw')}
                 className={`flex-1 py-2 rounded border transition-all cursor-pointer ${type === 'withdraw'
-                    ? 'bg-red-500/10 border-red-500 text-red-400'
-                    : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
+                  ? 'bg-red-500/10 border-red-500 text-red-400'
+                  : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
                   }`}
               >
                 - Withdraw
