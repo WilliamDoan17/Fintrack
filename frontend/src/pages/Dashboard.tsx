@@ -4,6 +4,7 @@ import BudgetContainer from '../../components/budgets/BudgetContainer'
 import CreateBudgetModal from '../../components/budgets/CreateBudgetModal'
 import CreateBudgetButton from '../../components/budgets/CreateBudgetButton'
 import TransactionContainer from '../../components/transactions/TransactionContainer'
+import BalanceSummary from '../../components/transactions/BalanceSummary'
 import useTransactions from '../../hooks/useTransactions'
 
 const Dashboard = () => {
@@ -21,15 +22,17 @@ const Dashboard = () => {
           <p className="text-gray-500 text-sm mt-1">Manage and track your finances</p>
         </div>
 
-        {/* Main Content */}
         <div className="flex flex-col gap-10">
 
-          {/* Recent Transactions Section */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-gray-400 text-sm uppercase tracking-widest">Recent Transactions</h2>
+          {/* Balance + Recent Transactions two-column */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <BalanceSummary transactionQuery={transactionQuery} />
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-gray-400 text-sm uppercase tracking-widest">Recent Transactions</h2>
+              </div>
+              <TransactionContainer transactionQuery={transactionQuery} />
             </div>
-            <TransactionContainer transactionQuery={transactionQuery} />
           </div>
 
           {/* Budgets Section */}

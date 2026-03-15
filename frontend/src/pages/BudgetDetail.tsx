@@ -10,6 +10,7 @@ import CreateBudgetModal from "../../components/budgets/CreateBudgetModal";
 import TransactionContainer from "../../components/transactions/TransactionContainer";
 import AddTransactionModal from '../../components/transactions/AddTransactionModal'
 import AddTransactionButton from '../../components/transactions/AddTransactionButton'
+import BalanceSummary from '../../components/transactions/BalanceSummary'
 
 const BudgetDetail = () => {
   const { id: budgetId } = useParams();
@@ -18,7 +19,6 @@ const BudgetDetail = () => {
   const [error, setError] = useState<Error | null>(null);
   const [openCreateBudgetModal, setOpenCreateBudgetModal] = useState<boolean>(false);
   const [openAddTransactionModal, setOpenAddTransactionModal] = useState<boolean>(false);
-
   const budgetQuery = useBudgets(budgetId ?? null);
   const transactionQuery = useTransactions(budgetId ?? null);
 
@@ -59,13 +59,16 @@ const BudgetDetail = () => {
 
         <div className="flex flex-col gap-10">
 
-          {/* Transactions Section */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-gray-400 text-sm uppercase tracking-widest">Recent Transactions</h2>
-              <AddTransactionButton setOpenModal={setOpenAddTransactionModal}></AddTransactionButton>
+          {/* Balance + Transactions two-column */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <BalanceSummary transactionQuery={transactionQuery} />
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-gray-400 text-sm uppercase tracking-widest">Recent Transactions</h2>
+                <AddTransactionButton setOpenModal={setOpenAddTransactionModal} />
+              </div>
+              <TransactionContainer transactionQuery={transactionQuery} />
             </div>
-            <TransactionContainer transactionQuery={transactionQuery} />
           </div>
 
           {/* Sub-budgets Section */}
