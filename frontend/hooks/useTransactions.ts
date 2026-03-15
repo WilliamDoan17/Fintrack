@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { getAllTransactions, getBudgetTransactions, type Transaction } from '../backend/services/transactions'
 
-const useTransactions = (budgetId: string | null = null) => {
+const useTransactions = (budgetId: string | null = null, limit: number = 10) => {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<Error | null>(null)
@@ -10,15 +10,15 @@ const useTransactions = (budgetId: string | null = null) => {
     setLoading(true)
     try {
       const data = budgetId
-        ? await getBudgetTransactions(budgetId)
-        : await getAllTransactions();
+        ? await getBudgetTransactions(budgetId, limit)
+        : await getAllTransactions(limit);
       setTransactions(data)
     } catch (err) {
       setError(err as Error)
     } finally {
       setLoading(false)
     }
-  }, [budgetId])
+  }, [budgetId, limit])
 
   useEffect(() => {
     fetchTransactions()
