@@ -13,6 +13,8 @@ import AddTransactionButton from '../../components/transactions/AddTransactionBu
 import BalanceSummary from '../../components/transactions/BalanceSummary'
 import UpdateBudgetNameInput from '../../components/budgets/UpdateBudgetNameInput'
 import UpdateBudgetNameButton from '../../components/budgets/UpdateBudgetNameButton'
+import DeleteBudgetButton from '../../components/budgets/DeleteBudgetButton'
+import DeleteBudgetConfirmModal from '../../components/budgets/DeleteBudgetConfirmModal'
 
 const BudgetDetail = () => {
   const { id: budgetId } = useParams();
@@ -22,6 +24,7 @@ const BudgetDetail = () => {
   const [openCreateBudgetModal, setOpenCreateBudgetModal] = useState<boolean>(false);
   const [openAddTransactionModal, setOpenAddTransactionModal] = useState<boolean>(false);
   const [isEditingName, setIsEditingName] = useState<boolean>(false)
+  const [openDeleteBudgetConfirmModal, setOpenDeleteBudgetConfirmModal] = useState<boolean>(false)
   const budgetQuery = useBudgets(budgetId ?? null);
   const transactionQuery = useTransactions(budgetId ?? null);
 
@@ -58,14 +61,21 @@ const BudgetDetail = () => {
         <div className="mb-10">
           <p className="text-gray-500 text-sm uppercase tracking-widest mb-1">Budget</p>
           {isEditingName
-            ? <UpdateBudgetNameInput budgetId={budgetId ?? ''} budgetName={budgetInfo?.name ?? ''} onSuccess={fetchBudgetInfo} setIsOpen={setIsEditingName} />
-            : <div className="flex items-center justify-between gap-3">
-              <h1 className="text-white text-3xl font-bold">{budgetInfo?.name}</h1>
-              <UpdateBudgetNameButton setIsOpen={setIsEditingName} />
+            ? <UpdateBudgetNameInput
+              budgetId={budgetId ?? ''}
+              budgetName={budgetInfo?.name ?? ''}
+              onSuccess={fetchBudgetInfo}
+              setIsOpen={setIsEditingName}
+            />
+            : <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <h1 className="text-white text-3xl font-bold">{budgetInfo?.name}</h1>
+                <UpdateBudgetNameButton setIsOpen={setIsEditingName} />
+              </div>
+              <DeleteBudgetButton setIsOpen={setOpenDeleteBudgetConfirmModal} />
             </div>
           }
         </div>
-
         <div className="flex flex-col gap-10">
 
           {/* Balance + Transactions two-column */}
@@ -88,7 +98,6 @@ const BudgetDetail = () => {
             </div>
             <BudgetContainer budgetQuery={budgetQuery} />
           </div>
-
         </div>
       </div>
 
@@ -104,6 +113,13 @@ const BudgetDetail = () => {
           transactionQuery={transactionQuery}
           budgetId={budgetId}
           setIsOpen={setOpenAddTransactionModal}
+        />
+      )}
+      {openDeleteBudgetConfirmModal && (
+        <DeleteBudgetConfirmModal
+          budgetId={budgetId ?? ''}
+          budgetName={budgetInfo?.name ?? ''}
+          setIsOpen={setOpenDeleteBudgetConfirmModal}
         />
       )}
     </div>
