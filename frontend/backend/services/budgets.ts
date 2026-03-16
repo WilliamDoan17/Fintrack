@@ -81,4 +81,10 @@ export const updateBudget = async (id: string, updates: Partial<BudgetInput>): P
   if (error) throw error
 }
 
-
+export const deleteBudget = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('budgets')
+    .delete()
+    .eq("id", id)
+  if (error) throw error
+}
