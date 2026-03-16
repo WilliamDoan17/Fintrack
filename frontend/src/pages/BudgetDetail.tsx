@@ -11,6 +11,8 @@ import TransactionContainer from "../../components/transactions/TransactionConta
 import AddTransactionModal from '../../components/transactions/AddTransactionModal'
 import AddTransactionButton from '../../components/transactions/AddTransactionButton'
 import BalanceSummary from '../../components/transactions/BalanceSummary'
+import UpdateBudgetNameInput from '../../components/budgets/UpdateBudgetNameInput'
+import UpdateBudgetNameButton from '../../components/budgets/UpdateBudgetNameButton'
 
 const BudgetDetail = () => {
   const { id: budgetId } = useParams();
@@ -19,6 +21,7 @@ const BudgetDetail = () => {
   const [error, setError] = useState<Error | null>(null);
   const [openCreateBudgetModal, setOpenCreateBudgetModal] = useState<boolean>(false);
   const [openAddTransactionModal, setOpenAddTransactionModal] = useState<boolean>(false);
+  const [isEditingName, setIsEditingName] = useState<boolean>(false)
   const budgetQuery = useBudgets(budgetId ?? null);
   const transactionQuery = useTransactions(budgetId ?? null);
 
@@ -54,7 +57,13 @@ const BudgetDetail = () => {
         {/* Header */}
         <div className="mb-10">
           <p className="text-gray-500 text-sm uppercase tracking-widest mb-1">Budget</p>
-          <h1 className="text-white text-3xl font-bold">{budgetInfo?.name}</h1>
+          {isEditingName
+            ? <UpdateBudgetNameInput budgetId={budgetId ?? ''} budgetName={budgetInfo?.name ?? ''} onSuccess={fetchBudgetInfo} setIsOpen={setIsEditingName} />
+            : <div className="flex items-center justify-between gap-3">
+              <h1 className="text-white text-3xl font-bold">{budgetInfo?.name}</h1>
+              <UpdateBudgetNameButton setIsOpen={setIsEditingName} />
+            </div>
+          }
         </div>
 
         <div className="flex flex-col gap-10">
