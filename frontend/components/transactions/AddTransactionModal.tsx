@@ -84,6 +84,7 @@ const AddTransactionModal = ({ transactionQuery: { refetch }, setIsOpen, budgetI
                 min={0}
                 step={0.01}
                 className="bg-gray-800 text-white border border-gray-700 rounded px-3 py-2 pl-7 w-full focus:outline-none focus:border-emerald-400 transition-all"
+                placeholder={'0'}
               />
             </div>
           </div>
