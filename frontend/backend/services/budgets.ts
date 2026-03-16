@@ -62,17 +62,6 @@ export const getBudget = async (id: string): Promise<Budget | null> => {
   return data
 }
 
-//  - **updateBudget(budget_id, updates)** → `void`
-//   - throws on failure
-//   - parameters:
-//     - `budget_id`: uuid
-//     - `updates`: Partial<BudgetInput>
-// - **deleteBudget(budget_id)** → `void`
-//   - throws on failure
-//   - parameters:
-//     - `budget_id`: uuid
-
-
 export const updateBudget = async (id: string, updates: Partial<BudgetInput>): Promise<void> => {
   const { error } = await supabase
     .from('budgets')
