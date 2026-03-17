@@ -1,13 +1,11 @@
-import { useState, type Dispatch, type SetStateAction } from 'react'
+import { useState } from 'react'
 import { createBudget } from '../../backend/services/budgets'
 import useBudgets from '../../hooks/useBudgets'
 
-const CreateBudgetModal = ({ budgetQuery: { refetch }, setIsOpen, parentId = null }: { budgetQuery: ReturnType<typeof useBudgets>, setIsOpen: Dispatch<SetStateAction<boolean>>, parentId?: string | null }) => {
+const CreateBudgetModal = ({ budgetQuery: { refetch }, onClose, parentId = null }: { budgetQuery: ReturnType<typeof useBudgets>, onClose: () => void, parentId?: string | null }) => {
   const [name, setName] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | null>(null)
-
-  const handleClose = () => setIsOpen(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -15,7 +13,7 @@ const CreateBudgetModal = ({ budgetQuery: { refetch }, setIsOpen, parentId = nul
     createBudget({ name, parent_id: parentId })
       .then(() => {
         refetch()
-        handleClose()
+        onClose()
       })
       .catch(setError)
       .finally(() => setLoading(false))
@@ -42,7 +40,7 @@ const CreateBudgetModal = ({ budgetQuery: { refetch }, setIsOpen, parentId = nul
           <div className="flex gap-3 justify-end mt-2">
             <button
               type='button'
-              onClick={handleClose}
+              onClick={onClose}
               className="px-4 py-2 rounded text-gray-400 hover:text-white transition-all cursor-pointer"
             >
               Cancel

@@ -1,15 +1,13 @@
-import { type Dispatch, type SetStateAction, useState } from 'react'
+import { useState } from 'react'
 import useTransactions from '../../hooks/useTransactions'
 import { type TransactionType, createTransaction } from '../../backend/services/transactions';
 
-const AddTransactionModal = ({ transactionQuery: { refetch }, setIsOpen, budgetId }: { transactionQuery: ReturnType<typeof useTransactions>, setIsOpen: Dispatch<SetStateAction<boolean>>, budgetId: string }) => {
+const AddTransactionModal = ({ transactionQuery: { refetch }, onClose, budgetId }: { transactionQuery: ReturnType<typeof useTransactions>, onClose: () => void, budgetId: string }) => {
   const [name, setName] = useState<string>('')
   const [type, setType] = useState<TransactionType>('add')
   const [amount, setAmount] = useState<number>(0)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | null>(null)
-
-  const handleClose = () => setIsOpen(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -17,7 +15,7 @@ const AddTransactionModal = ({ transactionQuery: { refetch }, setIsOpen, budgetI
     createTransaction({ name, type, amount, budget_id: budgetId })
       .then(() => {
         refetch()
-        handleClose()
+        onClose()
       })
       .catch(setError)
       .finally(() => setLoading(false))
@@ -95,7 +93,7 @@ const AddTransactionModal = ({ transactionQuery: { refetch }, setIsOpen, budgetI
           <div className="flex gap-3 justify-end mt-2">
             <button
               type="button"
-              onClick={handleClose}
+              onClick={onClose}
               className="px-4 py-2 rounded text-gray-400 hover:text-white transition-all cursor-pointer"
             >
               Cancel

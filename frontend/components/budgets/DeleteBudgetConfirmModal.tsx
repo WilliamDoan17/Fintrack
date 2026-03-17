@@ -1,8 +1,8 @@
-import { useState, type Dispatch, type SetStateAction } from 'react'
+import { useState } from 'react'
 import { deleteBudget } from '../../backend/services/budgets'
 import { useNavigate } from 'react-router-dom'
 
-const DeleteBudgetConfirmModal = ({ budgetId, budgetName, setIsOpen }: { budgetId: string, budgetName: string, setIsOpen: Dispatch<SetStateAction<boolean>> }) => {
+const DeleteBudgetConfirmModal = ({ budgetId, budgetName, onClose }: { budgetId: string, budgetName: string, onClose: () => void }) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | null>(null)
   const navigate = useNavigate()
@@ -11,7 +11,7 @@ const DeleteBudgetConfirmModal = ({ budgetId, budgetName, setIsOpen }: { budgetI
     setLoading(true)
     deleteBudget(budgetId)
       .then(() => {
-        setIsOpen(false)
+        onClose()
         navigate('/dashboard')
       })
       .catch(setError)
@@ -29,7 +29,7 @@ const DeleteBudgetConfirmModal = ({ budgetId, budgetName, setIsOpen }: { budgetI
         <div className="flex gap-3 justify-end">
           <button
             type="button"
-            onClick={() => setIsOpen(false)}
+            onClick={onClose}
             className="px-4 py-2 rounded text-gray-400 hover:text-white transition-all cursor-pointer"
           >
             Cancel

@@ -16,15 +16,18 @@ import UpdateBudgetNameButton from '../../components/budgets/UpdateBudgetNameBut
 import DeleteBudgetButton from '../../components/budgets/DeleteBudgetButton'
 import DeleteBudgetConfirmModal from '../../components/budgets/DeleteBudgetConfirmModal'
 
+type ModalState =
+  { type: 'createBudget' } |
+  { type: 'addTransaction' } |
+  { type: 'deleteBudgetConfirm' }
+
 const BudgetDetail = () => {
   const { id: budgetId } = useParams();
   const [budgetInfo, setBudgetInfo] = useState<Budget | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
-  const [openCreateBudgetModal, setOpenCreateBudgetModal] = useState<boolean>(false);
-  const [openAddTransactionModal, setOpenAddTransactionModal] = useState<boolean>(false);
   const [isEditingName, setIsEditingName] = useState<boolean>(false)
-  const [openDeleteBudgetConfirmModal, setOpenDeleteBudgetConfirmModal] = useState<boolean>(false)
+  const [modalState, setModalState] = useState<ModalState | null>(null)
   const budgetQuery = useBudgets(budgetId ?? null);
   const transactionQuery = useTransactions(budgetId ?? null);
 
@@ -72,7 +75,7 @@ const BudgetDetail = () => {
                 <h1 className="text-white text-3xl font-bold">{budgetInfo?.name}</h1>
                 <UpdateBudgetNameButton setIsOpen={setIsEditingName} />
               </div>
-              <DeleteBudgetButton setIsOpen={setOpenDeleteBudgetConfirmModal} />
+              <DeleteBudgetButton onClick={() => setModalState({ type: 'deleteBudgetConfirm' })} />
             </div>
           }
         </div>
@@ -84,7 +87,7 @@ const BudgetDetail = () => {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-gray-400 text-sm uppercase tracking-widest">Recent Transactions</h2>
-                <AddTransactionButton setOpenModal={setOpenAddTransactionModal} />
+                <AddTransactionButton onClick={() => setModalState({ type: 'addTransaction' })} />
               </div>
               <TransactionContainer transactionQuery={transactionQuery} />
             </div>
@@ -94,32 +97,32 @@ const BudgetDetail = () => {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-gray-400 text-sm uppercase tracking-widest">Sub-budgets</h2>
-              <CreateBudgetButton setOpenModal={setOpenCreateBudgetModal} />
+              <CreateBudgetButton onClick={() => setModalState({ type: 'createBudget' })} />
             </div>
             <BudgetContainer budgetQuery={budgetQuery} />
           </div>
         </div>
       </div>
 
-      {openCreateBudgetModal && (
+      {modalState?.type === 'createBudget' && (
         <CreateBudgetModal
           budgetQuery={budgetQuery}
           parentId={budgetId}
-          setIsOpen={setOpenCreateBudgetModal}
+          onClose={() => setModalState(null)}
         />
       )}
-      {openAddTransactionModal && budgetId && (
+      {modalState?.type === 'addTransaction' && budgetId && (
         <AddTransactionModal
           transactionQuery={transactionQuery}
           budgetId={budgetId}
-          setIsOpen={setOpenAddTransactionModal}
+          onClose={() => setModalState(null)}
         />
       )}
-      {openDeleteBudgetConfirmModal && (
+      {modalState?.type === 'deleteBudgetConfirm' && (
         <DeleteBudgetConfirmModal
           budgetId={budgetId ?? ''}
           budgetName={budgetInfo?.name ?? ''}
-          setIsOpen={setOpenDeleteBudgetConfirmModal}
+          onClose={() => setModalState(null)}
         />
       )}
     </div>
