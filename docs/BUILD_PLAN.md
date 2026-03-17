@@ -19,7 +19,7 @@ Users can:
 
 ## Phases
 
-### Phase 1: Auth
+### Phase 1: Auth ✅
 **Services:**
 - `signupWithEmailAndPassword(email, password)` → void
 - `loginWithEmailAndPassword(email, password)` → void
@@ -36,7 +36,7 @@ Users can:
 
 ---
 
-### Phase 2: Create + View Budgets
+### Phase 2: Create + View Budgets ✅
 **Services:**
 - `createBudget(BudgetInput)` → void
 - `getRootBudgets()` → Budget[]
@@ -50,7 +50,7 @@ Users can:
 
 ---
 
-### Phase 3: Budget Detail
+### Phase 3: Budget Detail ✅
 **Services:**
 - `getBudget(budget_id)` → Budget
 - `getChildBudgets(parent_id)` → Budget[]
@@ -63,7 +63,7 @@ Users can:
 
 ---
 
-### Phase 4: Create + View Transactions + Balance
+### Phase 4: Create + View Transactions + Balance ✅
 **Services:**
 - `createTransaction(TransactionInput)` → void
 - `getBudgetTransactions(budget_id)` → Transaction[]
@@ -72,6 +72,7 @@ Users can:
 **Tasks:**
 - Write RLS policies for transaction INSERT, SELECT
 - Write transaction services
+- Write `get_budget_transactions` PostgreSQL recursive function
 
 **Pages:**
 - `BudgetDetail.tsx` — add transaction form, transaction list (recursive), budget balance
@@ -79,9 +80,9 @@ Users can:
 
 ---
 
-### Phase 5: Update + Delete Budgets
+### Phase 5: Update + Delete Budgets ✅
 **Services:**
-- `updateBudget(budget_id, BudgetInput)` → void
+- `updateBudget(budget_id, Partial<BudgetInput>)` → void
 - `deleteBudget(budget_id)` → void
 
 **Tasks:**
@@ -89,14 +90,13 @@ Users can:
 - Write budget services
 
 **Pages:**
-- `Dashboard.tsx` — edit/delete actions on root budgets
-- `BudgetDetail.tsx` — edit/delete actions on sub-budgets
+- `BudgetDetail.tsx` — edit budget name inline, delete budget with confirmation modal
 
 ---
 
-### Phase 6: Update + Delete Transactions
+### Phase 6: Update + Delete Transactions ⬜
 **Services:**
-- `updateTransaction(transaction_id, TransactionInput)` → void
+- `updateTransaction(transaction_id, Partial<TransactionInput>)` → void
 - `deleteTransaction(transaction_id)` → void
 
 **Tasks:**
@@ -106,3 +106,16 @@ Users can:
 **Pages:**
 - `BudgetDetail.tsx` — edit/delete actions on transaction list
 - `Dashboard.tsx` — edit/delete actions on recent transactions
+
+---
+
+### Phase 7: Polish ⬜
+**Tasks:**
+- Add NotiToast for mutation notifications
+- DeleteBudgetButton: re-style the size
+- Polish BalanceSummary: 30% full width, give it a max height
+- Add navigation arrows for each page
+- Polish the spinner for page navigation
+- Loader for components (BudgetContainer)
+- TransactionContainerExtended: show all transactions
+- Log out button

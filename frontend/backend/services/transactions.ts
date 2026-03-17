@@ -46,9 +46,32 @@ export const getBudgetTransactions = async (budgetId: string): Promise<Transacti
   return data ?? []
 }
 
+// - **updateTransaction(transaction_id, updates)** → `void`
+//   - throws on failure
+//   - parameters:
+//     - `transaction_id`: uuid
+//     - `updates`: Partial<TransactionInput>
+// - **deleteTransaction(transaction_id)** → `void`
+//   - throws on failure
+//   - parameters:
+//     - `transaction_id`: uuid
 
 
+export const updateTransaction = async (transactionId: string, updates: Partial<TransactionInput>): Promise<void> => {
+  const { error } = await supabase
+    .from('transactions')
+    .update(updates)
+    .eq("id", transactionId)
+  if (error) throw error
+}
 
+export const deleteTransaction = async (transactionId: string): Promise<void> => {
+  const { error } = await supabase
+    .from('transactions')
+    .delete()
+    .eq("id", transactionId)
+  if (error) throw error
+}
 
 
 
