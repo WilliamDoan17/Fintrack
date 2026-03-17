@@ -77,9 +77,9 @@ const AddTransactionModal = ({ transactionQuery: { refetch }, setIsOpen, budgetI
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
               <input
-                type="number"
+                type="text"
                 id='add-transaction-amount'
-                value={amount}
+                value={amount !== 0 ? amount : ''}
                 onChange={(e) => setAmount(parseFloat(e.target.value))}
                 min={0}
                 step={0.01}
