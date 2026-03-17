@@ -1,5 +1,6 @@
 import { type Transaction } from "../../backend/services/transactions"
 import UpdateTransactionButton from './UpdateTransactionButton'
+import DeleteTransactionButton from './DeleteTransactionButton'
 
 const TransactionCard = ({ transaction, onEdit, onDelete }: { transaction: Transaction, onEdit: () => void, onDelete: () => void }) => {
   const isAdd = transaction.type === 'add'
@@ -14,6 +15,7 @@ const TransactionCard = ({ transaction, onEdit, onDelete }: { transaction: Trans
           {isAdd ? '+' : '-'}${transaction.amount}
         </span>
         <UpdateTransactionButton onClick={onEdit} />
+        <DeleteTransactionButton onClick={onDelete} />
       </div>
     </div>
   )

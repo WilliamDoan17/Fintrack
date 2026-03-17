@@ -3,6 +3,7 @@ import useTransactions from "../../hooks/useTransactions"
 import TransactionCard from "./TransactionCard"
 import { useState } from 'react'
 import UpdateTransactionModal from './UpdateTransactionModal'
+import DeleteTransactionConfirmModal from './DeleteTransactionConfirmModal'
 
 type ModalState =
   | { type: 'update', transaction: Transaction }
@@ -34,6 +35,15 @@ const TransactionContainer = ({ transactionQuery: { transactions, loading, error
           onClose={() => setModalState(null)}
         />
       )}
+      {
+        modalState?.type === 'delete' && (
+          <DeleteTransactionConfirmModal
+            transaction={modalState.transaction}
+            onSuccess={refetch}
+            onClose={() => setModalState(null)}
+          />
+        )
+      }
     </div>
   )
 }
