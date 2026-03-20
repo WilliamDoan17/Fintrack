@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getBudget, type Budget } from "../../backend/services/budgets";
 import useBudgets from "../../hooks/useBudgets";
 import useTransactions from "../../hooks/useTransactions";
-import PageLoader from "../../components/PageLoader";
+import PageLoader from "../../components/loaders/PageLoader";
 import CreateBudgetButton from "../../components/budgets/CreateBudgetButton";
 import BudgetContainer from "../../components/budgets/BudgetContainer";
 import CreateBudgetModal from "../../components/budgets/CreateBudgetModal";

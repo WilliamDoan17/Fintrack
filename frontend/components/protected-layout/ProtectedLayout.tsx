@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { Outlet, Navigate } from 'react-router-dom'
 import AuthContext from '../../contexts/AuthContext'
-import PageLoader from '../PageLoader'
+import PageLoader from '../loaders/PageLoader'
 import Sidebar from './Sidebar'
 import NavigationArrow from './NavigationArrow'
 

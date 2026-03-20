@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom
 import './App.css'
 import Auth from './pages/Auth'
 import { useContext } from 'react'
-import PageLoader from '../components/PageLoader'
+import PageLoader from '../components/loaders/PageLoader'
 import Dashboard from './pages/Dashboard'
 import AuthProvider from '../providers/AuthProvider'
 import AuthContext from '../contexts/AuthContext'
