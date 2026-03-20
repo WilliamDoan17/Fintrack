@@ -11,6 +11,13 @@ type ModalState =
 
 const TransactionContainer = ({ transactionQuery: { transactions, loading, error, refetch }, limit = 3 }: { transactionQuery: ReturnType<typeof useTransactions>, limit?: number }) => {
   const [modalState, setModalState] = useState<ModalState | null>(null)
+  const [isExpanded, setIsExpanded] = useState<boolean>(false)
+
+  if (isExpanded) return (
+    // like a modal, with no limit on how many transaction there is, and add a close button for this
+    <div>
+    </div> 
+  )
 
   if (loading) return <p className="text-gray-500 text-sm">Loading transactions...</p>
   if (error) return <p className="text-red-400 text-sm">Error loading transactions</p>
@@ -18,7 +25,10 @@ const TransactionContainer = ({ transactionQuery: { transactions, loading, error
 
   return (
     <div className="flex flex-col gap-3">
-      {transactions
+      <button onClick = {() => setIsExpanded(true)}>
+        {/* add svg for expansion */}
+      </button>
+      {transaction
         .slice(0, limit)
         .map(transaction => (
           <TransactionCard

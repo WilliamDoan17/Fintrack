@@ -7,19 +7,7 @@ import Dashboard from './pages/Dashboard'
 import AuthProvider from '../providers/AuthProvider'
 import AuthContext from '../contexts/AuthContext'
 import BudgetDetail from './pages/BudgetDetail'
-
-const ProtectedRoutes = () => {
-  const { user, loading, error } = useContext(AuthContext);
-  if (loading) {
-    return <PageLoader />
-  }
-  if (user) {
-    return <Outlet />
-  }
-  if (error || !user) {
-    return <Navigate to="/auth" replace />
-  }
-}
+import ProtectedLayout from '../components/protected-layout/ProtectedLayout'
 
 const PublicRoutes = () => {
   const { user, loading, error } = useContext(AuthContext);
@@ -49,7 +37,7 @@ function App() {
             </Route>
           </Route>
           <Route
-            element={<ProtectedRoutes />}
+            element={<ProtectedLayout />}
           >
             <Route
               path="/dashboard"
