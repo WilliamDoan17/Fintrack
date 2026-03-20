@@ -5,13 +5,12 @@ import type { User } from '@supabase/supabase-js'
 const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [error] = useState<Error | null>(null);
 
   useEffect(() => {
-    const { data: { subscription }, error: _error } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
       setLoading(false)
-      setError(_error)
     })
     return () => subscription.unsubscribe()
   }, [])
