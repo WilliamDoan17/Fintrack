@@ -1,6 +1,7 @@
 import AuthContext from '../../contexts/AuthContext'
 import { useContext, useState } from 'react'
 import { logout } from '../../backend/services/auth'
+import { useNotification } from '../../contexts/NotificationContext'
 
 const UserCard = ({ isCollapsed }: { isCollapsed: boolean }) => {
   const { user } = useContext(AuthContext)
@@ -27,12 +28,13 @@ const UserCard = ({ isCollapsed }: { isCollapsed: boolean }) => {
 
 const LogoutButton = ({ isCollapsed }: { isCollapsed: boolean }) => {
   const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<Error | null>(null)
+  const { notify } = useNotification()
 
   const handleLogout = () => {
     setLoading(true)
     logout()
-      .catch(setError)
+      .then(() => notify('Logged out', 'success'))
+      .catch((err) => notify(err.message, 'error'))
       .finally(() => setLoading(false))
   }
 

@@ -1,20 +1,26 @@
 import { useState } from 'react'
 import { deleteBudget } from '../../backend/services/budgets'
 import { useNavigate } from 'react-router-dom'
+import { useNotification } from '../../contexts/NotificationContext'
 
 const DeleteBudgetConfirmModal = ({ budgetId, budgetName, onClose }: { budgetId: string, budgetName: string, onClose: () => void }) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | null>(null)
   const navigate = useNavigate()
+  const { notify } = useNotification()
 
   const handleDeleteBudget = async () => {
     setLoading(true)
     deleteBudget(budgetId)
       .then(() => {
+        notify('Budget deleted', 'success')
         onClose()
         navigate('/dashboard')
       })
-      .catch(setError)
+      .catch((err) => {
+        notify(err.message, 'error')
+        setError(err)
+      })
       .finally(() => setLoading(false))
   }
 

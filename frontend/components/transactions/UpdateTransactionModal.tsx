@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { updateTransaction, type Transaction, type TransactionType } from '../../backend/services/transactions'
+import { useNotification } from '../../contexts/NotificationContext'
 
 const UpdateTransactionModal = ({ transaction, onSuccess, onClose }: { transaction: Transaction, onSuccess: () => void, onClose: () => void }) => {
   const [name, setName] = useState<string>(transaction.name)
@@ -7,16 +8,21 @@ const UpdateTransactionModal = ({ transaction, onSuccess, onClose }: { transacti
   const [amount, setAmount] = useState<number>(transaction.amount)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | null>(null)
+  const { notify } = useNotification()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     updateTransaction(transaction.id, { name, type, amount })
       .then(() => {
+        notify('Transaction updated', 'success')
         onSuccess()
         onClose()
       })
-      .catch(setError)
+      .catch((err) => {
+        notify(err.message, 'error')
+        setError(err)
+      })
       .finally(() => setLoading(false))
   }
 
@@ -75,8 +81,8 @@ const UpdateTransactionModal = ({ transaction, onSuccess, onClose }: { transacti
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
               <input
                 type="number"
+                id='update-transaction-amount'
                 value={amount}
-                id='add-transaction-amount'
                 onChange={(e) => setAmount(parseFloat(e.target.value))}
                 min={0}
                 step={0.01}

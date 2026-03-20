@@ -1,21 +1,27 @@
 import { useState } from 'react'
 import { createBudget } from '../../backend/services/budgets'
 import useBudgets from '../../hooks/useBudgets'
+import { useNotification } from '../../contexts/NotificationContext'
 
 const CreateBudgetModal = ({ budgetQuery: { refetch }, onClose, parentId = null }: { budgetQuery: ReturnType<typeof useBudgets>, onClose: () => void, parentId?: string | null }) => {
   const [name, setName] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | null>(null)
+  const { notify } = useNotification()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     createBudget({ name, parent_id: parentId })
       .then(() => {
+        notify('Budget created', 'success')
         refetch()
         onClose()
       })
-      .catch(setError)
+      .catch((err) => {
+        notify(err.message, 'error')
+        setError(err)
+      })
       .finally(() => setLoading(false))
   }
 

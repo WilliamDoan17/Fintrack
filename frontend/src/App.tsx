@@ -8,6 +8,7 @@ import AuthProvider from '../providers/AuthProvider'
 import AuthContext from '../contexts/AuthContext'
 import BudgetDetail from './pages/BudgetDetail'
 import ProtectedLayout from '../components/protected-layout/ProtectedLayout'
+import NotificationProvider from '../providers/NotificationProvider'
 
 const PublicRoutes = () => {
   const { user, loading, error } = useContext(AuthContext);
@@ -25,33 +26,35 @@ const PublicRoutes = () => {
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route
-            element={<PublicRoutes />}
-          >
+      <NotificationProvider>
+        <BrowserRouter>
+          <Routes>
             <Route
-              path="/auth"
-              element={<Auth />}
+              element={<PublicRoutes />}
             >
-            </Route>
-          </Route>
-          <Route
-            element={<ProtectedLayout />}
-          >
-            <Route
-              path="/dashboard"
-              element={<Dashboard />}
-            >
+              <Route
+                path="/auth"
+                element={<Auth />}
+              >
+              </Route>
             </Route>
             <Route
-              path="/budget/:id"
-              element={<BudgetDetail />}
+              element={<ProtectedLayout />}
             >
+              <Route
+                path="/dashboard"
+                element={<Dashboard />}
+              >
+              </Route>
+              <Route
+                path="/budget/:id"
+                element={<BudgetDetail />}
+              >
+              </Route>
             </Route>
-          </Route>
-        </Routes>
-      </BrowserRouter>
+          </Routes>
+        </BrowserRouter>
+      </NotificationProvider>
     </AuthProvider >
   )
 }

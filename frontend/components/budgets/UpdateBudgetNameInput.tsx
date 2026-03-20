@@ -1,20 +1,26 @@
 import { type Dispatch, type FormEvent, type SetStateAction, useState } from "react"
 import { updateBudget } from '../../backend/services/budgets'
+import { useNotification } from '../../contexts/NotificationContext'
 
 const UpdateBudgetNameInput = ({ budgetId, budgetName, onSuccess, setIsOpen }: { budgetId: string, budgetName: string, onSuccess: () => Promise<void>, setIsOpen: Dispatch<SetStateAction<boolean>> }) => {
   const [name, setName] = useState<string>(budgetName)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | null>(null)
+  const { notify } = useNotification()
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setLoading(true)
     updateBudget(budgetId, { name })
       .then(() => {
+        notify('Budget name updated', 'success')
         onSuccess()
         setIsOpen(false)
       })
-      .catch(setError)
+      .catch((err) => {
+        notify(err.message, 'error')
+        setError(err)
+      })
       .finally(() => setLoading(false))
   }
 

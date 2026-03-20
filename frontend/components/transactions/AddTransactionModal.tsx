@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import useTransactions from '../../hooks/useTransactions'
-import { type TransactionType, createTransaction } from '../../backend/services/transactions';
+import { type TransactionType, createTransaction } from '../../backend/services/transactions'
+import { useNotification } from '../../contexts/NotificationContext'
 
 const AddTransactionModal = ({ transactionQuery: { refetch }, onClose, budgetId }: { transactionQuery: ReturnType<typeof useTransactions>, onClose: () => void, budgetId: string }) => {
   const [name, setName] = useState<string>('')
@@ -8,16 +9,21 @@ const AddTransactionModal = ({ transactionQuery: { refetch }, onClose, budgetId 
   const [amount, setAmount] = useState<number>(0)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | null>(null)
+  const { notify } = useNotification()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     createTransaction({ name, type, amount, budget_id: budgetId })
       .then(() => {
+        notify('Transaction added', 'success')
         refetch()
         onClose()
       })
-      .catch(setError)
+      .catch((err) => {
+        notify(err.message, 'error')
+        setError(err)
+      })
       .finally(() => setLoading(false))
   }
 
@@ -82,7 +88,7 @@ const AddTransactionModal = ({ transactionQuery: { refetch }, onClose, budgetId 
                 min={0}
                 step={0.01}
                 className="bg-gray-800 text-white border border-gray-700 rounded px-3 py-2 pl-7 w-full focus:outline-none focus:border-emerald-400 transition-all"
-                placeholder={'0'}
+                placeholder='0'
               />
             </div>
           </div>
