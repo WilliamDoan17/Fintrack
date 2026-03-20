@@ -15,6 +15,7 @@ import UpdateBudgetNameInput from '../../components/budgets/UpdateBudgetNameInpu
 import UpdateBudgetNameButton from '../../components/budgets/UpdateBudgetNameButton'
 import DeleteBudgetButton from '../../components/budgets/DeleteBudgetButton'
 import DeleteBudgetConfirmModal from '../../components/budgets/DeleteBudgetConfirmModal'
+import { useNavigation } from '../../contexts/NavigationContext'
 
 type ModalState =
   { type: 'createBudget' } |
@@ -30,6 +31,7 @@ const BudgetDetail = () => {
   const [modalState, setModalState] = useState<ModalState | null>(null)
   const budgetQuery = useBudgets(budgetId ?? null);
   const transactionQuery = useTransactions(budgetId ?? null);
+  const { setBackTo } = useNavigation()
 
   const fetchBudgetInfo = useCallback(async () => {
     setLoading(true)
@@ -48,6 +50,13 @@ const BudgetDetail = () => {
   useEffect(() => {
     fetchBudgetInfo()
   }, [fetchBudgetInfo])
+
+  useEffect(() => {
+    if (budgetInfo) {
+      setBackTo(budgetInfo.parent_id ? `/budget/${budgetInfo.parent_id}` : '/dashboard')
+    }
+    return () => setBackTo(null)
+  }, [budgetInfo])
 
   if (loading) return <PageLoader />
   if (error) return (
@@ -94,6 +103,7 @@ const BudgetDetail = () => {
               <TransactionContainer transactionQuery={transactionQuery} />
             </div>
           </div>
+
           {/* Sub-budgets Section */}
           <div>
             <div className="flex items-center justify-between mb-4">
