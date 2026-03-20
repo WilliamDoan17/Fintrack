@@ -13,7 +13,13 @@ Coming soon
 Coming soon
 
 ## Features
-Coming soon
+- **Budget management** — create, update, and delete budgets with support for nested sub-budgets
+- **Transaction tracking** — add, edit, and delete transactions per budget, categorized as income or withdrawal
+- **Recursive balance** — balance calculations roll up through sub-budgets automatically
+- **Dashboard** — overview of total balance, recent transactions, and all budgets at a glance
+- **Toast notifications** — real-time feedback on all mutations
+- **Collapsible sidebar** — persistent navigation with user info and logout
+- **Authentication** — secure sign up and login via Supabase Auth
 
 ## Tech Stack
 - **Frontend:** Vite + React + TypeScript
