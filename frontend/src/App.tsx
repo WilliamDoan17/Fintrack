@@ -9,6 +9,7 @@ import AuthContext from '../contexts/AuthContext'
 import BudgetDetail from './pages/BudgetDetail'
 import ProtectedLayout from '../components/protected-layout/ProtectedLayout'
 import NotificationProvider from '../providers/NotificationProvider'
+import Landing from './pages/Landing'
 
 const PublicRoutes = () => {
   const { user, loading, error } = useContext(AuthContext);
@@ -32,6 +33,10 @@ function App() {
             <Route
               element={<PublicRoutes />}
             >
+              <Route
+                path = "/"
+                element = {<Landing />}
+              />
               <Route
                 path="/auth"
                 element={<Auth />}
