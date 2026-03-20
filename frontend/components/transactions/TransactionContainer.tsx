@@ -9,11 +9,25 @@ type ModalState =
   | { type: 'update', transaction: Transaction }
   | { type: 'delete', transaction: Transaction }
 
+const TransactionContainerSkeleton = () => (
+  <div className="flex flex-col gap-3 bg-gray-900 border border-gray-800 rounded-xl p-4">
+    {[...Array(3)].map((_, i) => (
+      <div key={i} className="flex items-center justify-between bg-gray-800 border border-gray-700 rounded-xl px-5 py-4">
+        <div className="flex flex-col gap-2">
+          <div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
+          <div className="w-16 h-3 bg-gray-700 rounded animate-pulse" />
+        </div>
+        <div className="w-16 h-5 bg-gray-700 rounded animate-pulse" />
+      </div>
+    ))}
+  </div>
+)
+
 const TransactionContainer = ({ transactionQuery: { transactions, loading, error, refetch }, limit = 3 }: { transactionQuery: ReturnType<typeof useTransactions>, limit?: number }) => {
   const [modalState, setModalState] = useState<ModalState | null>(null)
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
 
-  if (loading) return <p className="text-gray-500 text-sm">Loading transactions...</p>
+  if (loading) return <TransactionContainerSkeleton />
   if (error) return <p className="text-red-400 text-sm">Error loading transactions</p>
   if (transactions.length === 0) return <p className="text-gray-500 text-sm">No transactions yet. Create one to get started.</p>
 
