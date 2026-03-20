@@ -49,3 +49,4 @@ const BalanceSummary = ({ transactionQuery: { transactions, loading, error } }: 
 }
 
 export default BalanceSummary
+

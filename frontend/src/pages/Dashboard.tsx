@@ -24,9 +24,11 @@ const Dashboard = () => {
         </div>
         <div className="flex flex-col gap-10">
           {/* Balance + Recent Transactions two-column */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <BalanceSummary transactionQuery={transactionQuery} />
-            <div>
+          <div className="flex gap-6 items-start">
+            <div className="w-[30%] shrink-0">
+              <BalanceSummary transactionQuery={transactionQuery} />
+            </div>
+            <div className="flex-1">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-gray-400 text-sm uppercase tracking-widest">Recent Transactions</h2>
               </div>
