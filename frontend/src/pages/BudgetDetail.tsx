@@ -54,9 +54,11 @@ const BudgetDetail = () => {
   useEffect(() => {
     if (budgetInfo) {
       setBackTo(budgetInfo.parent_id ? `/budget/${budgetInfo.parent_id}` : '/dashboard')
+    } else if (error) {
+      setBackTo('/dashboard')
     }
     return () => setBackTo(null)
-  }, [budgetInfo])
+  }, [budgetInfo, error, setBackTo])
 
   if (loading) return <PageLoader />
   if (error) return (

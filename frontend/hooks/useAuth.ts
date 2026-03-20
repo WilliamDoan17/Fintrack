@@ -9,21 +9,13 @@ const useAuth = () => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      getCurrentUser()
-        .then(user => setUser(user))
-        .catch(error => setError(error))
-        .finally(() => setLoading(false))
-    }
-
-    fetchUser()
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
+      setLoading(false)
     })
-
     return () => subscription.unsubscribe()
   }, [])
+
 
   return {
     user,
