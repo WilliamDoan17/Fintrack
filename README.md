@@ -9,10 +9,18 @@ Built for anyone who wants clarity over their finances, starting with myself.
 ## Demo
 Coming soon
 
-## Installation
-Coming soon
+## Running Locally
+1. Clone the repository
+2. Navigate to the frontend directory: `cd frontend`
+3. Install dependencies: `npm install`
+4. Create a `.env` file with your Supabase credentials:
+```
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+5. Start the dev server: `npm run dev`
 
-## Features
+## Current Features (MVP)
 - **Budget management** — create, update, and delete budgets with support for nested sub-budgets
 - **Transaction tracking** — add, edit, and delete transactions per budget, categorized as income or withdrawal
 - **Recursive balance** — balance calculations roll up through sub-budgets automatically
@@ -20,6 +28,31 @@ Coming soon
 - **Toast notifications** — real-time feedback on all mutations
 - **Collapsible sidebar** — persistent navigation with user info and logout
 - **Authentication** — secure sign up and login via Supabase Auth
+
+## Roadmap
+
+### Stage 2 — UI & Core Features
+- useReactQuery for caching and automatic refetch
+- Dark / light mode toggle
+- Responsive UI for mobile
+- Balance display on each BudgetCard
+- Pagination for transactions
+- Transaction search and filter
+- Budget manager with hierarchy tree view
+- Move budgets and transactions between parents
+- Transfer money between budgets
+- Income as a special budget
+- Budget limits with warnings and low balance alerts
+- Stats page — spending over time, per-budget breakdown, income vs expenses
+
+### Stage 3 — Advanced & Scale
+- Multi-currency support
+- Scheduled and recurring transactions (AutoPay)
+- Session management
+- Bill splitter
+- Loan and owes tracking
+- Profiles
+- AI Agent — planning assistant and write operations
 
 ## Tech Stack
 - **Frontend:** Vite + React + TypeScript

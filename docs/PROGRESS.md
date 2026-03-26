@@ -49,11 +49,17 @@ frontend/
       supabase.ts
     frontend/
       pages/
+        Landing.tsx
         Auth.tsx
         Dashboard.tsx
         BudgetDetail.tsx
       components/
-        PageLoader.tsx
+        loaders/
+          PageLoader.tsx
+        protected-layout/
+          ProtectedLayout.tsx
+          Sidebar.tsx
+          NavigationArrow.tsx
         budgets/
           BudgetCard.tsx
           BudgetContainer.tsx
@@ -68,13 +74,24 @@ frontend/
           TransactionContainer.tsx
           AddTransactionModal.tsx
           AddTransactionButton.tsx
+          UpdateTransactionModal.tsx
+          UpdateTransactionButton.tsx
+          DeleteTransactionConfirmModal.tsx
+          DeleteTransactionButton.tsx
           BalanceSummary.tsx
+        Toast.tsx
       hooks/
         useAuth.ts
         useBudgets.ts
         useTransactions.ts
       contexts/
         AuthContext.tsx
+        NotificationContext.ts
+        NavigationContext.ts
+      providers/
+        AuthProvider.tsx
+        NotificationProvider.tsx
+        NavigationProvider.tsx
     App.tsx
 ```
 
@@ -118,7 +135,7 @@ create table transactions (
 create policy "users can select own budgets" on budgets for select
 using (user_id = auth.uid());
 
--- INSERT (with CTE to avoid scope ambiguity)
+-- INSERT
 create policy "users can insert own budgets" on budgets for insert
 with check (
   user_id = auth.uid() and
@@ -132,7 +149,13 @@ with check (
 -- UPDATE
 create policy "users can update own budgets" on budgets for update
 using (user_id = auth.uid())
-with check (user_id = auth.uid());
+with check (
+  user_id = auth.uid() and
+  (parent_id is null or exists (
+    select 1 from budgets b
+    where b.id = parent_id and b.user_id = auth.uid()
+  ))
+);
 
 -- DELETE
 create policy "users can delete own budgets" on budgets for delete
@@ -159,7 +182,13 @@ with check (
 -- UPDATE
 create policy "user can update own transactions" on transactions for update
 using (user_id = auth.uid())
-with check (user_id = auth.uid());
+with check (
+  user_id = auth.uid() and
+  exists (
+    select 1 from budgets b
+    where b.id = budget_id and b.user_id = auth.uid()
+  )
+);
 
 -- DELETE
 create policy "user can delete own transactions" on transactions for delete
@@ -205,7 +234,6 @@ $$ language plpgsql;
 - `signupWithEmailAndPassword(email, password)` → `void`
 - `loginWithEmailAndPassword(email, password)` → `void`
 - `logout()` → `void`
-- `getCurrentUser()` → `User | null`
 
 ### budgets.ts
 - `Budget` interface: `id`, `user_id`, `created_at`, `name`, `parent_id`
@@ -233,7 +261,7 @@ $$ language plpgsql;
 
 ### useAuth
 - Returns: `{ user, loading, error }`
-- Sets up `onAuthStateChange` listener
+- Sets up `onAuthStateChange` listener only — no `getCurrentUser` call
 - Used by `AuthContext`
 
 ### useBudgets(parentId: string | null)
@@ -249,16 +277,41 @@ $$ language plpgsql;
 
 ---
 
+## Contexts & Providers
+
+### AuthContext + AuthProvider
+- Global user state
+- `useAuth` hook — sets up `onAuthStateChange`, exposes `user`, `loading`, `error`
+
+### NotificationContext + NotificationProvider
+- Global toast notification state
+- `useNotification` hook — exposes `notify(message, type)`
+- Auto-dismisses toasts after 3 seconds
+- Mounted in `App.tsx` — available everywhere
+
+### NavigationContext + NavigationProvider
+- Global back navigation state
+- `useNavigation` hook — exposes `backTo`, `setBackTo`
+- `BudgetDetail` sets `backTo` on mount, clears on unmount
+- `NavigationArrow` reads `backTo` — returns null on Dashboard
+
+---
+
 ## Auth Architecture
 - `AuthContext` + `AuthProvider` — global user state
-- `useAuth` hook — sets up `onAuthStateChange`, exposes `user`, `loading`, `error`
-- `ProtectedRoutes` — uses React Router layout route pattern with `<Outlet />`
+- `useAuth` hook — sets up `onAuthStateChange` only, exposes `user`, `loading`, `error`
 - `PublicRoutes` — redirects authenticated users to `/dashboard`
+- `ProtectedLayout` — layout component with Sidebar + NavigationArrow + Outlet, handles auth gating
 - `PageLoader` — shown while auth state resolves
 
 ---
 
 ## Pages
+
+### Landing (`/`)
+- Hero section with headline + CTA → `/auth`
+- Features section (3 cards)
+- Navbar with Log in button
 
 ### Auth (`/auth`)
 - Single page with tab state (`login` | `signup`)
@@ -267,7 +320,7 @@ $$ language plpgsql;
 - Redirects to `/dashboard` on success (via `PublicRoutes`)
 
 ### Dashboard (`/dashboard`)
-- `BalanceSummary` + `TransactionContainer` in two-column grid
+- `BalanceSummary` (30% width) + `TransactionContainer` side by side
 - `BudgetContainer` below
 - `CreateBudgetModal` triggered by `CreateBudgetButton`
 - `transactionQuery = useTransactions(null)` — all user transactions
@@ -276,10 +329,11 @@ $$ language plpgsql;
 ### BudgetDetail (`/budget/:id`)
 - Header: budget name + `UpdateBudgetNameButton` + `DeleteBudgetButton`
 - `UpdateBudgetNameInput` replaces header when editing
-- `BalanceSummary` + `TransactionContainer` in two-column grid (recursive transactions)
+- `BalanceSummary` (30% width) + `TransactionContainer` side by side (recursive transactions)
 - `BudgetContainer` for sub-budgets
 - `CreateBudgetModal` with `parentId = budgetId`
 - `AddTransactionModal` + `DeleteBudgetConfirmModal`
+- Sets `backTo` in `NavigationContext` on mount
 
 ---
 
@@ -296,112 +350,80 @@ $$ language plpgsql;
 - No optimistic updates for create (server generates `id`, `created_at`)
 - Modal closes on success, stays open on error
 
-### Limit on TransactionContainer
-- `useTransactions` fetches ALL transactions — no limit on service
-- `TransactionContainer` accepts optional `limit` prop — slices for display
-- `BalanceSummary` uses full transaction list for accurate calculations
+### Modal state pattern
+- Pages and containers use a union type `ModalState` instead of multiple booleans
+- Invalid states (two modals open) are unrepresentable by design
+- `TransactionContainer` uses `{ type, transaction }` collapsed union — transaction always present
+
+### Toast notification pattern
+- `notify(message, type)` called inside `.then()` and `.catch()` of mutations
+- Inline `error` state kept as visual fallback on forms
+- `NotificationProvider` owns toast array, auto-dismisses via `setTimeout`
+
+### Navigation pattern
+- `NavigationContext` stores `backTo` path
+- `BudgetDetail` sets `backTo` based on `budgetInfo.parent_id`
+- `NavigationArrow` returns `null` when `backTo` is null (Dashboard)
+- Uses `navigate(backTo, { replace: true })` — in-app navigation, not browser history
 
 ### Balance calculation
 - Derived from transaction list on the frontend — no extra DB call
 - `BalanceSummary` takes `transactionQuery` — handles its own loading/error
 - Auto-updates when `transactionQuery` refetches
 
+### Skeleton loaders
+- `BudgetContainerSkeleton` — lives at top of `BudgetContainer.tsx`
+- `TransactionContainerSkeleton` — lives at top of `TransactionContainer.tsx`
+- Replaces text loading states for better UX
+
+---
+
+## Deployment
+
+- **Platform:** Vercel
+- **Root directory:** `frontend/`
+- **SPA routing fix:** `vercel.json` with rewrite rule `/(.*) → /index.html`
+- **Environment variables:** `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
+
 ---
 
 ## Build Plan
 
 ### Phase 1: Auth ✅
-**Services:** `signupWithEmailAndPassword`, `loginWithEmailAndPassword`, `logout`, `getCurrentUser`
-
-**Tasks:**
-- Link Supabase to the project
-- Write auth services
-- Set up protected routes
-
-**Pages:**
-- `Auth.tsx` — fully functional (signup, login, tab switching, wired to services)
-
----
-
 ### Phase 2: Create + View Budgets ✅
-**Services:** `createBudget`, `getRootBudgets`
-
-**Tasks:**
-- Write RLS policies for budget INSERT, SELECT
-- Write budget services
-
-**Pages:**
-- `Dashboard.tsx` — root budgets list, create budget modal
-
----
-
 ### Phase 3: Budget Detail ✅
-**Services:** `getBudget`, `getChildBudgets`
-
-**Tasks:**
-- Write budget services
-
-**Pages:**
-- `BudgetDetail.tsx` — budget name, sub-budgets list, create sub-budget modal
-
----
-
 ### Phase 4: Create + View Transactions + Balance ✅
-**Services:** `createTransaction`, `getBudgetTransactions`, `getAllTransactions`
-
-**Tasks:**
-- Write RLS policies for transaction INSERT, SELECT
-- Write transaction services
-- Write `get_budget_transactions` PostgreSQL recursive function
-
-**Pages:**
-- `BudgetDetail.tsx` — add transaction form, transaction list (recursive), budget balance
-- `Dashboard.tsx` — recent transactions list, overall balance
-
----
-
 ### Phase 5: Update + Delete Budgets ✅
-**Services:** `updateBudget`, `deleteBudget`
-
-**Tasks:**
-- Write RLS policies for budget UPDATE, DELETE
-- Write budget services
-
-**Pages:**
-- `BudgetDetail.tsx` — edit budget name inline, delete budget with confirmation modal
+### Phase 6: Update + Delete Transactions ✅
+### Phase 7: Polish ✅
 
 ---
 
-### Phase 6: Update + Delete Transactions ⬜
-**Services:** `updateTransaction`, `deleteTransaction`
+## Stage 2 Roadmap
+1. useReactQuery
+2. Dark/light mode
+3. Responsive UI
+4. BudgetCard balance
+5. Pagination for transactions
+6. Transaction search/filter
+7. Budget manager (hierarchy tree)
+8. Move Budget
+9. Move Transaction
+10. Transfer money
+11. Income as special budget
+12. Budget limits + warnings + low balance alerts
+13. Stats page
 
-**Tasks:**
-- Write RLS policies for transaction UPDATE, DELETE
-- Write transaction services
+## Stage 3 Roadmap
+1. Multi-currency
+2. Scheduled & Recurring Transactions (AutoPay) + reminders
+3. Session management
+4. Bill splitter
+5. Loan & owes
+6. Profiles
+7. AI Agent
 
-**Pages:**
-- `BudgetDetail.tsx` — edit/delete actions on transaction list
-- `Dashboard.tsx` — edit/delete actions on recent transactions
-
----
-
-### Phase 7: Polish ⬜
-**Tasks:**
-- Add NotiToast for mutation notifications
-- DeleteBudgetButton: re-style the size
-- Polish BalanceSummary: 30% full width, give it a max height
-- Add navigation arrows for each page
-- Polish the spinner for page navigation
-- Loader for components (BudgetContainer)
-- TransactionContainerExtended: show all transactions
-- Log out button
-
----
-
-## Post-MVP Notes
-1. **Budget card balance** — add `balance` column to `budgets` table, maintained by a PostgreSQL trigger that walks up the budget tree on transaction INSERT/UPDATE/DELETE
-2. **Stats page** — dropped for MVP
-3. **Move budgets** — change `parent_id` via drag and drop or parent selector UI
-4. **React Query** — replace manual `useState/useEffect` hooks for caching and automatic refetch
-5. **Pagination** — add limit/offset to `getAllTransactions` when transaction count grows
-6. **Materialized view** — pre-computed budget balances for fast reads at scale
+## Post Stage 3 — Noted for Later
+- Onboarding
+- Data management (CSV export/import, backup & restore)
+- Social/Sharing (shared budgets)
