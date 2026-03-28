@@ -16,7 +16,7 @@ Coming soon
 4. Create a `.env` file with your Supabase credentials:
 ```
    VITE_SUPABASE_URL=your_supabase_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   VITE_SUPABASE_PUBLIC_URL=your_supabase_anon_key
 ```
 5. Start the dev server: `npm run dev`
 

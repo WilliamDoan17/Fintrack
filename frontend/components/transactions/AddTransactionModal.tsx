@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import useTransactions from '../../hooks/useTransactions'
-import { type TransactionType, createTransaction } from '../../backend/services/transactions'
+import { createTransaction } from '../../backend/services/transactions'
+import type { TransactionType } from '../../backend/types/transactions'
 import { useNotification } from '../../contexts/NotificationContext'
 
 const AddTransactionModal = ({ transactionQuery: { refetch }, onClose, budgetId }: { transactionQuery: ReturnType<typeof useTransactions>, onClose: () => void, budgetId: string }) => {

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
-import { getAllTransactions, getBudgetTransactions, type Transaction } from '../backend/services/transactions'
+import { getAllTransactions, getBudgetTransactions } from '../backend/services/transactions'
+import type { Transaction } from "../backend/types/transactions"
 
 const useTransactions = (budgetId: string | null = null) => {
   const [transactions, setTransactions] = useState<Transaction[]>([])

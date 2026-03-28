@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom"
 import { useState, useEffect, useCallback } from "react";
-import { getBudget, type Budget } from "../../backend/services/budgets";
+import { getBudget } from "../../backend/services/budgets";
+import type { Budget } from "../../backend/types/budgets";
 import useBudgets from "../../hooks/useBudgets";
 import useTransactions from "../../hooks/useTransactions";
 import PageLoader from "../../components/loaders/PageLoader";

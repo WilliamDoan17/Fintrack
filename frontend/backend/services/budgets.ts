@@ -1,14 +1,5 @@
 import { supabase } from '../supabase'
-
-export interface Budget {
-  id: string,
-  user_id: string,
-  created_at: string,
-  name: string,
-  parent_id: string | null,
-}
-
-export type BudgetInput = Omit<Budget, 'id' | 'created_at' | 'user_id'>;
+import type { Budget, BudgetInput } from '../types/budgets'
 
 export const createBudget = async (input: BudgetInput) => {
   const { data: { user } } = await supabase.auth.getUser()

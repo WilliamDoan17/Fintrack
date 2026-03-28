@@ -1,4 +1,4 @@
-import { type Transaction } from "../../backend/services/transactions"
+import { type Transaction } from "../../backend/types/transactions"
 import UpdateTransactionButton from './UpdateTransactionButton'
 import DeleteTransactionButton from './DeleteTransactionButton'
 

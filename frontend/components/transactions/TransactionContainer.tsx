@@ -1,4 +1,4 @@
-import type { Transaction } from "../../backend/services/transactions"
+import type { Transaction } from "../../backend/types/transactions"
 import useTransactions from "../../hooks/useTransactions"
 import TransactionCard from "./TransactionCard"
 import { useState } from 'react'
@@ -91,15 +91,15 @@ const TransactionContainer = ({ transactionQuery: { transactions, loading, error
       {modalState && (
         modalState.type === 'update'
           ? <UpdateTransactionModal
-              transaction={modalState.transaction}
-              onSuccess={refetch}
-              onClose={() => setModalState(null)}
-            />
+            transaction={modalState.transaction}
+            onSuccess={refetch}
+            onClose={() => setModalState(null)}
+          />
           : <DeleteTransactionConfirmModal
-              transaction={modalState.transaction}
-              onSuccess={refetch}
-              onClose={() => setModalState(null)}
-            />
+            transaction={modalState.transaction}
+            onSuccess={refetch}
+            onClose={() => setModalState(null)}
+          />
       )}
     </div>
   )

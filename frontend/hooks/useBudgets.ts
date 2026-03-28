@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react'
-import { getRootBudgets, getChildBudgets, type Budget } from '../backend/services/budgets'
+import { useEffect, useState, useCallback } from 'react'
+import { getChildBudgets, getRootBudgets } from '../backend/services/budgets'
+import type { Budget } from '../backend/types/budgets'
 
 const useBudgets = (parentId: string | null = null) => {
   const [budgets, setBudgets] = useState<Budget[]>([])

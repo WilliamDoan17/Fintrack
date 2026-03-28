@@ -1,4 +1,4 @@
-import { type Budget } from '../../backend/services/budgets'
+import type { Budget } from '../../backend/types/budgets'
 import { useNavigate } from 'react-router-dom'
 
 const BudgetCard = ({ budget }: { budget: Budget }) => {
