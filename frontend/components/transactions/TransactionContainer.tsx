@@ -12,7 +12,7 @@ type ModalState =
 const TransactionContainerSkeleton = () => (
   <div className="flex flex-col gap-3 bg-gray-900 border border-gray-800 rounded-xl p-4">
     {[...Array(3)].map((_, i) => (
-      <div key={i} className="flex items-center justify-between bg-gray-800 border border-gray-700 rounded-xl px-5 py-4">
+      <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 bg-gray-800 border border-gray-700 rounded-xl px-5 py-4">
         <div className="flex flex-col gap-2">
           <div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
           <div className="w-16 h-3 bg-gray-700 rounded animate-pulse" />
@@ -60,8 +60,8 @@ const TransactionContainer = ({ transactionQuery: { transactions, loading, error
 
       {/* Expanded overlay */}
       {isExpanded && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 w-full max-w-2xl shadow-xl max-h-[80vh] flex flex-col">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 md:p-8 w-full max-w-2xl shadow-xl max-h-[90vh] flex flex-col">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-white text-xl font-semibold">All Transactions</h2>
               <button

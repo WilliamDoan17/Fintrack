@@ -29,8 +29,8 @@ const AddTransactionModal = ({ transactionQuery: { refetch }, onClose, budgetId 
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 w-full max-w-md shadow-xl">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 md:p-8 w-full max-w-md shadow-xl">
         <h2 className="text-white text-xl font-semibold mb-1">Add Transaction</h2>
         <p className="text-gray-500 text-sm mb-6">Record a new transaction for this budget.</p>
 

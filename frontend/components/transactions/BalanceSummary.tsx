@@ -26,10 +26,10 @@ const BalanceSummary = ({ transactionQuery: { transactions, loading, error } }: 
   const balance = income - expenses
 
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 flex flex-col gap-4">
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 md:p-6 flex flex-col gap-4">
       <div className="flex flex-col items-center">
         <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Balance</p>
-        <p className={`font-bold text-3xl ${balance >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+        <p className={`font-bold text-2xl md:text-3xl ${balance >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
           {balance >= 0 ? '+' : '-'}${Math.abs(balance).toFixed(2)}
         </p>
       </div>
@@ -37,11 +37,11 @@ const BalanceSummary = ({ transactionQuery: { transactions, loading, error } }: 
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col items-center">
           <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Income</p>
-          <p className="text-emerald-400 font-semibold text-lg">+${income.toFixed(2)}</p>
+          <p className="text-emerald-400 font-semibold text-base md:text-lg">+${income.toFixed(2)}</p>
         </div>
         <div className="flex flex-col items-center">
           <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Expenses</p>
-          <p className="text-red-400 font-semibold text-lg">-${expenses.toFixed(2)}</p>
+          <p className="text-red-400 font-semibold text-base md:text-lg">-${expenses.toFixed(2)}</p>
         </div>
       </div>
     </div>
