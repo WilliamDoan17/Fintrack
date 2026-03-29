@@ -195,12 +195,9 @@ Users can:
 
 ---
 
-### S2-5: Pagination for Transactions ⬜
+### S2-5: Pagination for Transactions ✅
 **Tasks:**
-- Add limit/offset to `getAllTransactions` service
-- Add limit/offset to `getBudgetTransactions` service
-- Add pagination UI to `TransactionContainer`
-- Update `useTransactions` hook to support pagination
+- Add pagination UI to `TransactionContainer` ✅
 
 ---
 

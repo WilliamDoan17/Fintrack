@@ -26,6 +26,15 @@ const TransactionContainerSkeleton = () => (
 const TransactionContainer = ({ transactionQuery: { transactions, loading, error, refetch }, limit = 3 }: { transactionQuery: ReturnType<typeof useTransactions>, limit?: number }) => {
   const [modalState, setModalState] = useState<ModalState | null>(null)
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const transactionsPerPage = 10
+
+  const totalPages = Math.ceil(transactions.length / transactionsPerPage)
+  const startIndex = (currentPage - 1) * transactionsPerPage
+  const endIndex = startIndex + transactionsPerPage
+  const currentTransactions = transactions.slice(startIndex, endIndex)
+
+  // Reset page when overlay closes (handled in close button onClick)
 
   if (loading) return <TransactionContainerSkeleton />
   if (error) return <p className="text-red-400 text-sm">Error loading transactions</p>
@@ -33,20 +42,6 @@ const TransactionContainer = ({ transactionQuery: { transactions, loading, error
 
   return (
     <div className="flex flex-col gap-3 bg-gray-900 border border-gray-800 rounded-xl p-4">
-
-      {/* Expand button */}
-      <button
-        onClick={() => setIsExpanded(true)}
-        className="self-end text-gray-500 hover:text-emerald-400 transition-all cursor-pointer"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="15 3 21 3 21 9" />
-          <polyline points="9 21 3 21 3 15" />
-          <line x1="21" y1="3" x2="14" y2="10" />
-          <line x1="3" y1="21" x2="10" y2="14" />
-        </svg>
-      </button>
-
       {transactions
         .slice(0, limit)
         .map(transaction => (
@@ -58,6 +53,16 @@ const TransactionContainer = ({ transactionQuery: { transactions, loading, error
           />
         ))}
 
+      {/* Show "View all" button if there are more transactions */}
+      {transactions.length > limit && (
+        <button
+          onClick={() => setIsExpanded(true)}
+          className="text-gray-400 hover:text-emerald-400 text-sm transition-all cursor-pointer mt-2"
+        >
+          View all {transactions.length} transactions
+        </button>
+      )}
+
       {/* Expanded overlay */}
       {isExpanded && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
@@ -65,7 +70,10 @@ const TransactionContainer = ({ transactionQuery: { transactions, loading, error
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-white text-xl font-semibold">All Transactions</h2>
               <button
-                onClick={() => setIsExpanded(false)}
+                onClick={() => {
+                  setIsExpanded(false)
+                  setCurrentPage(1)
+                }}
                 className="text-gray-500 hover:text-white transition-all cursor-pointer"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -74,8 +82,10 @@ const TransactionContainer = ({ transactionQuery: { transactions, loading, error
                 </svg>
               </button>
             </div>
-            <div className="flex flex-col gap-3 overflow-y-auto">
-              {transactions.map(transaction => (
+
+            {/* Transactions list */}
+            <div className="flex flex-col gap-3 overflow-y-auto flex-1">
+              {currentTransactions.map(transaction => (
                 <TransactionCard
                   key={transaction.id}
                   transaction={transaction}
@@ -83,6 +93,69 @@ const TransactionContainer = ({ transactionQuery: { transactions, loading, error
                   onDelete={() => setModalState({ type: 'delete', transaction })}
                 />
               ))}
+            </div>
+
+            {/* Pagination controls */}
+            <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-800">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400 text-sm">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <span className="text-gray-500 text-xs">
+                  ({startIndex + 1}-{Math.min(endIndex, transactions.length)} of {transactions.length})
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 rounded bg-gray-800 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="15 18 9 12 15 6" />
+                  </svg>
+                </button>
+
+                {/* Page numbers */}
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNumber;
+                    if (totalPages <= 5) {
+                      pageNumber = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNumber = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNumber = totalPages - 4 + i;
+                    } else {
+                      pageNumber = currentPage - 2 + i;
+                    }
+
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => setCurrentPage(pageNumber)}
+                        className={`w-8 h-8 rounded text-sm font-medium transition-all cursor-pointer ${currentPage === pageNumber
+                          ? 'bg-emerald-500 text-white'
+                          : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
+                          }`}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 rounded bg-gray-800 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
