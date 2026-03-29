@@ -1,7 +1,7 @@
 import type { Transaction } from "../../backend/types/transactions"
 import useTransactions from "../../hooks/useTransactions"
 import TransactionCard from "./TransactionCard"
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import UpdateTransactionModal from './UpdateTransactionModal'
 import DeleteTransactionConfirmModal from './DeleteTransactionConfirmModal'
 
@@ -29,12 +29,44 @@ const TransactionContainer = ({ transactionQuery: { transactions, loading, error
   const [currentPage, setCurrentPage] = useState<number>(1)
   const transactionsPerPage = 10
 
-  const totalPages = Math.ceil(transactions.length / transactionsPerPage)
+  // Filter states
+  const [searchText, setSearchText] = useState<string>('')
+  const [typeFilter, setTypeFilter] = useState<'all' | 'add' | 'withdraw'>('all')
+  const [minAmount, setMinAmount] = useState<string>('')
+  const [maxAmount, setMaxAmount] = useState<string>('')
+
+  // Filter transactions
+  const filteredTransactions = useMemo(() => {
+    return transactions.filter(transaction => {
+      // Search filter (case insensitive)
+      if (searchText && !transaction.name.toLowerCase().includes(searchText.toLowerCase())) {
+        return false
+      }
+
+      // Type filter
+      if (typeFilter !== 'all' && transaction.type !== typeFilter) {
+        return false
+      }
+
+      // Amount range filter
+      if (minAmount && transaction.amount < parseFloat(minAmount)) {
+        return false
+      }
+      if (maxAmount && transaction.amount > parseFloat(maxAmount)) {
+        return false
+      }
+
+      return true
+    })
+  }, [transactions, searchText, typeFilter, minAmount, maxAmount])
+
+  // Pagination with filtered transactions
+  const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage)
   const startIndex = (currentPage - 1) * transactionsPerPage
   const endIndex = startIndex + transactionsPerPage
-  const currentTransactions = transactions.slice(startIndex, endIndex)
+  const currentTransactions = filteredTransactions.slice(startIndex, endIndex)
 
-  // Reset page when overlay closes (handled in close button onClick)
+  // Reset page when filters change (handled in filter change handlers)
 
   if (loading) return <TransactionContainerSkeleton />
   if (error) return <p className="text-red-400 text-sm">Error loading transactions</p>
@@ -83,80 +115,181 @@ const TransactionContainer = ({ transactionQuery: { transactions, loading, error
               </button>
             </div>
 
+            {/* Filter controls */}
+            <div className="mb-4 space-y-3">
+              {/* Search input */}
+              <div className="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Search transactions..."
+                  value={searchText}
+                  onChange={(e) => {
+                    setSearchText(e.target.value)
+                    setCurrentPage(1)
+                  }}
+                  className="w-full bg-gray-800 text-white border border-gray-700 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:border-emerald-400 transition-all placeholder:text-gray-500"
+                />
+              </div>
+
+              {/* Filter row */}
+              <div className="flex flex-wrap gap-3">
+                {/* Type filter */}
+                <div className="flex-1 min-w-[120px]">
+                  <select
+                    value={typeFilter}
+                    onChange={(e) => {
+                      setTypeFilter(e.target.value as 'all' | 'add' | 'withdraw')
+                      setCurrentPage(1)
+                    }}
+                    className="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400 transition-all cursor-pointer"
+                  >
+                    <option value="all">All types</option>
+                    <option value="add">Add only</option>
+                    <option value="withdraw">Withdraw only</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Amount range */}
+              <div className="flex gap-3">
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                  <input
+                    type="number"
+                    placeholder="Min amount"
+                    value={minAmount}
+                    onChange={(e) => {
+                      setMinAmount(e.target.value)
+                      setCurrentPage(1)
+                    }}
+                    min={0}
+                    step={0.01}
+                    className="w-full bg-gray-800 text-white border border-gray-700 rounded-lg pl-7 pr-3 py-2 focus:outline-none focus:border-emerald-400 transition-all placeholder:text-gray-500"
+                  />
+                </div>
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                  <input
+                    type="number"
+                    placeholder="Max amount"
+                    value={maxAmount}
+                    onChange={(e) => {
+                      setMaxAmount(e.target.value)
+                      setCurrentPage(1)
+                    }}
+                    min={0}
+                    step={0.01}
+                    className="w-full bg-gray-800 text-white border border-gray-700 rounded-lg pl-7 pr-3 py-2 focus:outline-none focus:border-emerald-400 transition-all placeholder:text-gray-500"
+                  />
+                </div>
+              </div>
+
+              {/* Clear filters button */}
+              {(searchText || typeFilter !== 'all' || minAmount || maxAmount) && (
+                <button
+                  onClick={() => {
+                    setSearchText('')
+                    setTypeFilter('all')
+                    setMinAmount('')
+                    setMaxAmount('')
+                    setCurrentPage(1)
+                  }}
+                  className="text-gray-400 hover:text-emerald-400 text-sm transition-all cursor-pointer"
+                >
+                  Clear all filters
+                </button>
+              )}
+            </div>
+
+            {/* Results count */}
+            <div className="mb-3 text-sm text-gray-500">
+              Showing {filteredTransactions.length} of {transactions.length} transactions
+            </div>
+
             {/* Transactions list */}
             <div className="flex flex-col gap-3 overflow-y-auto flex-1">
-              {currentTransactions.map(transaction => (
-                <TransactionCard
-                  key={transaction.id}
-                  transaction={transaction}
-                  onEdit={() => setModalState({ type: 'update', transaction })}
-                  onDelete={() => setModalState({ type: 'delete', transaction })}
-                />
-              ))}
+              {currentTransactions.length === 0 ? (
+                <p className="text-gray-500 text-sm text-center py-4">No transactions match your filters</p>
+              ) : (
+                currentTransactions.map(transaction => (
+                  <TransactionCard
+                    key={transaction.id}
+                    transaction={transaction}
+                    onEdit={() => setModalState({ type: 'update', transaction })}
+                    onDelete={() => setModalState({ type: 'delete', transaction })}
+                  />
+                ))
+              )}
             </div>
 
             {/* Pagination controls */}
-            <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-800">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400 text-sm">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <span className="text-gray-500 text-xs">
-                  ({startIndex + 1}-{Math.min(endIndex, transactions.length)} of {transactions.length})
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-3 py-1.5 rounded bg-gray-800 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="15 18 9 12 15 6" />
-                  </svg>
-                </button>
-
-                {/* Page numbers */}
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNumber;
-                    if (totalPages <= 5) {
-                      pageNumber = i + 1;
-                    } else if (currentPage <= 3) {
-                      pageNumber = i + 1;
-                    } else if (currentPage >= totalPages - 2) {
-                      pageNumber = totalPages - 4 + i;
-                    } else {
-                      pageNumber = currentPage - 2 + i;
-                    }
-
-                    return (
-                      <button
-                        key={pageNumber}
-                        onClick={() => setCurrentPage(pageNumber)}
-                        className={`w-8 h-8 rounded text-sm font-medium transition-all cursor-pointer ${currentPage === pageNumber
-                          ? 'bg-emerald-500 text-white'
-                          : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
-                          }`}
-                      >
-                        {pageNumber}
-                      </button>
-                    );
-                  })}
+            {filteredTransactions.length > 0 && (
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-800">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-400 text-sm">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <span className="text-gray-500 text-xs">
+                    ({startIndex + 1}-{Math.min(endIndex, filteredTransactions.length)} of {filteredTransactions.length})
+                  </span>
                 </div>
 
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-1.5 rounded bg-gray-800 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1.5 rounded bg-gray-800 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="15 18 9 12 15 6" />
+                    </svg>
+                  </button>
+
+                  {/* Page numbers */}
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      let pageNumber;
+                      if (totalPages <= 5) {
+                        pageNumber = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNumber = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNumber = totalPages - 4 + i;
+                      } else {
+                        pageNumber = currentPage - 2 + i;
+                      }
+
+                      return (
+                        <button
+                          key={pageNumber}
+                          onClick={() => setCurrentPage(pageNumber)}
+                          className={`w-8 h-8 rounded text-sm font-medium transition-all cursor-pointer ${currentPage === pageNumber
+                            ? 'bg-emerald-500 text-white'
+                            : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
+                            }`}
+                        >
+                          {pageNumber}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1.5 rounded bg-gray-800 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}

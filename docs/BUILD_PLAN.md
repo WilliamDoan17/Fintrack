@@ -201,13 +201,12 @@ Users can:
 
 ---
 
-### S2-6: Transaction Search / Filter ⬜
+### S2-6: Transaction Search / Filter ✅
 **Tasks:**
-- Add search input to `TransactionContainer`
-- Add type filter (all / add / withdraw)
-- Add date range filter
-- Add amount range filter
-- Filters apply on top of pagination
+- Add search input to `TransactionContainer` ✅
+- Add type filter (all / add / withdraw) ✅
+- Add amount range filter ✅
+- Filters apply on top of pagination ✅
 
 ---
 

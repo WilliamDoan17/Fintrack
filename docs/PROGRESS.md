@@ -405,7 +405,7 @@ $$ language plpgsql;
 3. Responsive UI
 4. BudgetCard balance ✅
 5. Pagination for transactions ✅
-6. Transaction search/filter
+6. Transaction search/filter ✅
 7. Budget manager (hierarchy tree)
 8. Move Budget
 9. Move Transaction
