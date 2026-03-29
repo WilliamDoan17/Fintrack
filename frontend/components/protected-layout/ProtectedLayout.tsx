@@ -10,7 +10,7 @@ const ProtectedLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   if (loading) return <PageLoader />
-  if (error || !user) return <Navigate to="/auth" replace />
+  if (error || !user) return <Navigate to="/" replace />
 
   return (
     <div className="flex h-screen bg-gray-950">
@@ -32,7 +32,7 @@ const ProtectedLayout = () => {
 
       {/* Mobile overlay */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="md:hidden fixed inset-0 bg-black/60 z-40"
           onClick={() => setIsMobileMenuOpen(false)}
         />
