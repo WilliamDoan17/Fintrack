@@ -403,7 +403,7 @@ $$ language plpgsql;
 1. useReactQuery
 2. Dark/light mode
 3. Responsive UI
-4. BudgetCard balance
+4. BudgetCard balance ✅
 5. Pagination for transactions
 6. Transaction search/filter
 7. Budget manager (hierarchy tree)

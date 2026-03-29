@@ -4,7 +4,8 @@ export interface Budget {
   created_at: string,
   name: string,
   parent_id: string | null,
+  balance: number,
 }
 
-export type BudgetInput = Omit<Budget, 'id' | 'created_at' | 'user_id'>;
+export type BudgetInput = Omit<Budget, 'id' | 'created_at' | 'user_id' | 'balance'>;
 

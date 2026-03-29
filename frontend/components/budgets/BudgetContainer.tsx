@@ -6,7 +6,8 @@ const BudgetContainerSkeleton = () => (
     {[...Array(4)].map((_, i) => (
       <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl px-5 py-4 flex flex-col gap-3">
         <div className="w-24 h-4 bg-gray-800 rounded animate-pulse" />
-        <div className="w-16 h-3 bg-gray-800 rounded animate-pulse" />
+        <div className="w-16 h-3 bg-gray-800 rounded animate-pulse mb-2" />
+        <div className="w-20 h-6 bg-gray-800 rounded animate-pulse" />
       </div>
     ))}
   </div>

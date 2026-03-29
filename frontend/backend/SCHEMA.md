@@ -39,6 +39,12 @@ This document states the data schema for Fintrack project
   - constraints:
     - on delete cascade
   - References the parent budget, null if this is a root budget
+- balance:
+  - type: numeric(15, 2)
+  - defaults to 0
+  - constraints:
+    - not null
+  - Calculated balance including own transactions and all sub-budgets' balances recursively
 #### Implementation
 ```postgres
 create table budgets (
@@ -46,7 +52,8 @@ create table budgets (
   user_id uuid not null references auth.users(id) on delete cascade,
   created_at timestamptz default now() not null,
   name text not null check(name <> ''),
-  parent_id uuid references budgets(id) on delete cascade
+  parent_id uuid references budgets(id) on delete cascade,
+  balance numeric(15, 2) not null default 0
 );
 ```
 

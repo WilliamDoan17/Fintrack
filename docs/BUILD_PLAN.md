@@ -183,13 +183,15 @@ Users can:
 
 ---
 
-### S2-4: BudgetCard Balance ⬜
+### S2-4: BudgetCard Balance ✅
 **Tasks:**
-- Add `balance` column to `budgets` table
-- Write PostgreSQL trigger to update balance on transaction INSERT/UPDATE/DELETE
-- Trigger walks up budget tree to update parent balances
-- Update `Budget` interface to include `balance`
-- Display balance on `BudgetCard`
+- Add `balance` column to `budgets` table ✅
+- Write function to update budgets balance ✅
+- update_all_budgets_balance run ⬜ (needs to be run in Supabase)
+- Write PostgreSQL trigger to update balance on transaction INSERT/UPDATE/DELETE ⬜ (planned)
+- Trigger walks up budget tree to update parent balances ⬜ (planned)
+- Update `Budget` interface to include `balance` ✅
+- Display balance on `BudgetCard` ✅
 
 ---
 
