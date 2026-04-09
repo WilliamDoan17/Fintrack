@@ -210,25 +210,17 @@ Users can:
 
 ---
 
-### S2-7: Budget Manager (Hierarchy Tree) ⬜
+### S2-7: Move Budget ⬜
 **Tasks:**
-- Create `/budgets` page
-- Write recursive tree component
-- Support expand/collapse per node
-- Add route to `App.tsx` and link to Sidebar
+- Update budget UPDATE RLS to allow `parent_id` changes (avoid circular) ⬜
+- Create useBudgetStructure hook ✅
+- Create `MoveBudgetModal` & `MoveBudgetButton` component ✅
+- Add move option to `BudgetDetail` header ✅
+- Wire to `updateBudget` service ✅
 
 ---
 
-### S2-8: Move Budget ⬜
-**Tasks:**
-- Update budget UPDATE RLS to allow `parent_id` changes
-- Create `BudgetSelector` component
-- Add move option to `BudgetDetail` header
-- Wire to `updateBudget` service
-
----
-
-### S2-9: Move Transaction ⬜
+### S2-8: Move Transaction ⬜
 **Tasks:**
 - Add budget selector to `UpdateTransactionModal`
 - Wire to `updateTransaction` service
@@ -236,7 +228,7 @@ Users can:
 
 ---
 
-### S2-10: Transfer Money Between Budgets ⬜
+### S2-9: Transfer Money Between Budgets ⬜
 **Tasks:**
 - Design transfer as two transactions: withdraw from source, add to destination
 - Create `TransferModal` component
@@ -246,12 +238,21 @@ Users can:
 
 ---
 
-### S2-11: Income as Special Budget ⬜
+### S2-10: Income as Special Budget ⬜
 **Tasks:**
 - Add `is_income` flag to `budgets` table
 - Update RLS for income budget rules
 - Show income budget distinctly in Dashboard and Budget Manager
 - Income transfers to other budgets via Transfer feature
+
+---
+
+### S2-11: Budget Manager (Hierarchy Tree) ⬜
+**Tasks:**
+- Create `/budgets` page
+- Write recursive tree component
+- Support expand/collapse per node
+- Add route to `App.tsx` and link to Sidebar
 
 ---
 

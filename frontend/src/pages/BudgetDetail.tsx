@@ -16,12 +16,15 @@ import UpdateBudgetNameInput from '../../components/budgets/UpdateBudgetNameInpu
 import UpdateBudgetNameButton from '../../components/budgets/UpdateBudgetNameButton'
 import DeleteBudgetButton from '../../components/budgets/DeleteBudgetButton'
 import DeleteBudgetConfirmModal from '../../components/budgets/DeleteBudgetConfirmModal'
+import MoveBudgetButton from '../../components/budgets/MoveBudgetButton'
+import MoveBudgetModal from '../../components/budgets/MoveBudgetModal'
 import { useNavigation } from '../../contexts/NavigationContext'
 
 type ModalState =
   { type: 'createBudget' } |
   { type: 'addTransaction' } |
-  { type: 'deleteBudgetConfirm' }
+  { type: 'deleteBudgetConfirm' } |
+  { type: 'moveBudget' }
 
 const BudgetDetail = () => {
   const { id: budgetId } = useParams();
@@ -87,7 +90,13 @@ const BudgetDetail = () => {
                 <h1 className="text-white text-2xl md:text-3xl font-bold">{budgetInfo?.name}</h1>
                 <UpdateBudgetNameButton setIsOpen={setIsEditingName} />
               </div>
-              <DeleteBudgetButton onClick={() => setModalState({ type: 'deleteBudgetConfirm' })} />
+              <div className="flex gap-2">
+                <MoveBudgetButton 
+                  budget={budgetInfo} 
+                  onClick={() => setModalState({ type: 'moveBudget' })}
+                />
+                <DeleteBudgetButton onClick={() => setModalState({ type: 'deleteBudgetConfirm' })} />
+              </div>
             </div>
           }
         </div>
@@ -136,6 +145,12 @@ const BudgetDetail = () => {
         <DeleteBudgetConfirmModal
           budgetId={budgetId ?? ''}
           budgetName={budgetInfo?.name ?? ''}
+          onClose={() => setModalState(null)}
+        />
+      )}
+      {modalState?.type === 'moveBudget' && budgetInfo && (
+        <MoveBudgetModal
+          budget={budgetInfo}
           onClose={() => setModalState(null)}
         />
       )}
