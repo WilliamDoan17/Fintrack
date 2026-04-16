@@ -2,7 +2,7 @@ import { type Transaction } from "../../backend/types/transactions"
 import UpdateTransactionButton from './UpdateTransactionButton'
 import DeleteTransactionButton from './DeleteTransactionButton'
 
-const TransactionCard = ({ transaction, onEdit, onDelete }: { transaction: Transaction, onEdit: () => void, onDelete: () => void }) => {
+const TransactionCard = ({ transaction, onEdit, onDelete, onMove }: { transaction: Transaction, onEdit: () => void, onDelete: () => void, onMove: () => void }) => {
   const isAdd = transaction.type === 'add'
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 bg-gray-800 border border-gray-700 rounded-xl px-5 py-4 hover:border-gray-600 transition-all">
@@ -15,6 +15,12 @@ const TransactionCard = ({ transaction, onEdit, onDelete }: { transaction: Trans
           {isAdd ? '+' : '-'}${transaction.amount}
         </span>
         <div className="flex items-center gap-2">
+          <button
+            onClick={onMove}
+            className="px-4 py-2 text-sm text-gray-400 hover:text-white cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
+          >
+            Move
+          </button>
           <UpdateTransactionButton onClick={onEdit} />
           <DeleteTransactionButton onClick={onDelete} />
         </div>

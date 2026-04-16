@@ -4,10 +4,12 @@ import TransactionCard from "./TransactionCard"
 import { useState, useMemo } from 'react'
 import UpdateTransactionModal from './UpdateTransactionModal'
 import DeleteTransactionConfirmModal from './DeleteTransactionConfirmModal'
+import MoveTransactionModal from './MoveTransactionModal'
 
 type ModalState =
   | { type: 'update', transaction: Transaction }
   | { type: 'delete', transaction: Transaction }
+  | { type: 'move', transaction: Transaction }
 
 const TransactionContainerSkeleton = () => (
   <div className="flex flex-col gap-3 bg-gray-900 border border-gray-800 rounded-xl p-4">
@@ -82,6 +84,7 @@ const TransactionContainer = ({ transactionQuery: { transactions, loading, error
             transaction={transaction}
             onEdit={() => setModalState({ type: 'update', transaction })}
             onDelete={() => setModalState({ type: 'delete', transaction })}
+            onMove={() => setModalState({ type: 'move', transaction })}
           />
         ))}
 
@@ -221,6 +224,7 @@ const TransactionContainer = ({ transactionQuery: { transactions, loading, error
                     transaction={transaction}
                     onEdit={() => setModalState({ type: 'update', transaction })}
                     onDelete={() => setModalState({ type: 'delete', transaction })}
+                    onMove={() => setModalState({ type: 'move', transaction })}
                   />
                 ))
               )}
@@ -301,11 +305,17 @@ const TransactionContainer = ({ transactionQuery: { transactions, loading, error
             onSuccess={refetch}
             onClose={() => setModalState(null)}
           />
-          : <DeleteTransactionConfirmModal
-            transaction={modalState.transaction}
-            onSuccess={refetch}
-            onClose={() => setModalState(null)}
-          />
+          : modalState.type === 'delete'
+            ? <DeleteTransactionConfirmModal
+              transaction={modalState.transaction}
+              onSuccess={refetch}
+              onClose={() => setModalState(null)}
+            />
+            : <MoveTransactionModal
+              transaction={modalState.transaction}
+              onSuccess={refetch}
+              onClose={() => setModalState(null)}
+            />
       )}
     </div>
   )

@@ -220,11 +220,14 @@ Users can:
 
 ---
 
-### S2-8: Move Transaction ⬜
+### S2-8: Move Transaction ✅
 **Tasks:**
-- Add budget selector to `UpdateTransactionModal`
-- Wire to `updateTransaction` service
-- Refetch transaction list on success
+- Update transactions UPDATE RLS to allow `budget_id` changes (budget must be owned by user) ✅
+- Create `MoveTransactionModal` & `MoveTransactionButton` ✅
+- Wire `useBudgetStructure` hook to the modal (it actually listed own budgets, don't need to filter anything) (use same hinting pattern as `MoveBudgetModal`) ✅
+- Add move option to `TransactionCard` ✅
+- Wire to `updateTransaction` service ✅
+- Refetch transaction list on success ✅
 
 ---
 

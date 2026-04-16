@@ -14,6 +14,7 @@ const useTransactions = (budgetId: string | null = null) => {
         ? await getBudgetTransactions(budgetId)
         : await getAllTransactions();
       setTransactions(data)
+      console.log(data);
     } catch (err) {
       setError(err as Error)
     } finally {
