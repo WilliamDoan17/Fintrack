@@ -91,8 +91,8 @@ const BudgetDetail = () => {
                 <UpdateBudgetNameButton setIsOpen={setIsEditingName} />
               </div>
               <div className="flex gap-2">
-                <MoveBudgetButton 
-                  budget={budgetInfo} 
+                <MoveBudgetButton
+                  budget={budgetInfo}
                   onClick={() => setModalState({ type: 'moveBudget' })}
                 />
                 <DeleteBudgetButton onClick={() => setModalState({ type: 'deleteBudgetConfirm' })} />
@@ -112,7 +112,8 @@ const BudgetDetail = () => {
                 <h2 className="text-gray-400 text-sm uppercase tracking-widest">Recent Transactions</h2>
                 <AddTransactionButton onClick={() => setModalState({ type: 'addTransaction' })} />
               </div>
-              <TransactionContainer transactionQuery={transactionQuery} />
+              <TransactionContainer
+                budgetQuery={budgetQuery} transactionQuery={transactionQuery} />
             </div>
           </div>
 

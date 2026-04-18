@@ -1,5 +1,6 @@
 import type { Transaction } from "../../backend/types/transactions"
 import useTransactions from "../../hooks/useTransactions"
+import useBudgets from "../../hooks/useBudgets"
 import TransactionCard from "./TransactionCard"
 import { useState, useMemo } from 'react'
 import UpdateTransactionModal from './UpdateTransactionModal'
@@ -25,7 +26,8 @@ const TransactionContainerSkeleton = () => (
   </div>
 )
 
-const TransactionContainer = ({ transactionQuery: { transactions, loading, error, refetch }, limit = 3 }: { transactionQuery: ReturnType<typeof useTransactions>, limit?: number }) => {
+const TransactionContainer = ({ transactionQuery, budgetQuery, limit = 3 }: { transactionQuery: ReturnType<typeof useTransactions>, budgetQuery: ReturnType<typeof useBudgets>, limit?: number }) => {
+  const { transactions, loading, error } = transactionQuery
   const [modalState, setModalState] = useState<ModalState | null>(null)
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const [currentPage, setCurrentPage] = useState<number>(1)
@@ -302,18 +304,21 @@ const TransactionContainer = ({ transactionQuery: { transactions, loading, error
         modalState.type === 'update'
           ? <UpdateTransactionModal
             transaction={modalState.transaction}
-            onSuccess={refetch}
+            onSuccess={transactionQuery.refetch}
             onClose={() => setModalState(null)}
           />
           : modalState.type === 'delete'
             ? <DeleteTransactionConfirmModal
               transaction={modalState.transaction}
-              onSuccess={refetch}
+              onSuccess={transactionQuery.refetch}
               onClose={() => setModalState(null)}
             />
             : <MoveTransactionModal
               transaction={modalState.transaction}
-              onSuccess={refetch}
+              onSuccess={() => {
+                transactionQuery.refetch()
+                budgetQuery.refetch()
+              }}
               onClose={() => setModalState(null)}
             />
       )}
