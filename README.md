@@ -77,3 +77,5 @@ All project docs live in [`docs/`](./docs/):
 | [TYPES.md](./docs/TYPES.md) | TypeScript types used across the frontend |
 | [SCHEMA.md](./docs/SCHEMA.md) | Database tables, types, and indexes |
 | [RLS.md](./docs/RLS.md) | Row Level Security policies |
+| [TRIGGERS.md](./docs/TRIGGERS.md) | PostgreSQL triggers and when they fire |
+| [DB_FUNCTIONS.md](./docs/DB_FUNCTIONS.md) | PostgreSQL functions (RPC and trigger functions) |
