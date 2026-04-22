@@ -11,7 +11,7 @@ const UpdateBudgetNameInput = ({ budgetId, budgetName, onSuccess, setIsOpen }: {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    updateBudget(budgetId, { name })
+    updateBudget(budgetId, { name: name.trim() })
       .then(() => {
         notify('Budget name updated', 'success')
         onSuccess()

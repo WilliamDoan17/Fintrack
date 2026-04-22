@@ -12,7 +12,7 @@ const CreateBudgetModal = ({ budgetQuery: { refetch }, onClose, parentId = null 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    createBudget({ name, parent_id: parentId })
+    createBudget({ name: name.trim(), parent_id: parentId })
       .then(() => {
         notify('Budget created', 'success')
         refetch()
