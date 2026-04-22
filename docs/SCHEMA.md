@@ -53,4 +53,6 @@ This document states the data schema for Fintrack project.
 | id | uuid | primary key, default gen_random_uuid |
 | from_budget_id | uuid | not null, FK -> budgets(id) on delete cascade |
 | to_budget_id | uuid | not null, FK -> budgets(id) on delete cascade |
-| 
+| amount | numeric(15, 2) | not null, check amount > 0 |
+| name | text | not null, check name <> '' |
+| created_at | timestamptz  | not null, default now() |
