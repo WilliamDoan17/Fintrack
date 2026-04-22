@@ -61,3 +61,19 @@ Coming soon
   - Authentication (Supabase Auth)
   - PostgreSQL Database
   - Row Level Security (RLS)
+
+## Documentation
+All project docs live in [`docs/`](./docs/):
+
+| File | Purpose |
+|------|---------|
+| [SCOPE.md](./docs/SCOPE.md) | Full feature scope by category |
+| [BUILD_PLAN.md](./docs/BUILD_PLAN.md) | Development philosophy, stages, and per-phase task breakdown |
+| [PROGRESS.md](./docs/PROGRESS.md) | Status of each phase (✅ / ⬜ / Partial) |
+| [TASKS.md](./docs/TASKS.md) | Daily task log |
+| [PAGES.md](./docs/PAGES.md) | Routes and page-level features |
+| [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Frontend structure (hooks, contexts, components, conventions) |
+| [SERVICES.md](./docs/SERVICES.md) | Backend service functions (auth, budgets, transactions) |
+| [TYPES.md](./docs/TYPES.md) | TypeScript types used across the frontend |
+| [SCHEMA.md](./docs/SCHEMA.md) | Database tables, types, and indexes |
+| [RLS.md](./docs/RLS.md) | Row Level Security policies |

@@ -32,7 +32,10 @@ const Dashboard = () => {
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-gray-400 text-sm uppercase tracking-widest">Recent Transactions</h2>
               </div>
-              <TransactionContainer transactionQuery={transactionQuery} />
+              <TransactionContainer
+                transactionQuery={transactionQuery}
+                budgetQuery={budgetQuery}
+              />
             </div>
           </div>
           {/* Budgets Section */}

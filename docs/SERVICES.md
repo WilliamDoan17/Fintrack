@@ -1,0 +1,40 @@
+# SERVICES
+This document defines the services for Fintrack.
+
+## Conventions
+- Services never accept `user_id` as a parameter
+- `user_id` is always retrieved internally via `supabase.auth.getUser()`
+- RLS handles user-level data protection
+- Mutations (`create`, `update`, `delete`) return `void` on success, throw on failure
+- UI uses optimistic updates: state updated immediately, refetch reconciles with server, rollback on failure via try/catch
+
+---
+
+## auth
+
+- **signupWithEmailAndPassword(email, password)** → `void` — creates a new user account
+- **loginWithEmailAndPassword(email, password)** → `void` — signs in an existing user
+- **logout()** → `void` — signs out the current user
+- **getCurrentUser()** → `User` — returns the currently authenticated user
+
+---
+
+## budgets
+
+- **createBudget(input)** → `void` — creates a new budget for the current user
+- **updateBudget(budget_id, updates: Partial<BudgetInput>)** → `void` — updates fields on an existing budget
+- **deleteBudget(budget_id)** → `void` — deletes a budget and all its sub-budgets (cascade)
+- **getBudget(budget_id)** → `Budget` — fetches a single budget by id
+- **getRootBudgets()** → `Budget[]` — fetches all top-level budgets (no parent) for the current user
+- **getChildBudgets(parent_id)** → `Budget[]` — fetches direct children of a given budget
+
+---
+
+## transactions
+
+- **createTransaction(input)** → `void` — creates a new transaction on a budget
+- **updateTransaction(transaction_id, updates: Partial<TransactionInput>)** → `void` — updates fields on an existing transaction
+- **deleteTransaction(transaction_id)** → `void` — deletes a transaction
+- **getTransaction(transaction_id)** → `Transaction` — fetches a single transaction by id
+- **getAllTransactions()** → `Transaction[]` — fetches all transactions for the current user
+- **getBudgetTransactions(budget_id)** → `Transaction[]` — fetches all transactions for a budget and its sub-budgets recursively

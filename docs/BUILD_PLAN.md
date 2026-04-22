@@ -1,7 +1,7 @@
 # BUILD PLAN
 This document outlines the full development plan for Fintrack.
 
-## Scope
+## Stages
 
 ### MVP (Completed)
 Users can:
@@ -34,6 +34,11 @@ Users can:
 - Manage their profile
 - Interact with an AI agent that can read, plan, and execute financial actions
 
+### Post Stage 3 — Noted for Later
+- Onboarding — first time user guided setup flow
+- Data management — CSV export/import, backup & restore
+- Social/Sharing — shared budgets between users (couples, families, roommates)
+
 ---
 
 ## Development Philosophy
@@ -45,315 +50,157 @@ Users can:
 
 ---
 
-## MVP Phases
+## Phases (Detailed Breakdown)
 
-### Phase 1: Auth ✅
-**Services:**
-- `signupWithEmailAndPassword(email, password)` → void
-- `loginWithEmailAndPassword(email, password)` → void
-- `logout()` → void
+Each phase lists the tasks, services, and pages it touches. Status is tracked in `PROGRESS.md`.
 
-**Tasks:**
-- Link Supabase to the project
-- Write auth services
-- Set up protected routes
+### MVP
 
-**Pages:**
-- `Auth.tsx` — fully functional (signup, login, tab switching, wired to services)
+#### Phase 1: Auth
+- **Tasks:** link Supabase; write auth services; set up protected routes
+- **Services:** `signupWithEmailAndPassword`, `loginWithEmailAndPassword`, `logout`
+- **Pages:** `Auth.tsx`
 
----
+#### Phase 2: Create + View Budgets
+- **Tasks:** RLS for budget INSERT/SELECT; budget services
+- **Services:** `createBudget`, `getRootBudgets`
+- **Pages:** `Dashboard.tsx` — root budgets list, create modal
 
-### Phase 2: Create + View Budgets ✅
-**Services:**
-- `createBudget(BudgetInput)` → void
-- `getRootBudgets()` → Budget[]
+#### Phase 3: Budget Detail
+- **Services:** `getBudget`, `getChildBudgets`
+- **Pages:** `BudgetDetail.tsx` — budget name, sub-budgets list, create sub-budget modal
 
-**Tasks:**
-- Write RLS policies for budget INSERT, SELECT
-- Write budget services
+#### Phase 4: Create + View Transactions + Balance
+- **Tasks:** RLS for transaction INSERT/SELECT; transaction services; `get_budget_transactions` recursive PL/pgSQL function
+- **Services:** `createTransaction`, `getBudgetTransactions`, `getAllTransactions`
+- **Pages:** `BudgetDetail.tsx` (add tx form, tx list recursive, balance), `Dashboard.tsx` (recent tx, overall balance)
 
-**Pages:**
-- `Dashboard.tsx` — root budgets list, create budget modal
+#### Phase 5: Update + Delete Budgets
+- **Tasks:** RLS for budget UPDATE/DELETE
+- **Services:** `updateBudget`, `deleteBudget`
+- **Pages:** `BudgetDetail.tsx` — inline rename, delete with confirm modal
 
----
+#### Phase 6: Update + Delete Transactions
+- **Tasks:** RLS for transaction UPDATE/DELETE
+- **Services:** `updateTransaction`, `deleteTransaction`
+- **Pages:** `BudgetDetail.tsx`, `Dashboard.tsx` — edit/delete actions on transaction list
 
-### Phase 3: Budget Detail ✅
-**Services:**
-- `getBudget(budget_id)` → Budget
-- `getChildBudgets(parent_id)` → Budget[]
-
-**Tasks:**
-- Write budget services
-
-**Pages:**
-- `BudgetDetail.tsx` — budget name, sub-budgets list, create sub-budget modal
+#### Phase 7: Polish
+- **Tasks:** Toast notification system; collapsible Sidebar with user info + logout; NavigationArrow + NavigationContext; ProtectedLayout; Landing page; BalanceSummary polish; skeleton loaders; TransactionContainer expanded overlay; Vercel deployment with SPA routing fix
 
 ---
 
-### Phase 4: Create + View Transactions + Balance ✅
-**Services:**
-- `createTransaction(TransactionInput)` → void
-- `getBudgetTransactions(budget_id)` → Transaction[]
-- `getAllTransactions()` → Transaction[]
+### Stage 2
 
-**Tasks:**
-- Write RLS policies for transaction INSERT, SELECT
-- Write transaction services
-- Write `get_budget_transactions` PostgreSQL recursive function
-
-**Pages:**
-- `BudgetDetail.tsx` — add transaction form, transaction list (recursive), budget balance
-- `Dashboard.tsx` — recent transactions list, overall balance
-
----
-
-### Phase 5: Update + Delete Budgets ✅
-**Services:**
-- `updateBudget(budget_id, Partial<BudgetInput>)` → void
-- `deleteBudget(budget_id)` → void
-
-**Tasks:**
-- Write RLS policies for budget UPDATE, DELETE
-- Fixed bug in budget UPDATE RLS `with check` — `parent_id` now checked against user's own budgets
-- Write budget services
-
-**Pages:**
-- `BudgetDetail.tsx` — edit budget name inline, delete budget with confirmation modal
-
----
-
-### Phase 6: Update + Delete Transactions ✅
-**Services:**
-- `updateTransaction(transaction_id, Partial<TransactionInput>)` → void
-- `deleteTransaction(transaction_id)` → void
-
-**Tasks:**
-- Write RLS policies for transaction UPDATE, DELETE
-- Transaction UPDATE `with check` verifies new `budget_id` still belongs to user
-- Write transaction services
-
-**Pages:**
-- `BudgetDetail.tsx` — edit/delete actions on transaction list
-- `Dashboard.tsx` — edit/delete actions on recent transactions
-
----
-
-### Phase 7: Polish ✅
-**Tasks:**
-- Add Toast notification system (NotificationContext + NotificationProvider)
-- Wire Toast to all mutations across all modals
-- Add collapsible Sidebar with user info + logout
-- Add NavigationArrow with NavigationContext for in-app back navigation
-- Add ProtectedLayout wrapping all protected pages
-- Add Landing page (`/`)
-- Polish BalanceSummary — 30% width, max height
-- Skeleton loaders for BudgetContainer and TransactionContainer
-- TransactionContainer expanded overlay — show all transactions
-- Deploy to Vercel — SPA routing fix via `vercel.json`
-
----
-
-## Stage 2 — UI & Core Features
-
-### S2-1: useReactQuery ⬜
-**Tasks:**
-- Refactor `useBudgets` to use React Query
-- Refactor `useTransactions` to use React Query
-- Refactor `useAuth` to use React Query
+#### S2-1: useReactQuery
+- Refactor `useBudgets`, `useTransactions`, `useAuth` to React Query
 - Remove manual `useState/useEffect` patterns from hooks
 - Test caching and automatic refetch behavior
 
----
-
-### S2-2: Dark / Light Mode ⬜
-**Tasks:**
-- Create `ThemeContext` + `ThemeProvider`
-- Add toggle button to Sidebar
-- Update all Tailwind classes to support light mode variants
+#### S2-2: Dark / Light Mode
+- `ThemeContext` + `ThemeProvider`
+- Toggle button in Sidebar
+- Light mode Tailwind variants across components
 - Persist preference to localStorage
 
----
-
-### S2-3: Responsive UI ⬜
-**Tasks:**
+#### S2-3: Responsive UI
 - Audit all pages for mobile breakpoints
-- Sidebar auto-collapses on small screens
+- Sidebar auto-collapse on small screens
 - Update Dashboard and BudgetDetail grids for mobile
-- Test on common breakpoints (sm, md, lg)
+- Test on sm/md/lg breakpoints
 
----
+#### S2-4: BudgetCard Balance
+- Add `balance` column to `budgets`
+- Function to update budgets balance
+- PostgreSQL trigger on transaction INSERT/UPDATE/DELETE that walks up budget tree
+- Update `Budget` interface + display balance on `BudgetCard`
 
-### S2-4: BudgetCard Balance ✅
-**Tasks:**
-- Add `balance` column to `budgets` table ✅
-- Write function to update budgets balance ✅
-- update_all_budgets_balance run ⬜ (needs to be run in Supabase)
-- Write PostgreSQL trigger to update balance on transaction INSERT/UPDATE/DELETE ⬜ (planned)
-- Trigger walks up budget tree to update parent balances ⬜ (planned)
-- Update `Budget` interface to include `balance` ✅
-- Display balance on `BudgetCard` ✅
+#### S2-5: Pagination for Transactions
+- Add pagination UI to `TransactionContainer`
 
----
+#### S2-6: Transaction Search / Filter
+- Search input, type filter (all/add/withdraw), amount range filter on `TransactionContainer`
+- Filters apply on top of pagination
 
-### S2-5: Pagination for Transactions ✅
-**Tasks:**
-- Add pagination UI to `TransactionContainer` ✅
+#### S2-7: Move Budget
+- Update budget UPDATE RLS to allow `parent_id` changes (avoid circular)
+- `useBudgetStructure` hook
+- `MoveBudgetModal` + `MoveBudgetButton`
+- Add move option to `BudgetDetail` header; wire to `updateBudget`
 
----
+#### S2-8: Move Transaction
+- Update transactions UPDATE RLS to allow `budget_id` changes (target must be user-owned)
+- `MoveTransactionModal` + `MoveTransactionButton`
+- Wire `useBudgetStructure` to the modal
+- Add move option to `TransactionCard`; wire to `updateTransaction`; refetch on success
 
-### S2-6: Transaction Search / Filter ✅
-**Tasks:**
-- Add search input to `TransactionContainer` ✅
-- Add type filter (all / add / withdraw) ✅
-- Add amount range filter ✅
-- Filters apply on top of pagination ✅
+#### S2-9: Transfer Money Between Budgets
+- Extend `TransactionType` with `'transfer'`; allow negative amount when type = 'transfer'
+- `createTransfer` service (creates two transactions; rollback on partial failure)
+- `filterNonTransfers` / `filterTransfers` helpers
+- `TransferModal`, `TransferCard` components
+- `BalanceSummary` uses `filterNonTransfers`
+- `TransactionContainer` renders `TransferCard` vs `TransactionCard` per type
+- Transfer button on `BudgetDetail`
 
----
-
-### S2-7: Move Budget ⬜
-**Tasks:**
-- Update budget UPDATE RLS to allow `parent_id` changes (avoid circular) ⬜
-- Create useBudgetStructure hook ✅
-- Create `MoveBudgetModal` & `MoveBudgetButton` component ✅
-- Add move option to `BudgetDetail` header ✅
-- Wire to `updateBudget` service ✅
-
----
-
-### S2-8: Move Transaction ✅
-**Tasks:**
-- Update transactions UPDATE RLS to allow `budget_id` changes (budget must be owned by user) ✅
-- Create `MoveTransactionModal` & `MoveTransactionButton` ✅
-- Wire `useBudgetStructure` hook to the modal (it actually listed own budgets, don't need to filter anything) (use same hinting pattern as `MoveBudgetModal`) ✅
-- Add move option to `TransactionCard` ✅
-- Wire to `updateTransaction` service ✅
-- Refetch transaction list on success ✅
-
----
-
-### S2-9: Transfer Money Between Budgets ⬜
-**Tasks:**
-- Design transfer as two transactions: withdraw from source, add to destination
-- Create `TransferModal` component
-- Write `transferMoney` service (atomic — both or neither)
-- Handle rollback if one side fails
-- Add transfer button to `BudgetDetail`
-
----
-
-### S2-10: Income as Special Budget ⬜
-**Tasks:**
-- Add `is_income` flag to `budgets` table
+#### S2-10: Income as Special Budget
+- Add `is_income` flag to `budgets`
 - Update RLS for income budget rules
-- Show income budget distinctly in Dashboard and Budget Manager
-- Income transfers to other budgets via Transfer feature
+- Distinct UI on Dashboard and Budget Manager
+- Income flows to other budgets via Transfer feature
+
+#### S2-11: Budget Manager (Hierarchy Tree)
+- `/budgets` page with recursive tree component
+- Expand/collapse per node
+- Route in `App.tsx` + Sidebar link
+
+#### S2-12: Budget Limits + Warnings + Alerts
+- Add `limit` and `reset_period` columns to `budgets`
+- Compute current spend from transactions filtered by reset period
+- Show limit + current spend on `BudgetCard` and `BudgetDetail`
+- Warning UI at 80% of limit; alert UI when exceeded; alert when balance below threshold
+
+#### S2-13: Stats Page
+- `/stats` page: spending over time, per-budget breakdown, income vs expenses
+- Route in `App.tsx` + Sidebar link
 
 ---
 
-### S2-11: Budget Manager (Hierarchy Tree) ⬜
-**Tasks:**
-- Create `/budgets` page
-- Write recursive tree component
-- Support expand/collapse per node
-- Add route to `App.tsx` and link to Sidebar
+### Stage 3
 
----
-
-### S2-12: Budget Limits + Warnings + Alerts ⬜
-**Tasks:**
-- Add `limit` and `reset_period` columns to `budgets` table
-- Calculate current spend from transactions filtered by reset period
-- Show limit and current spend on `BudgetCard` and `BudgetDetail`
-- Warning UI at 80% of limit
-- Alert UI when limit is exceeded
-- Alert UI when balance falls below threshold
-
----
-
-### S2-13: Stats Page ⬜
-**Tasks:**
-- Create `/stats` page
-- Spending over time chart (by week/month)
-- Per-budget breakdown chart
-- Income vs expenses chart
-- Add route to `App.tsx` and link to Sidebar
-
----
-
-## Stage 3 — Advanced & Scale
-
-### S3-1: Multi-Currency ⬜
-**Tasks:**
-- Add `currency` field to `transactions` and `budgets`
+#### S3-1: Multi-Currency
+- `currency` field on `transactions` and `budgets`
 - Integrate exchange rate API
 - Currency selector on transaction forms
 - Convert to base currency for balance calculations
 
----
+#### S3-2: Scheduled & Recurring Transactions (AutoPay)
+- `scheduled_transactions` table + RLS
+- Supabase Edge Function or cron scheduler
+- `/scheduled` page with card + create modal
+- One-time and recurring support; pre-run reminders
 
-### S3-2: Scheduled & Recurring Transactions (AutoPay) ⬜
-**Tasks:**
-- Create `scheduled_transactions` table
-- Write RLS policies
-- Set up Supabase Edge Function or cron scheduler
-- Create `/scheduled` page with card + create modal
-- One-time and recurring transaction support
-- Reminders before scheduled run
-
----
-
-### S3-3: Session Management ⬜
-**Tasks:**
+#### S3-3: Session Management
 - List active sessions in Settings page
-- Revoke individual and all other sessions
-- Show device info + last active per session
+- Revoke individual / all other sessions
+- Device info + last-active per session
 - Wire to Supabase auth session API
 
----
-
-### S3-4: Bill Splitter ⬜
-**Tasks:**
-- Create `BillSplit` modal
-- Input total amount + participants
-- Split equally or custom amounts
-- Generate split transactions per participant
+#### S3-4: Bill Splitter
+- `BillSplit` modal: total + participants
+- Split equally or custom; per-participant transactions
 - Track who has paid
 
----
-
-### S3-5: Loan & Owes Tracking ⬜
-**Tasks:**
-- Create `loans` table
-- Track money lent and money owed
-- Mark loans as settled
-- View outstanding loans/owes dashboard
+#### S3-5: Loan & Owes Tracking
+- `loans` table; track lent vs owed
+- Mark as settled; outstanding dashboard
 - Link loans to transactions
 
----
+#### S3-6: Profiles
+- `profiles` table + data migration
+- `/profile` page — avatar, display name, settings
+- RLS policies for profile-aware queries
 
-### S3-6: Profiles ⬜
-**Tasks:**
-- Create `profiles` table
-- Plan and execute data migration
-- Profile page (`/profile`) — avatar, display name, settings
-- Update RLS policies for profile-aware queries
-
----
-
-### S3-7: AI Agent ⬜
-**Tasks:**
-- Phase 1 — Read only
-  - Integrate Anthropic API
-  - Chat interface component
-  - Agent reads budgets and transactions
-  - Agent gives spending insights and planning advice
-- Phase 2 — Write operations
-  - Define tools: `create_budget`, `create_transaction`, `move_budget`, `transfer_money`
-  - Action confirmation UI before agent executes writes
-
----
-
-## Post Stage 3 — Noted for Later
-- Onboarding — first time user guided setup flow
-- Data management — CSV export/import, backup & restore
-- Social/Sharing — shared budgets between users (couples, families, roommates)
+#### S3-7: AI Agent
+- Phase 1 — Read only: integrate Anthropic API, chat interface, agent reads budgets/transactions, gives spending insights
+- Phase 2 — Write: tools (`create_budget`, `create_transaction`, `move_budget`, `transfer_money`) + action confirmation UI

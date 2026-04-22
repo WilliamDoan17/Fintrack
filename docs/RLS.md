@@ -1,4 +1,4 @@
-# POLICIES
+# RLS
 This document defines the Row Level Security (RLS) policies for Fintrack's Supabase database.
 
 ## Conventions
@@ -6,6 +6,8 @@ This document defines the Row Level Security (RLS) policies for Fintrack's Supab
 - A user can only perform operations on their own data via `user_id = auth.uid()`
 - `USING` checks the existing row before an operation
 - `WITH CHECK` checks the resulting row after an operation
+
+---
 
 ## budgets
 
@@ -15,8 +17,10 @@ This document defines the Row Level Security (RLS) policies for Fintrack's Supab
   - `parent_id` is null OR the parent budget is owned by `auth.uid()`
 - **UPDATE**:
   - `USING`: `user_id = auth.uid()`
-  - `WITH CHECK`: `user_id = auth.uid()`
+  - `WITH CHECK`: `user_id = auth.uid()` AND (`parent_id` is null OR the new parent budget is owned by `auth.uid()`)
 - **DELETE**: `user_id = auth.uid()`
+
+---
 
 ## transactions
 
