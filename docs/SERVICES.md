@@ -21,7 +21,7 @@ This document defines the services for Fintrack.
 
 ## budgets
 
-- **createBudget(input)** → `void` — creates a new budget for the current user
+- **createBudget(input: BudgetInput)** → `void` — creates a new budget for the current user
 - **updateBudget(budget_id, updates: Partial<BudgetInput>)** → `void` — updates fields on an existing budget
 - **deleteBudget(budget_id)** → `void` — deletes a budget and all its sub-budgets (cascade)
 - **getBudget(budget_id)** → `Budget` — fetches a single budget by id
@@ -32,9 +32,20 @@ This document defines the services for Fintrack.
 
 ## transactions
 
-- **createTransaction(input)** → `void` — creates a new transaction on a budget
+- **createTransaction(input: TransactionInput)** → `void` — creates a new transaction on a budget
 - **updateTransaction(transaction_id, updates: Partial<TransactionInput>)** → `void` — updates fields on an existing transaction
 - **deleteTransaction(transaction_id)** → `void` — deletes a transaction
 - **getTransaction(transaction_id)** → `Transaction` — fetches a single transaction by id
 - **getAllTransactions()** → `Transaction[]` — fetches all transactions for the current user
 - **getBudgetTransactions(budget_id)** → `Transaction[]` — fetches all transactions for a budget and its sub-budgets recursively
+
+---
+
+## transfers
+
+- **createTransfer(input: TransferInput)** → `void` — creates a new transfer between two budgets
+- **updateTransfer(transfer_id, updates: Partial<TransferInput>)** → `void` — updates fields on an existing transfer
+- **deleteTransfer(transfer_id)** → `void` — deletes a transfer
+- **getTransfer(transfer_id)** → `Transfer` — fetches a single transfer by id
+- **getAllTransfers()** → `Transfer[]` — fetches all transfers for the current user
+- **getBudgetTransfers(budget_id)** → `Transfer[]` — fetches transfers where the budget is the source or destination (not recursive)

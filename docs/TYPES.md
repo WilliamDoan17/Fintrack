@@ -50,3 +50,29 @@ Shape passed to `createTransaction` / `updateTransaction`. Equivalent to `Omit<T
 | type | TransactionType |
 | amount | number |
 | name | string |
+
+--- 
+
+## transfers (`frontend/backend/types/transfers.ts`)
+
+### `Transfer`
+| Field | Type |
+|-------|------|
+| id | string (uuid) |
+| user_id | string (uuid) |
+| from_budget_id | string (uuid) |
+| to_budget_id | string (uuid) |
+| amount | number |
+| name | string |
+| created_at | string (ISO timestamp) |
+
+### `TransferInput`
+Shape passed to `createTransfer` / `updateTransfer`. Equivalent to `Omit<Transfer, 'id' \| 'user_id' \| 'created_at'>`:
+| Field | Type |
+|-------|------|
+| from_budget_id | string (uuid) |
+| to_budget_id | string (uuid) |
+| amount | number |
+| name | string |
+
+
