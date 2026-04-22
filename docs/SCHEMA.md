@@ -45,14 +45,23 @@ This document states the data schema for Fintrack project.
 | name | text | not null, check name <> '' |
 | created_at | timestamptz | not null, default now() |
 
+---
+
 ### transfers
 
 #### Interface
 | Field | Type | Constraints |
-| --- | --- | --- |
-| id | uuid | primary key, default gen_random_uuid |
-| from_budget_id | uuid | not null, FK -> budgets(id) on delete cascade |
-| to_budget_id | uuid | not null, FK -> budgets(id) on delete cascade |
+|-------|------|-------------|
+| id | uuid | primary key, default gen_random_uuid() |
+| user_id | uuid id | not null, FK -> auth.users(id) on delete cascade |
+| from_budget_id | uuid | not null, FK → budgets(id) on delete cascade |
+| to_budget_id | uuid | not null, FK → budgets(id) on delete cascade |
 | amount | numeric(15, 2) | not null, check amount > 0 |
 | name | text | not null, check name <> '' |
-| created_at | timestamptz  | not null, default now() |
+| created_at | timestamptz | not null, default now() |
+
+#### Indexes
+| Name | Column | Method |
+|------|--------|--------|
+| idx_transfers_from_budget_id | from_budget_id | btree |
+| idx_transfers_to_budget_id | to_budget_id | btree |

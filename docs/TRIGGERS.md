@@ -44,7 +44,8 @@ A single trigger handles all balance-affecting changes to transactions (INSERT, 
 
 - **On DELETE:** reverses both operations — calls `apply_balance_delta(from_budget_id, +amount)` then `apply_balance_delta(to_budget_id, -amount)`
 
-**Trigger:**
-- `on_transfer_change` — fires `AFTER INSERT OR DELETE ON transfers`
+- **On UPDATE:** only fires when `amount`, `from_budget_id`, or `to_budget_id` changes — reverses the old transfer's effect on both budget trees, then applies the new values
 
-**Note:** Transfers are immutable by design — no UPDATE trigger exists. To modify a transfer, users must delete and recreate it. This simplifies the trigger logic and maintains audit trail integrity.
+**Triggers:**
+- `on_transfer_insert_delete` — fires `AFTER INSERT OR DELETE ON transfers`
+- `on_transfer_update` — fires `AFTER UPDATE ON transfers WHEN (OLD.amount IS DISTINCT FROM NEW.amount OR OLD.from_budget_id IS DISTINCT FROM NEW.from_budget_id OR OLD.to_budget_id IS DISTINCT FROM NEW.to_budget_id)`
