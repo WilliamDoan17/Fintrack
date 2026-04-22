@@ -78,8 +78,9 @@ Maintains budget balances whenever transactions are created, deleted, or modifie
   - **If only amount and/or type changed (same budget):** calculates the net change (new_effect - old_effect) and applies it to the same budget tree
   - **If only name or other metadata changed:** no action taken (balance unaffected)
 
-**Used by trigger:**
-- `on_transaction_change` — fires `AFTER INSERT OR DELETE OR UPDATE ON transactions`
+**Used by triggers:**
+- `on_transaction_insert_delete` — fires `AFTER INSERT OR DELETE ON transactions`
+- `on_transaction_budget_moved` — fires `AFTER UPDATE ON transactions WHEN (OLD.budget_id IS DISTINCT FROM NEW.budget_id)`
 
 
 ---
@@ -91,11 +92,11 @@ Maintains budget balances whenever transactions are created, deleted, or modifie
 **What it does:**
 Maintains budget balances whenever money is transferred between budgets.
 
-- **On INSERT:** applies a negative delta (withdrawal) to the source budget and a positive delta (deposit) to the destination budget — effectively moving the amount from one budget tree to another
-- **On DELETE:** reverses the operation — applies positive delta back to source, negative delta back to destination — restoring the original balances
+- **On INSERT:** applies a negative delta to the source budget and a positive delta to the destination budget — moving the amount from one budget tree to another
+- **On DELETE:** reverses both — restoring original balances on both trees
+- **On UPDATE:** reverses the old transfer's effect on both trees, then applies the new values — fires only when `amount`, `from_budget_id`, or `to_budget_id` changes
 
-**Used by trigger:**
-- `on_transfer_change` — fires `AFTER INSERT OR DELETE ON transfers`
-
-**Note:** Unlike transactions, transfers are immutable by design — they cannot be updated, only inserted or deleted. This simplifies the trigger logic since there's no UPDATE case to handle.
+**Used by triggers:**
+- `on_transfer_insert_delete` — fires `AFTER INSERT OR DELETE ON transfers`
+- `on_transfer_update` — fires `AFTER UPDATE ON transfers WHEN (OLD.amount IS DISTINCT FROM NEW.amount OR OLD.from_budget_id IS DISTINCT FROM NEW.from_budget_id OR OLD.to_budget_id IS DISTINCT FROM NEW.to_budget_id)`
 

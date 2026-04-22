@@ -14,7 +14,8 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
     - implement create table transfers ✅
     - Write RLS for transfers (both budget IDs must be owned by user) ✅
     - implement RLS on supabase ✅
-    - Update TRIGGERS.md
+    - Update TRIGGERS.md ✅
+    - Update DB_FUNCTIONS.md ✅
     - implement `update_budget_balance_on_transfer()`
     - implement `on_transfer_insert_delete` & `on_transfers_update`
     - Update SERVICES.md and TYPES.md
