@@ -1,16 +1,41 @@
 import type { Transaction } from "../../backend/types/transactions"
+import type { Transfer } from "../../backend/types/transfers"
 import useTransactions from "../../hooks/useTransactions"
+import useTransfers from "../../hooks/useTransfers"
 import useBudgets from "../../hooks/useBudgets"
 import TransactionCard from "./TransactionCard"
+import TransferCard from "../transfers/TransferCard"
 import { useState, useMemo } from 'react'
 import UpdateTransactionModal from './UpdateTransactionModal'
 import DeleteTransactionConfirmModal from './DeleteTransactionConfirmModal'
 import MoveTransactionModal from './MoveTransactionModal'
+import UpdateTransferModal from '../transfers/UpdateTransferModal'
+import DeleteTransferConfirmModal from '../transfers/DeleteTransferConfirmModal'
 
 type ModalState =
   | { type: 'update', transaction: Transaction }
   | { type: 'delete', transaction: Transaction }
   | { type: 'move', transaction: Transaction }
+  | { type: 'updateTransfer', transfer: Transfer }
+  | { type: 'deleteTransfer', transfer: Transfer }
+
+type CardItem =
+  | { kind: 'transaction'; data: Transaction }
+  | { kind: 'transfer'; data: Transfer }
+
+function mergeSorted(transactions: Transaction[], transfers: Transfer[]): CardItem[] {
+  const result: CardItem[] = []
+  let t = 0, r = 0
+  while (t < transactions.length && r < transfers.length) {
+    const txDate = new Date(transactions[t].created_at).getTime()
+    const trDate = new Date(transfers[r].created_at).getTime()
+    if (txDate >= trDate) result.push({ kind: 'transaction', data: transactions[t++] })
+    else result.push({ kind: 'transfer', data: transfers[r++] })
+  }
+  while (t < transactions.length) result.push({ kind: 'transaction', data: transactions[t++] })
+  while (r < transfers.length) result.push({ kind: 'transfer', data: transfers[r++] })
+  return result
+}
 
 const TransactionContainerSkeleton = () => (
   <div className="flex flex-col gap-3 bg-gray-900 border border-gray-800 rounded-xl p-4">
@@ -26,7 +51,7 @@ const TransactionContainerSkeleton = () => (
   </div>
 )
 
-const TransactionContainer = ({ transactionQuery, budgetQuery, limit = 3 }: { transactionQuery: ReturnType<typeof useTransactions>, budgetQuery: ReturnType<typeof useBudgets>, limit?: number }) => {
+const TransactionContainer = ({ transactionQuery, transferQuery, budgetQuery, budgetId, limit = 3 }: { transactionQuery: ReturnType<typeof useTransactions>, transferQuery?: ReturnType<typeof useTransfers>, budgetQuery: ReturnType<typeof useBudgets>, budgetId?: string, limit?: number }) => {
   const { transactions, loading, error } = transactionQuery
   const [modalState, setModalState] = useState<ModalState | null>(null)
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
@@ -39,64 +64,73 @@ const TransactionContainer = ({ transactionQuery, budgetQuery, limit = 3 }: { tr
   const [minAmount, setMinAmount] = useState<string>('')
   const [maxAmount, setMaxAmount] = useState<string>('')
 
-  // Filter transactions
-  const filteredTransactions = useMemo(() => {
-    return transactions.filter(transaction => {
-      // Search filter (case insensitive)
-      if (searchText && !transaction.name.toLowerCase().includes(searchText.toLowerCase())) {
-        return false
-      }
+  const transfers = transferQuery ? transferQuery.transfers : []
 
-      // Type filter
-      if (typeFilter !== 'all' && transaction.type !== typeFilter) {
-        return false
-      }
+  const merged = useMemo(
+    () => mergeSorted(transactions, transfers),
 
-      // Amount range filter
-      if (minAmount && transaction.amount < parseFloat(minAmount)) {
-        return false
-      }
-      if (maxAmount && transaction.amount > parseFloat(maxAmount)) {
-        return false
+    [transactions, transfers]
+  )
+
+  // Filter merged items
+  const filteredItems = useMemo(() => {
+    return merged.filter(item => {
+      const name = item.data.name
+      const amount = item.data.amount
+
+      if (searchText && !name.toLowerCase().includes(searchText.toLowerCase())) return false
+      if (minAmount && amount < parseFloat(minAmount)) return false
+      if (maxAmount && amount > parseFloat(maxAmount)) return false
+
+      // Type filter only applies to transactions
+      if (typeFilter !== 'all') {
+        if (item.kind === 'transfer') return false
+        if (item.data.type !== typeFilter) return false
       }
 
       return true
     })
-  }, [transactions, searchText, typeFilter, minAmount, maxAmount])
+  }, [merged, searchText, typeFilter, minAmount, maxAmount])
 
-  // Pagination with filtered transactions
-  const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage)
+  // Pagination with filtered items
+  const totalPages = Math.ceil(filteredItems.length / transactionsPerPage)
   const startIndex = (currentPage - 1) * transactionsPerPage
   const endIndex = startIndex + transactionsPerPage
-  const currentTransactions = filteredTransactions.slice(startIndex, endIndex)
-
-  // Reset page when filters change (handled in filter change handlers)
+  const currentItems = filteredItems.slice(startIndex, endIndex)
 
   if (loading) return <TransactionContainerSkeleton />
   if (error) return <p className="text-red-400 text-sm">Error loading transactions</p>
-  if (transactions.length === 0) return <p className="text-gray-500 text-sm">No transactions yet. Create one to get started.</p>
+  if (merged.length === 0) return <p className="text-gray-500 text-sm">No transactions yet. Create one to get started.</p>
 
   return (
     <div className="flex flex-col gap-3 bg-gray-900 border border-gray-800 rounded-xl p-4">
-      {transactions
-        .slice(0, limit)
-        .map(transaction => (
+      {merged.slice(0, limit).map(item =>
+        item.kind === 'transaction' ? (
           <TransactionCard
-            key={transaction.id}
-            transaction={transaction}
-            onEdit={() => setModalState({ type: 'update', transaction })}
-            onDelete={() => setModalState({ type: 'delete', transaction })}
-            onMove={() => setModalState({ type: 'move', transaction })}
+            key={item.data.id}
+            transaction={item.data}
+            onEdit={() => setModalState({ type: 'update', transaction: item.data })}
+            onDelete={() => setModalState({ type: 'delete', transaction: item.data })}
+            onMove={() => setModalState({ type: 'move', transaction: item.data })}
           />
-        ))}
+        ) : (
+          <TransferCard
+            key={item.data.id}
+            transfer={item.data}
+            budgetId={budgetId!}
+            onEdit={() => setModalState({ type: 'updateTransfer', transfer: item.data })}
+            onDelete={() => setModalState({ type: 'deleteTransfer', transfer: item.data })}
+          />
+        )
+      )}
 
-      {/* Show "View all" button if there are more transactions */}
-      {transactions.length > limit && (
+      {/* Show "View all" button if there are more items */}
+      {merged.length > limit && (
         <button
           onClick={() => setIsExpanded(true)}
           className="text-gray-400 hover:text-emerald-400 text-sm transition-all cursor-pointer mt-2"
         >
-          View all {transactions.length} transactions
+          View all {merged.length} transactions
         </button>
       )}
 
@@ -212,35 +246,45 @@ const TransactionContainer = ({ transactionQuery, budgetQuery, limit = 3 }: { tr
 
             {/* Results count */}
             <div className="mb-3 text-sm text-gray-500">
-              Showing {filteredTransactions.length} of {transactions.length} transactions
+              Showing {filteredItems.length} of {merged.length} transactions
             </div>
 
             {/* Transactions list */}
             <div className="flex flex-col gap-3 overflow-y-auto flex-1">
-              {currentTransactions.length === 0 ? (
+              {currentItems.length === 0 ? (
                 <p className="text-gray-500 text-sm text-center py-4">No transactions match your filters</p>
               ) : (
-                currentTransactions.map(transaction => (
-                  <TransactionCard
-                    key={transaction.id}
-                    transaction={transaction}
-                    onEdit={() => setModalState({ type: 'update', transaction })}
-                    onDelete={() => setModalState({ type: 'delete', transaction })}
-                    onMove={() => setModalState({ type: 'move', transaction })}
-                  />
-                ))
+                currentItems.map(item =>
+                  item.kind === 'transaction' ? (
+                    <TransactionCard
+                      key={item.data.id}
+                      transaction={item.data}
+                      onEdit={() => setModalState({ type: 'update', transaction: item.data })}
+                      onDelete={() => setModalState({ type: 'delete', transaction: item.data })}
+                      onMove={() => setModalState({ type: 'move', transaction: item.data })}
+                    />
+                  ) : (
+                    <TransferCard
+                      key={item.data.id}
+                      transfer={item.data}
+                      budgetId={budgetId!}
+                      onEdit={() => setModalState({ type: 'updateTransfer', transfer: item.data })}
+                      onDelete={() => setModalState({ type: 'deleteTransfer', transfer: item.data })}
+                    />
+                  )
+                )
               )}
             </div>
 
             {/* Pagination controls */}
-            {filteredTransactions.length > 0 && (
+            {filteredItems.length > 0 && (
               <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-800">
                 <div className="flex items-center gap-2">
                   <span className="text-gray-400 text-sm">
                     Page {currentPage} of {totalPages}
                   </span>
                   <span className="text-gray-500 text-xs">
-                    ({startIndex + 1}-{Math.min(endIndex, filteredTransactions.length)} of {filteredTransactions.length})
+                    ({startIndex + 1}-{Math.min(endIndex, filteredItems.length)} of {filteredItems.length})
                   </span>
                 </div>
 
@@ -300,27 +344,43 @@ const TransactionContainer = ({ transactionQuery, budgetQuery, limit = 3 }: { tr
         </div>
       )}
 
-      {modalState && (
-        modalState.type === 'update'
-          ? <UpdateTransactionModal
-            transaction={modalState.transaction}
-            onSuccess={transactionQuery.refetch}
-            onClose={() => setModalState(null)}
-          />
-          : modalState.type === 'delete'
-            ? <DeleteTransactionConfirmModal
-              transaction={modalState.transaction}
-              onSuccess={transactionQuery.refetch}
-              onClose={() => setModalState(null)}
-            />
-            : <MoveTransactionModal
-              transaction={modalState.transaction}
-              onSuccess={() => {
-                transactionQuery.refetch()
-                budgetQuery.refetch()
-              }}
-              onClose={() => setModalState(null)}
-            />
+      {modalState?.type === 'update' && (
+        <UpdateTransactionModal
+          transaction={modalState.transaction}
+          onSuccess={transactionQuery.refetch}
+          onClose={() => setModalState(null)}
+        />
+      )}
+      {modalState?.type === 'delete' && (
+        <DeleteTransactionConfirmModal
+          transaction={modalState.transaction}
+          onSuccess={transactionQuery.refetch}
+          onClose={() => setModalState(null)}
+        />
+      )}
+      {modalState?.type === 'move' && (
+        <MoveTransactionModal
+          transaction={modalState.transaction}
+          onSuccess={() => {
+            transactionQuery.refetch()
+            budgetQuery.refetch()
+          }}
+          onClose={() => setModalState(null)}
+        />
+      )}
+      {modalState?.type === 'updateTransfer' && transferQuery && (
+        <UpdateTransferModal
+          transfer={modalState.transfer}
+          onSuccess={transferQuery.refetch}
+          onClose={() => setModalState(null)}
+        />
+      )}
+      {modalState?.type === 'deleteTransfer' && transferQuery && (
+        <DeleteTransferConfirmModal
+          transfer={modalState.transfer}
+          onSuccess={transferQuery.refetch}
+          onClose={() => setModalState(null)}
+        />
       )}
     </div>
   )

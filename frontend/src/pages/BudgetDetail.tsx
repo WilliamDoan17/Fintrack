@@ -18,13 +18,17 @@ import DeleteBudgetButton from '../../components/budgets/DeleteBudgetButton'
 import DeleteBudgetConfirmModal from '../../components/budgets/DeleteBudgetConfirmModal'
 import MoveBudgetButton from '../../components/budgets/MoveBudgetButton'
 import MoveBudgetModal from '../../components/budgets/MoveBudgetModal'
+import CreateTransferButton from '../../components/transfers/CreateTransferButton'
+import CreateTransferModal from '../../components/transfers/CreateTransferModal'
+import useTransfers from '../../hooks/useTransfers'
 import { useNavigation } from '../../contexts/NavigationContext'
 
 type ModalState =
   { type: 'createBudget' } |
   { type: 'addTransaction' } |
   { type: 'deleteBudgetConfirm' } |
-  { type: 'moveBudget' }
+  { type: 'moveBudget' } |
+  { type: 'createTransfer' }
 
 const BudgetDetail = () => {
   const { id: budgetId } = useParams();
@@ -35,6 +39,7 @@ const BudgetDetail = () => {
   const [modalState, setModalState] = useState<ModalState | null>(null)
   const budgetQuery = useBudgets(budgetId ?? null);
   const transactionQuery = useTransactions(budgetId ?? null);
+  const transferQuery = useTransfers(budgetId ?? null);
   const { setBackTo } = useNavigation()
 
   const fetchBudgetInfo = useCallback(async () => {
@@ -91,6 +96,7 @@ const BudgetDetail = () => {
                 <UpdateBudgetNameButton setIsOpen={setIsEditingName} />
               </div>
               <div className="flex gap-2">
+                <CreateTransferButton onClick={() => setModalState({ type: 'createTransfer' })} />
                 <MoveBudgetButton
                   budget={budgetInfo}
                   onClick={() => setModalState({ type: 'moveBudget' })}
@@ -105,7 +111,7 @@ const BudgetDetail = () => {
           {/* Balance + Transactions */}
           <div className="flex flex-col lg:flex-row gap-6 items-start">
             <div className="w-full lg:w-[30%] shrink-0">
-              <BalanceSummary transactionQuery={transactionQuery} />
+              <BalanceSummary transactionQuery={transactionQuery} transferQuery={transferQuery} budgetId={budgetId} />
             </div>
             <div className="w-full flex-1">
               <div className="flex items-center justify-between mb-4">
@@ -113,7 +119,11 @@ const BudgetDetail = () => {
                 <AddTransactionButton onClick={() => setModalState({ type: 'addTransaction' })} />
               </div>
               <TransactionContainer
-                budgetQuery={budgetQuery} transactionQuery={transactionQuery} />
+                budgetQuery={budgetQuery}
+                transactionQuery={transactionQuery}
+                transferQuery={transferQuery}
+                budgetId={budgetId}
+              />
             </div>
           </div>
 
@@ -152,6 +162,13 @@ const BudgetDetail = () => {
       {modalState?.type === 'moveBudget' && budgetInfo && (
         <MoveBudgetModal
           budget={budgetInfo}
+          onClose={() => setModalState(null)}
+        />
+      )}
+      {modalState?.type === 'createTransfer' && budgetInfo && (
+        <CreateTransferModal
+          budget={budgetInfo}
+          onSuccess={transferQuery.refetch}
           onClose={() => setModalState(null)}
         />
       )}

@@ -28,7 +28,7 @@
 | S2-6 | Transaction Search / Filter | ✅ |
 | S2-7 | Move Budget | Partial |
 | S2-8 | Move Transaction | ✅ |
-| S2-9 | Transfer Money Between Budgets | ⬜ |
+| S2-9 | Transfer Money Between Budgets | ✅ |
 | S2-10 | Income as Special Budget | ⬜ |
 | S2-11 | Budget Manager (Hierarchy Tree) | ⬜ |
 | S2-12 | Budget Limits + Warnings + Alerts | ⬜ |
@@ -45,8 +45,9 @@
 | S3-3 | Session Management | ⬜ |
 | S3-4 | Bill Splitter | ⬜ |
 | S3-5 | Loan & Owes Tracking | ⬜ |
-| S3-6 | Profiles | ⬜ |
-| S3-7 | AI Agent | ⬜ |
+| S3-6 | Auto Log Transactions With Bank Linking (Plaid) | ⬜ |
+| S3-7 | Profiles | ⬜ |
+| S3-8 | AI Agent | ⬜ |
 
 ---
 

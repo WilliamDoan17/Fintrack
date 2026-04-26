@@ -44,6 +44,7 @@ export const getAllTransfers = async (): Promise<Transfer[]> => {
     .select('*')
     .order('created_at', { ascending: false })
   if (error) throw error
+  console.log(data);
   return data ?? []
 }
 

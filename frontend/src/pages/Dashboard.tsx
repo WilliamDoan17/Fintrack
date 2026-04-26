@@ -6,6 +6,7 @@ import CreateBudgetButton from '../../components/budgets/CreateBudgetButton'
 import TransactionContainer from '../../components/transactions/TransactionContainer'
 import BalanceSummary from '../../components/transactions/BalanceSummary'
 import useTransactions from '../../hooks/useTransactions'
+import useTransfers from '../../hooks/useTransfers'
 
 type ModalState = { type: 'createBudget' }
 
@@ -13,6 +14,7 @@ const Dashboard = () => {
   const [modalState, setModalState] = useState<ModalState | null>(null)
   const budgetQuery = useBudgets(null)
   const transactionQuery = useTransactions(null)
+  const transferQuery = useTransfers(null)
 
   return (
     <div className="min-h-screen bg-gray-950">
@@ -35,6 +37,7 @@ const Dashboard = () => {
               <TransactionContainer
                 transactionQuery={transactionQuery}
                 budgetQuery={budgetQuery}
+                transferQuery={transferQuery}
               />
             </div>
           </div>

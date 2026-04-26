@@ -1,6 +1,11 @@
 import useTransactions from '../../hooks/useTransactions'
+import useTransfers from '../../hooks/useTransfers'
 
-const BalanceSummary = ({ transactionQuery: { transactions, loading, error } }: { transactionQuery: ReturnType<typeof useTransactions> }) => {
+const BalanceSummary = ({ transactionQuery: { transactions, loading, error }, transferQuery, budgetId }: {
+  transactionQuery: ReturnType<typeof useTransactions>
+  transferQuery?: ReturnType<typeof useTransfers>
+  budgetId?: string
+}) => {
   if (loading) return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 flex items-center justify-center">
       <p className="text-gray-500 text-sm">Loading balance...</p>
@@ -23,7 +28,20 @@ const BalanceSummary = ({ transactionQuery: { transactions, loading, error } }: 
     }
   })
 
-  const balance = income - expenses
+  let transfersIn = 0
+  let transfersOut = 0
+
+  if (transferQuery) {
+    transferQuery.transfers.forEach(({ from_budget_id, amount }) => {
+      if (from_budget_id === budgetId) {
+        transfersOut += amount
+      } else {
+        transfersIn += amount
+      }
+    })
+  }
+
+  const balance = income - expenses + transfersIn - transfersOut
 
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 md:p-6 flex flex-col gap-4">
@@ -43,6 +61,18 @@ const BalanceSummary = ({ transactionQuery: { transactions, loading, error } }: 
           <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Expenses</p>
           <p className="text-red-400 font-semibold text-base md:text-lg">-${expenses.toFixed(2)}</p>
         </div>
+        {(transfersIn > 0 || transfersOut > 0) && (
+          <>
+            <div className="flex flex-col items-center">
+              <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Transferred In</p>
+              <p className="text-emerald-400 font-semibold text-base md:text-lg">+${transfersIn.toFixed(2)}</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Transferred Out</p>
+              <p className="text-red-400 font-semibold text-base md:text-lg">-${transfersOut.toFixed(2)}</p>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

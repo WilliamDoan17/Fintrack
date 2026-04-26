@@ -2,7 +2,14 @@
 Daily log of tasks worked on. One `<details>` block per day, newest on top.
 
 <details>
+  <summary>Apr 25, 2026</summary>
+
+  - Make TransactionContainer show transactions and transfers ✅
+</details>
+
+<details>
   <summary>Apr 22, 2026</summary>
+
   - update the docs for better logging of development ✅
   - tasks for Transferring between budgets feature
     - Define `transfers` table schema (`id`, `user_id`,`from_budget_id`,`to_budget_id`, `amount`, `name`, `created_at`) ✅
@@ -21,7 +28,11 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
     - Update SERVICES.md and TYPES.md ✅
     - write transfer types ✅
     - write transfer services ✅
-    - Add transfer button to `BudgetDetail`
-    - Write `TransferModal` + `TransferCard` components
+    - Add transfer button to `BudgetDetail` ✅
+    - Write useTranfers(budget_id) (hook for getting and updating state) ✅
+    - Write `CreateTransferModal` + `TransferCard` components ✅
+    - wire `TransferCard` to `TransactionContainer` ✅
+    - Write `UpdateTransferModal` + `UpdateTranferButton` and wire ✅
+    - Write `DeleteTransferButton` + `DeleteTransferModal` and wire ✅
     - Test
 </details>
