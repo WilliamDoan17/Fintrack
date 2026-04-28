@@ -43,8 +43,8 @@
 | S3-1 | Multi-Currency | ⬜ |
 | S3-2 | Scheduled & Recurring Transactions (AutoPay) | ⬜ |
 | S3-3 | Session Management | ⬜ |
-| S3-4 | Bill Splitter | ⬜ |
-| S3-5 | Loan & Owes Tracking | ⬜ |
+| S3-4 | Loan & Owes Tracking | ⬜ |
+| S3-5 | Bill Splitter | ⬜ |
 | S3-6 | Auto Log Transactions With Bank Linking (Plaid) | ⬜ |
 | S3-7 | Profiles | ⬜ |
 | S3-8 | AI Agent | ⬜ |
