@@ -16,13 +16,16 @@ Source files live in `frontend/backend/types/`.
 | name | string |
 | parent_id | string \| null |
 | balance | number |
+| is_income | boolean |
 
 ### `BudgetInput`
-Shape passed to `createBudget` / `updateBudget`. Equivalent to `Omit<Budget, 'id' \| 'created_at' \| 'user_id' \| 'balance'>`:
+Shape passed to `createBudget` / `updateBudget`. Equivalent to `Omit<Budget, 'id' \| 'created_at' \| 'user_id' \| 'balance' \| 'is_income'>`:
 | Field | Type |
 |-------|------|
 | name | string |
 | parent_id | string \| null |
+
+Note: `is_income` is excluded from `BudgetInput` — it is never set by the user or app layer. The income budget is created by the signup trigger and its flag cannot be changed.
 
 ---
 

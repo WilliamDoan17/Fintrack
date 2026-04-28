@@ -15,10 +15,11 @@ This document defines the Row Level Security (RLS) policies for Fintrack's Supab
 - **INSERT**:
   - `user_id = auth.uid()`
   - `parent_id` is null OR the parent budget is owned by `auth.uid()`
+  - `is_income` must be `false` (income budget is created only by the signup trigger, never by the user)
 - **UPDATE**:
   - `USING`: `user_id = auth.uid()`
-  - `WITH CHECK`: `user_id = auth.uid()` AND (`parent_id` is null OR the new parent budget is owned by `auth.uid()`)
-- **DELETE**: `user_id = auth.uid()`
+  - `WITH CHECK`: `user_id = auth.uid()` AND (`parent_id` is null OR the new parent budget is owned by `auth.uid()`) AND `is_income` is unchanged (block flipping the flag)
+- **DELETE**: `user_id = auth.uid()` AND `is_income = false` (income budget is undeletable)
 
 ---
 

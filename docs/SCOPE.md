@@ -15,7 +15,9 @@ Fintrack is a personal finance web application focused on clarity, control, and 
 
 ## Transactions
 
-- Add, update, and delete transactions for any budget
+- Log income transactions (`add`) on the income budget only — the sole entry point for money into the system
+- Log spending transactions (`withdraw`) on regular budgets only
+- Update and delete transactions
 - View recent transactions and total balances
 - Move transactions between budgets
 - Paginate and search/filter transactions (by type, amount, name, etc.)

@@ -20,11 +20,14 @@ Coming soon
 ```
 5. Start the dev server: `npm run dev`
 
-## Current Features (MVP)
+## Current Features
 - **Budget management** — create, update, and delete budgets with support for nested sub-budgets
-- **Transaction tracking** — add, edit, and delete transactions per budget, categorized as income or withdrawal
+- **Transaction tracking** — add, edit, and delete transactions per budget
 - **Recursive balance** — balance calculations roll up through sub-budgets automatically
+- **Transfers** — move money between budgets
+- **Move budgets and transactions** — reorganize your budget hierarchy at any time
 - **Dashboard** — overview of total balance, recent transactions, and all budgets at a glance
+- **Transaction search and filter** — find transactions by name, type, or amount with pagination
 - **Toast notifications** — real-time feedback on all mutations
 - **Collapsible sidebar** — persistent navigation with user info and logout
 - **Authentication** — secure sign up and login via Supabase Auth
@@ -41,7 +44,7 @@ Coming soon
 - Budget manager with hierarchy tree view
 - Move budgets and transactions between parents
 - Transfer money between budgets
-- Income as a special budget
+- Income budget — strict envelope model (income → allocate to budgets → spend)
 - Budget limits with warnings and low balance alerts
 - Stats page — spending over time, per-budget breakdown, income vs expenses
 

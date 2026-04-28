@@ -16,8 +16,32 @@ Public page for signing in or creating an account. Has a tab bar to switch betwe
 ## `/dashboard` — Dashboard (`src/pages/Dashboard.tsx`)
 Main overview page for authenticated users. Shows:
 - Balance summary
-- All transactions (paginated, searchable, filterable) with edit/delete/move actions
+- Recent transactions preview — clicking a transaction or "View all" navigates to `/transactions`
 - All root budgets with a create budget button
+
+---
+
+## `/transactions` — Transactions (`src/pages/Transactions.tsx`)
+Full transaction history for authenticated users. Shows:
+- All transactions across all budgets (paginated, searchable, filterable)
+- Edit/delete/move actions per transaction
+
+---
+
+## `/budgets` — Budgets (`src/pages/Budgets.tsx`)
+Budget management page for authenticated users. Shows:
+- Full budget hierarchy as a navigable tree
+- Create, rename, move, and delete budgets
+
+---
+
+## `/income` — Income (`src/pages/Income.tsx`)
+Protected page for the user's income budget. Shows:
+- Income budget name (inline editable, cannot be deleted)
+- Total income balance (unallocated funds available to distribute)
+- Log income form — adds an `add` transaction to the income budget
+- Income transaction history (paginated, searchable, filterable)
+- Allocate button — opens transfer modal to move funds from income to a spending budget
 
 ---
 

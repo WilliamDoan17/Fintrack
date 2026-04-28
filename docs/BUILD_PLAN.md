@@ -19,7 +19,7 @@ Users can:
 - Move budgets and transactions between parents
 - Transfer money between budgets
 - Set spending limits with warnings and alerts
-- Designate an income budget as the source of all money
+- Designate an income budget as the sole source of all money (strict envelope model: income → allocate to budgets → spend)
 - View spending stats and charts
 - Toggle dark/light mode
 - Use the app on mobile (responsive UI)
@@ -47,4 +47,5 @@ Users can:
 - Backend (RLS + services) before frontend (UI)
 - Optimistic updates on the frontend — rollback on failure via try/catch
 - Test each phase via UI + Supabase dashboard before moving on
+- Strict envelope model — all money enters through the income budget and is allocated to spending budgets via transfers; regular budgets are spend-only
 

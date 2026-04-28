@@ -2,6 +2,12 @@
 Daily log of tasks worked on. One `<details>` block per day, newest on top.
 
 <details>
+  <summary>Apr 28, 2026</summary>
+  
+  - Planning and document for future development (`income`) ✅
+</details>
+
+<details>
   <summary>Apr 25, 2026</summary>
 
   - Make TransactionContainer show transactions and transfers ✅
