@@ -14,39 +14,38 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
       - Write trigger ✅
   - Income — RLS ✅
     - Update RLS for `income` ✅
-  - Update on frontend 
-    - Rename and rewrite budget services to split into spending budgets and income budgets
-      - Update `SERVICES.md`
-      - `getRootSpendingBudgets`
-      - `getIncomeBudget`
-      - `getAllSpendingBudgets`
-      - `getAllBudgets`
+  - Update on frontend ✅
+    - Rename and rewrite budget services to split into spending budgets and income budgets ✅
+      - Update `SERVICES.md` ✅
+      - `getRootSpendingBudgets` ✅
+      - `getIncomeBudget` ✅
+      - `getAllSpendingBudgets` ✅
+      - `getAllBudgets` ✅
 
-    - Write `HOOKS.md` to keep track of hooks
-    - Rename and rewrite hooks
-      - Update `HOOKS.md`
-      - `useSpendingBudgets` — replaces `useBudgets`, filters `is_income = false`
-      - `useIncomeBudget` — fetches the single income budget
-      - `useBudgetInfo` — shared between `BudgetDetail` and `IncomeBudgetDetail`, fetches a single budget by id
-      - `useSpendingBudgetStructure` — replaces `useBudgetStructure`, excludes income budget from move target tree
+    - Write `HOOKS.md` to keep track of hooks ✅
+    - Rename and rewrite hooks ✅
+      - Update `HOOKS.md` ✅
+      - `useSpendingBudgets` — replaces `useBudgets`, filters `is_income = false` ✅
+      - `useIncomeBudget` — fetches the single income budget ✅
+      - `useBudgetInfo` — shared between `BudgetDetail` and `IncomeBudgetDetail`, fetches a single budget by id ✅
+      - `useSpendingBudgetStructure` — replaces `useBudgetStructure`, excludes income budget from move target tree ✅
 
-    - Write `COMPONENTS.md` to keep track of components
-    - Add new page `/income`
-    - Add nav links to `Sidebar` (Dashboard, Income)
-    - Rename and rewrite components to split into `SpendingBudget` and `IncomeBudget`
-      - Update `COMPONENTS.md`
-      - `SpendingBudgetContainer`
-      - `SpendingBudgetCard`
-      - `AddTransactionModal`: pass `budgetType` prop
-        - spending budgets: hide `add` type (only `withdraw`)
-        - income budget: hide `withdraw` type (only `add`)
-      - `IncomeBudgetCard` 
-      - `IncomeBudgetDetail`: wire to `/income`, no DeleteBudgetButton, MoveBudgetButton, CreateBudgetButton
-      - `BudgetDetail`: remove CreateBudgetButton (no sub-budgets on spending budgets at this level)
-    - Wire into pages
-      - `SpendingBudgetCard` wires to `SpendingBudgetContainer` 
-      - `SpendingBudgetContainer` wires to `Dashboard` and `BudgetDetail` 
-      - `IncomeBudgetCard` wires to `Dashboard`
+    - Write `COMPONENTS.md` to keep track of components ✅
+    - Add new page `/income` ✅
+    - Add nav links to `Sidebar` (Dashboard, Income) ✅
+    - Rename and rewrite components to split into `SpendingBudget` and `IncomeBudget` ✅
+      - Update `COMPONENTS.md` ✅
+      - `SpendingBudgetContainer` ✅
+      - `SpendingBudgetCard` ✅
+      - `AddTransactionModal`: pass `budgetType` prop ✅
+        - spending budgets: hide `add` type (only `withdraw`) ✅
+        - income budget: hide `withdraw` type (only `add`) ✅
+      - `IncomeBudgetCard` ✅
+      - `IncomeBudgetDetail`: wire to `/income`, no DeleteBudgetButton, MoveBudgetButton, CreateBudgetButton ✅
+    - Wire into pages ✅
+      - `SpendingBudgetCard` wires to `SpendingBudgetContainer` ✅
+      - `SpendingBudgetContainer` wires to `Dashboard` and `BudgetDetail` ✅
+      - `IncomeBudgetCard` wires to `Dashboard` ✅
 
 
 </details>

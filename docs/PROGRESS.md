@@ -29,13 +29,13 @@
 | S2-7 | Move Budget | Partial |
 | S2-8 | Move Transaction | ✅ |
 | S2-9 | Transfer Money Between Budgets | ✅ |
-| S2-10a | Income — Schema, backfill, trigger | ⬜ |
-| S2-10b | Income — RLS | ⬜ |
-| S2-10c | Income — Services + Types | ⬜ |
+| S2-10a | Income — Schema, backfill, trigger | ✅ |
+| S2-10b | Income — RLS | ✅ |
+| S2-10c | Income — Services + Types | ✅ |
 | S2-10d | /transactions page | ⬜ |
 | S2-11 | /budgets page (hierarchy tree) | ⬜ |
-| S2-10e | Income — UI (income page + allocate flow) | ⬜ |
-| S2-10f | Income — Enforce strict envelope (restrict add to income budget only) | ⬜ |
+| S2-10e | Income — UI (income page + allocate flow) | ✅ |
+| S2-10f | Income — Enforce strict envelope (restrict add to income budget only) | ✅ |
 | S2-12 | Budget Limits + Warnings + Alerts | ⬜ |
 | S2-13 | Stats Page | ⬜ |
 
@@ -59,4 +59,4 @@
 
 ---
 
-**Last updated:** Mon Apr 28 2026
+**Last updated:** Thu Apr 30 2026
