@@ -63,6 +63,18 @@ Recursively fetches all transactions belonging to the given budget and all of it
 
 Trigger functions are automatically invoked by database events (INSERT, UPDATE, DELETE) and are responsible for maintaining data integrity — specifically keeping budget balances synchronized with transactions and transfers.
 
+### `create_income_budget_for_new_user()`
+
+**Returns:** `trigger`
+
+**What it does:**
+Automatically creates an income budget for a user upon signup. Inserts a row into `budgets` with `name = 'Income'`, `is_income = true`, `parent_id = null`, and `balance = 0`, linked to the new user's ID.
+
+**Used by triggers:**
+- `on_new_user_create_income_budget` — fires `AFTER INSERT ON auth.users`
+
+---
+
 ### `update_budget_balance_on_transaction()`
 
 **Returns:** `trigger`

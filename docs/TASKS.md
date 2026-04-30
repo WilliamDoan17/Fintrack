@@ -10,6 +10,8 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
       - function `add_income_budget_to_all_users` (supabase functions) ✅
       - run function ✅
     - Write and activate trigger `on_new_user_create_income_budget` 
+      - Write function `create_income_budget_for_new_user` ✅
+      - Write trigger
   - Income — RLS 
     - Update RLS for `income`
   - Income — Services + Types
