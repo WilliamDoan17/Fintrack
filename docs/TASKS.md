@@ -2,6 +2,13 @@
 Daily log of tasks worked on. One `<details>` block per day, newest on top.
 
 <details>
+  <summary>May 2, 2026</summary>
+  
+  - Test implementation and create pull request from `feature/income-budget` to `main`
+  - Refactor hooks to use `tanstack-query`
+</details>
+
+<details>
   <summary>Apr 30, 2026</summary>
 
   - Income — Schema, backfill, trigger
