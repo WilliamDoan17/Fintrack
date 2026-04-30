@@ -37,6 +37,13 @@ Full recalculation of every budget's balance from scratch. Runs in three steps:
 
 **When to run:** after a data migration, bulk import, or any operation that bypasses the incremental triggers. Not needed during normal app operation — triggers keep balances up to date incrementally.
 
+### `add_income_budget_to_all_users()`
+
+**Returns:** `void`
+**What it does**:
+
+Add budget named `Income` with `is_income` = `True` to every existing users
+
 ---
 
 ## RPC Functions

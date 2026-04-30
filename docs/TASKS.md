@@ -6,15 +6,14 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
 
   - Income — Schema, backfill, trigger
     - Add column `is_income` to `budgets`
-    - For every user, add a budget named `Income` with `is_income` = `true`
+    - for every user, add a budget named `Income` with `is_income` = `true`
+      - function `add_income_budget_to_all_users` (supabase functions)
     - Write and activate trigger `on_new_user_create_income_budget`
   - Income — RLS 
     - Update RLS for `income`
   - Income — Services + Types
     - Update types (`frontend/backend/types/budgets.ts`)
     - Update services (`frontend/backend/services/budgets.ts`)
-
- 
 
 </details>
 
