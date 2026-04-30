@@ -11,7 +11,7 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
       - run function ✅
     - Write and activate trigger `on_new_user_create_income_budget` 
       - Write function `create_income_budget_for_new_user` ✅
-      - Write trigger
+      - Write trigger ✅
   - Income — RLS 
     - Update RLS for `income`
   - Income — Services + Types
