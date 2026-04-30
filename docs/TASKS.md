@@ -5,10 +5,11 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
   <summary>Apr 30, 2026</summary>
 
   - Income — Schema, backfill, trigger
-    - Add column `is_income` to `budgets`
-    - for every user, add a budget named `Income` with `is_income` = `true`
-      - function `add_income_budget_to_all_users` (supabase functions)
-    - Write and activate trigger `on_new_user_create_income_budget`
+    - Add column `is_income` to `budgets` ✅
+    - for every user, add a budget named `Income` with `is_income` = `true` ✅
+      - function `add_income_budget_to_all_users` (supabase functions) ✅
+      - run function ✅
+    - Write and activate trigger `on_new_user_create_income_budget` 
   - Income — RLS 
     - Update RLS for `income`
   - Income — Services + Types
