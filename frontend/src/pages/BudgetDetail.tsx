@@ -1,12 +1,11 @@
 import { useParams } from "react-router-dom"
-import { useState, useEffect, useCallback } from "react";
-import { getBudget } from "../../backend/services/budgets";
-import type { Budget } from "../../backend/types/budgets";
-import useBudgets from "../../hooks/useBudgets";
+import { useState, useEffect } from "react";
+import useBudgetInfo from "../../hooks/useBudgetInfo";
+import useSpendingBudgets from "../../hooks/useSpendingBudgets";
 import useTransactions from "../../hooks/useTransactions";
 import PageLoader from "../../components/loaders/PageLoader";
 import CreateBudgetButton from "../../components/budgets/CreateBudgetButton";
-import BudgetContainer from "../../components/budgets/BudgetContainer";
+import SpendingBudgetContainer from "../../components/budgets/SpendingBudgetContainer";
 import CreateBudgetModal from "../../components/budgets/CreateBudgetModal";
 import TransactionContainer from "../../components/transactions/TransactionContainer";
 import AddTransactionModal from '../../components/transactions/AddTransactionModal'
@@ -32,33 +31,13 @@ type ModalState =
 
 const BudgetDetail = () => {
   const { id: budgetId } = useParams();
-  const [budgetInfo, setBudgetInfo] = useState<Budget | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+  const { budget: budgetInfo, loading, error, refetch: fetchBudgetInfo } = useBudgetInfo(budgetId ?? null)
   const [isEditingName, setIsEditingName] = useState<boolean>(false)
   const [modalState, setModalState] = useState<ModalState | null>(null)
-  const budgetQuery = useBudgets(budgetId ?? null);
+  const budgetQuery = useSpendingBudgets(budgetId ?? null);
   const transactionQuery = useTransactions(budgetId ?? null);
   const transferQuery = useTransfers(budgetId ?? null);
   const { setBackTo } = useNavigation()
-
-  const fetchBudgetInfo = useCallback(async () => {
-    setLoading(true)
-    if (budgetId) {
-      try {
-        const data = await getBudget(budgetId);
-        setBudgetInfo(data);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setLoading(false)
-      }
-    }
-  }, [budgetId])
-
-  useEffect(() => {
-    fetchBudgetInfo()
-  }, [fetchBudgetInfo])
 
   useEffect(() => {
     if (budgetInfo) {
@@ -133,7 +112,7 @@ const BudgetDetail = () => {
               <h2 className="text-gray-400 text-sm uppercase tracking-widest">Sub-budgets</h2>
               <CreateBudgetButton onClick={() => setModalState({ type: 'createBudget' })} />
             </div>
-            <BudgetContainer budgetQuery={budgetQuery} />
+            <SpendingBudgetContainer budgetQuery={budgetQuery} />
           </div>
         </div>
       </div>
@@ -149,6 +128,7 @@ const BudgetDetail = () => {
         <AddTransactionModal
           transactionQuery={transactionQuery}
           budgetId={budgetId}
+          budgetType='spending'
           onClose={() => setModalState(null)}
         />
       )}

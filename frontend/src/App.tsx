@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import AuthProvider from '../providers/AuthProvider'
 import AuthContext from '../contexts/AuthContext'
 import BudgetDetail from './pages/BudgetDetail'
+import IncomeBudgetDetail from './pages/IncomeBudgetDetail'
 import ProtectedLayout from '../components/protected-layout/ProtectedLayout'
 import NotificationProvider from '../providers/NotificationProvider'
 import NavigationProvider from '../providers/NavigationProvider'
@@ -33,6 +34,7 @@ function App() {
               <Route element={<ProtectedLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/budget/:id" element={<BudgetDetail />} />
+                <Route path="/income" element={<IncomeBudgetDetail />} />
               </Route>
             </Routes>
           </BrowserRouter>
