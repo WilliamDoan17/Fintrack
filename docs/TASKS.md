@@ -3,24 +3,23 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
 
 <details>
   <summary>May 14, 2026</summary>
-  
-  - Test implementation and create pull request from `feature/income-budget` to `main`
-  - Reason out why there's a loading bug at /income and fix it
-  - Refactor UI:
-    - Dashboard: 
-      - Balance and income goes to the same height
-      - Recent Transactions go after
-      - then your Budgets
-    - IncomeBudgetCard: 
-      - make it more compact (same height, smaller width) 
-      - centered text
-      - double income text fix
-    - IncomeBudgetDetail:
-      - Balance and recent transactions are stacked vertically
 
-  - document up to now
-
-  - Refactor hooks to use `tanstack-query`
+  - Rename `budgetQuery` → `spendingBudgetQuery` across all components ✅
+    - `SpendingBudgetContainer`, `BudgetContainer`, `CreateBudgetModal`, `Dashboard`, `BudgetDetail`
+    - `TransactionContainer`: renamed + made optional (only needed for spending budget move refetch)
+  - Merge `feature/income-budget` → `main` (PR #2) ✅
+  - Fix flickering content on `/income` ✅
+    - Root cause: `useTransactions(null)` fires on first render, then re-fires with real budget ID once `useIncomeBudget` resolves — two loading phases cause a flicker
+    - Fix: split `IncomeBudgetDetail` into loader shell + `IncomeBudgetDetailContent` — dependent queries only mount after budget ID is ready
+  - Refactor UI (PR #3) ✅
+    - Dashboard redesigned as financial overview:
+      - Summary row: `BalanceSummary` + `IncomeBudgetCard` side by side at equal height
+      - Recent Transactions full-width below
+      - Spending Budgets full-width at bottom
+    - `IncomeBudgetCard`: compact fixed width (`md:w-56`), budget name as small gray label top-center, balance centered in remaining space
+    - `IncomeBudgetDetail`: layout changed to vertical stack (Balance → Transactions)
+  - Update docs ✅
+  - Refactor hooks to use `tanstack-query` ⬜
 
 </details>
 

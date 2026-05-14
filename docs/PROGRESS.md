@@ -36,6 +36,8 @@
 | S2-11 | /budgets page (hierarchy tree) | ⬜ |
 | S2-10e | Income — UI (income page + allocate flow) | ✅ |
 | S2-10f | Income — Enforce strict envelope (restrict add to income budget only) | ✅ |
+| S2-10g | Income — Fix flicker on /income (component split pattern) | ✅ |
+| S2-10h | UI Refactor — Dashboard as financial overview, IncomeBudgetCard compact, IncomeBudgetDetail vertical stack | ✅ |
 | S2-12 | Budget Limits + Warnings + Alerts | ⬜ |
 | S2-13 | Stats Page | ⬜ |
 
@@ -59,4 +61,4 @@
 
 ---
 
-**Last updated:** Thu Apr 30 2026
+**Last updated:** Thu May 14 2026

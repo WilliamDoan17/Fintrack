@@ -14,10 +14,10 @@ Public page for signing in or creating an account. Has a tab bar to switch betwe
 ---
 
 ## `/dashboard` — Dashboard (`src/pages/Dashboard.tsx`)
-Main overview page for authenticated users. Shows:
-- Balance summary
-- Recent transactions preview — clicking a transaction or "View all" navigates to `/transactions`
-- All root budgets with a create budget button
+Financial overview page for authenticated users. Layout top-to-bottom:
+- **Summary row** — `BalanceSummary` and `IncomeBudgetCard` side by side at equal height
+- **Recent Transactions** — full-width preview with "View all" expanded overlay
+- **Your Budgets** — root spending budgets grid with a create budget button
 
 ---
 
@@ -35,13 +35,12 @@ Budget management page for authenticated users. Shows:
 
 ---
 
-## `/income` — Income (`src/pages/Income.tsx`)
+## `/income` — Income Budget Detail (`src/pages/IncomeBudgetDetail.tsx`)
 Protected page for the user's income budget. Shows:
-- Income budget name (inline editable, cannot be deleted)
-- Total income balance (unallocated funds available to distribute)
-- Log income form — adds an `add` transaction to the income budget
-- Income transaction history (paginated, searchable, filterable)
-- Allocate button — opens transfer modal to move funds from income to a spending budget
+- Income budget name (inline editable, cannot be deleted or moved)
+- Balance summary (full width)
+- Income transactions list with add transaction and create transfer buttons
+- Transfers in/out visible alongside transactions
 
 ---
 

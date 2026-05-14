@@ -19,14 +19,14 @@ Displays a single spending budget card. Navigates to `/budget/:id` on click.
 ### `SpendingBudgetContainer`
 Grid container for spending budgets. Handles loading skeleton and empty state.
 
-**Props:** `{ budgetQuery: ReturnType<typeof useSpendingBudgets> }`
+**Props:** `{ spendingBudgetQuery: ReturnType<typeof useSpendingBudgets> }`
 
 **Used by:** `Dashboard`, `BudgetDetail`
 
 ---
 
 ### `IncomeBudgetCard`
-Displays the income budget card with distinct emerald styling. Navigates to `/income` on click.
+Compact card displaying the income budget balance. Budget name renders as a small gray uppercase label at the top-center; balance is centered in the remaining space. Distinct emerald border styling. Navigates to `/income` on click.
 
 **Props:** `{ budget: Budget }`
 
@@ -44,7 +44,7 @@ Icon button that triggers the create budget modal.
 ### `CreateBudgetModal`
 Modal form for creating a new spending budget.
 
-**Props:** `{ budgetQuery, parentId?, onClose }`
+**Props:** `{ spendingBudgetQuery, parentId?, onClose }`
 
 ---
 
@@ -111,9 +111,11 @@ Icon button that triggers the add transaction modal.
 ---
 
 ### `TransactionContainer`
-Lists transactions and transfers for a budget.
+Lists transactions and transfers for a budget. Supports pagination, search, and type/amount filters via an expanded overlay.
 
-**Props:** `{ transactionQuery, transferQuery?, budgetQuery?, budgetId? }`
+**Props:** `{ transactionQuery, transferQuery?, spendingBudgetQuery?, budgetId?, limit? }`
+
+`spendingBudgetQuery` is optional — only needed when the container is used in a spending budget context and needs to refetch budgets after a transaction is moved.
 
 ---
 
@@ -153,7 +155,10 @@ Delete flow for an existing transfer.
 ## Pages (`src/pages/`)
 
 ### `Dashboard`
-Main overview page. Shows `BalanceSummary`, recent transactions, `IncomeBudgetCard`, and `SpendingBudgetContainer`.
+Financial overview page. Layout top-to-bottom:
+1. Summary row — `BalanceSummary` (flex-1) + `IncomeBudgetCard` (fixed width) side by side at equal height
+2. Recent Transactions (full width)
+3. Spending Budgets (full width) with create button
 
 **Route:** `/dashboard`
 
@@ -167,6 +172,10 @@ Detail page for a spending budget. Shows balance, transactions, transfers, sub-b
 ---
 
 ### `IncomeBudgetDetail`
-Detail page for the income budget. Shows balance, income transactions, and transfers. No delete, move, or create sub-budget actions.
+Detail page for the income budget. Split into a loader shell (`IncomeBudgetDetail`) and content component (`IncomeBudgetDetailContent`) — dependent queries only mount after the income budget ID is available, preventing a two-phase loading flicker.
+
+Layout is vertically stacked: `BalanceSummary` on top, then income transactions below.
+
+No delete, move, or create sub-budget actions.
 
 **Route:** `/income`
