@@ -1,16 +1,10 @@
-import { useContext, useState } from 'react'
-import { Outlet, Navigate } from 'react-router-dom'
-import AuthContext from '../../contexts/AuthContext'
-import PageLoader from '../loaders/PageLoader'
+import { useState } from 'react'
+import { Outlet } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import NavigationArrow from './NavigationArrow'
 
 const ProtectedLayout = () => {
-  const { user, loading, error } = useContext(AuthContext)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-
-  if (loading) return <PageLoader />
-  if (error || !user) return <Navigate to="/" replace />
 
   return (
     <div className="flex h-screen bg-gray-950">
