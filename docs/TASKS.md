@@ -11,6 +11,10 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
       - Balance and income goes to the same height
       - Recent Transactions go after
       - then your Budgets
+    - IncomeBudgetCard: 
+      - make it more compact (same height, smaller width) 
+      - centered text
+      - double income text fix
     - IncomeBudgetDetail:
       - Balance and recent transactions are stacked vertically
 
