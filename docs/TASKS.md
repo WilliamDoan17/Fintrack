@@ -18,6 +18,8 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
     - IncomeBudgetDetail:
       - Balance and recent transactions are stacked vertically
 
+  - document up to now
+
   - Refactor hooks to use `tanstack-query`
 
 </details>
