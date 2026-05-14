@@ -5,7 +5,14 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
   <summary>May 14, 2026</summary>
   
   - Test implementation and create pull request from `feature/income-budget` to `main`
-  - Reason out why there's a loading bug at /income
+  - Reason out why there's a loading bug at /income and fix it
+  - Refactor UI:
+    - Dashboard: 
+      - Balance and income goes to the same height
+      - Recent Transactions go after
+      - then your Budgets
+    - IncomeBudgetDetail:
+      - Balance and recent transactions are stacked vertically
 
   - Refactor hooks to use `tanstack-query`
 
