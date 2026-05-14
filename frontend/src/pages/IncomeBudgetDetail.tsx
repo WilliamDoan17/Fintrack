@@ -12,38 +12,17 @@ import UpdateBudgetNameButton from '../../components/budgets/UpdateBudgetNameBut
 import CreateTransferButton from '../../components/transfers/CreateTransferButton'
 import CreateTransferModal from '../../components/transfers/CreateTransferModal'
 import { useNavigation } from '../../contexts/NavigationContext'
-
+import type { Budget } from '../../backend/types/budgets'
 
 type ModalState =
   { type: 'addTransaction' } |
   { type: 'createTransfer' }
 
-const IncomeBudgetDetail = () => {
-  const { budget, loading, error, refetch } = useIncomeBudget()
-  const transactionQuery = useTransactions(budget ? budget.id : null)
-  const transferQuery = useTransfers(budget ? budget.id : null)
+const IncomeBudgetDetailContent = ({ budget, refetch }: { budget: Budget, refetch: () => Promise<void> }) => {
+  const transactionQuery = useTransactions(budget.id)
+  const transferQuery = useTransfers(budget.id)
   const [isEditingName, setIsEditingName] = useState<boolean>(false)
   const [modalState, setModalState] = useState<ModalState | null>(null)
-
-  const { setBackTo } = useNavigation()
-
-  useEffect(() => {
-    if (budget) {
-      setBackTo('/dashboard')
-    } else if (error) {
-      setBackTo('/dashboard')
-    }
-    return () => setBackTo(null)
-  }, [budget, error, setBackTo])
-
-
-
-  if (loading) return <PageLoader />
-  if (error || !budget) return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-      <p className="text-red-400 text-sm">Cannot find income budget</p>
-    </div>
-  )
 
   return (
     <div className="min-h-screen bg-gray-950">
@@ -108,6 +87,25 @@ const IncomeBudgetDetail = () => {
       )}
     </div>
   )
+}
+
+const IncomeBudgetDetail = () => {
+  const { budget, loading, error, refetch } = useIncomeBudget()
+  const { setBackTo } = useNavigation()
+
+  useEffect(() => {
+    if (budget || error) setBackTo('/dashboard')
+    return () => setBackTo(null)
+  }, [budget, error, setBackTo])
+
+  if (loading) return <PageLoader />
+  if (error || !budget) return (
+    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <p className="text-red-400 text-sm">Cannot find income budget</p>
+    </div>
+  )
+
+  return <IncomeBudgetDetailContent budget={budget} refetch={refetch} />
 }
 
 export default IncomeBudgetDetail
