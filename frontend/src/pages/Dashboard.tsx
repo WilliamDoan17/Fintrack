@@ -14,7 +14,7 @@ type ModalState = { type: 'createBudget' }
 
 const Dashboard = () => {
   const [modalState, setModalState] = useState<ModalState | null>(null)
-  const budgetQuery = useSpendingBudgets(null)
+  const spendingBudgetQuery = useSpendingBudgets(null)
   const { budget: incomeBudget } = useIncomeBudget()
   const transactionQuery = useTransactions(null)
   const transferQuery = useTransfers(null)
@@ -39,7 +39,7 @@ const Dashboard = () => {
               </div>
               <TransactionContainer
                 transactionQuery={transactionQuery}
-                budgetQuery={budgetQuery}
+                spendingBudgetQuery={spendingBudgetQuery}
                 transferQuery={transferQuery}
               />
             </div>
@@ -58,12 +58,12 @@ const Dashboard = () => {
               <h2 className="text-gray-400 text-sm uppercase tracking-widest">Your Budgets</h2>
               <CreateBudgetButton onClick={() => setModalState({ type: 'createBudget' })} />
             </div>
-            <SpendingBudgetContainer budgetQuery={budgetQuery} />
+            <SpendingBudgetContainer spendingBudgetQuery={spendingBudgetQuery} />
           </div>
         </div>
       </div>
       {modalState?.type === 'createBudget' && (
-        <CreateBudgetModal budgetQuery={budgetQuery} onClose={() => setModalState(null)} />
+        <CreateBudgetModal spendingBudgetQuery={spendingBudgetQuery} onClose={() => setModalState(null)} />
       )}
     </div>
   )

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import useIncomeBudget from '../../hooks/useIncomeBudget'
 import useTransactions from '../../hooks/useTransactions'
 import useTransfers from '../../hooks/useTransfers'
@@ -11,6 +11,8 @@ import UpdateBudgetNameInput from '../../components/budgets/UpdateBudgetNameInpu
 import UpdateBudgetNameButton from '../../components/budgets/UpdateBudgetNameButton'
 import CreateTransferButton from '../../components/transfers/CreateTransferButton'
 import CreateTransferModal from '../../components/transfers/CreateTransferModal'
+import { useNavigation } from '../../contexts/NavigationContext'
+
 
 type ModalState =
   { type: 'addTransaction' } |
@@ -18,10 +20,23 @@ type ModalState =
 
 const IncomeBudgetDetail = () => {
   const { budget, loading, error, refetch } = useIncomeBudget()
-  const transactionQuery = useTransactions(budget?.id ?? null)
-  const transferQuery = useTransfers(budget?.id ?? null)
+  const transactionQuery = useTransactions(budget ? budget.id : null)
+  const transferQuery = useTransfers(budget ? budget.id : null)
   const [isEditingName, setIsEditingName] = useState<boolean>(false)
   const [modalState, setModalState] = useState<ModalState | null>(null)
+
+  const { setBackTo } = useNavigation()
+
+  useEffect(() => {
+    if (budget) {
+      setBackTo('/dashboard')
+    } else if (error) {
+      setBackTo('/dashboard')
+    }
+    return () => setBackTo(null)
+  }, [budget, error, setBackTo])
+
+
 
   if (loading) return <PageLoader />
   if (error || !budget) return (

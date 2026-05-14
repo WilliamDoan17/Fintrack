@@ -34,7 +34,7 @@ const BudgetDetail = () => {
   const { budget: budgetInfo, loading, error, refetch: fetchBudgetInfo } = useBudgetInfo(budgetId ?? null)
   const [isEditingName, setIsEditingName] = useState<boolean>(false)
   const [modalState, setModalState] = useState<ModalState | null>(null)
-  const budgetQuery = useSpendingBudgets(budgetId ?? null);
+  const spendingBudgetQuery = useSpendingBudgets(budgetId ?? null);
   const transactionQuery = useTransactions(budgetId ?? null);
   const transferQuery = useTransfers(budgetId ?? null);
   const { setBackTo } = useNavigation()
@@ -98,7 +98,7 @@ const BudgetDetail = () => {
                 <AddTransactionButton onClick={() => setModalState({ type: 'addTransaction' })} />
               </div>
               <TransactionContainer
-                budgetQuery={budgetQuery}
+                spendingBudgetQuery={spendingBudgetQuery}
                 transactionQuery={transactionQuery}
                 transferQuery={transferQuery}
                 budgetId={budgetId}
@@ -112,14 +112,14 @@ const BudgetDetail = () => {
               <h2 className="text-gray-400 text-sm uppercase tracking-widest">Sub-budgets</h2>
               <CreateBudgetButton onClick={() => setModalState({ type: 'createBudget' })} />
             </div>
-            <SpendingBudgetContainer budgetQuery={budgetQuery} />
+            <SpendingBudgetContainer spendingBudgetQuery={spendingBudgetQuery} />
           </div>
         </div>
       </div>
 
       {modalState?.type === 'createBudget' && (
         <CreateBudgetModal
-          budgetQuery={budgetQuery}
+          spendingBudgetQuery={spendingBudgetQuery}
           parentId={budgetId}
           onClose={() => setModalState(null)}
         />

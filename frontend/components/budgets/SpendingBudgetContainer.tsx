@@ -13,7 +13,7 @@ const SpendingBudgetContainerSkeleton = () => (
   </div>
 )
 
-const SpendingBudgetContainer = ({ budgetQuery: { budgets, loading, error } }: { budgetQuery: ReturnType<typeof useSpendingBudgets> }) => {
+const SpendingBudgetContainer = ({ spendingBudgetQuery: { budgets, loading, error } }: { spendingBudgetQuery: ReturnType<typeof useSpendingBudgets> }) => {
   if (loading) return <SpendingBudgetContainerSkeleton />
   if (error) return <p className="text-red-400 text-sm">Something went wrong</p>
   if (budgets.length === 0) return <p className="text-gray-500 text-sm">No budgets yet. Create one to get started.</p>
