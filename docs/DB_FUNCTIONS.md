@@ -37,6 +37,13 @@ Full recalculation of every budget's balance from scratch. Runs in three steps:
 
 **When to run:** after a data migration, bulk import, or any operation that bypasses the incremental triggers. Not needed during normal app operation — triggers keep balances up to date incrementally.
 
+### `add_income_budget_to_all_users()`
+
+**Returns:** `void`
+**What it does**:
+
+Add budget named `Income` with `is_income` = `True` to every existing users
+
 ---
 
 ## RPC Functions
@@ -55,6 +62,18 @@ Recursively fetches all transactions belonging to the given budget and all of it
 ## Trigger Functions
 
 Trigger functions are automatically invoked by database events (INSERT, UPDATE, DELETE) and are responsible for maintaining data integrity — specifically keeping budget balances synchronized with transactions and transfers.
+
+### `create_income_budget_for_new_user()`
+
+**Returns:** `trigger`
+
+**What it does:**
+Automatically creates an income budget for a user upon signup. Inserts a row into `budgets` with `name = 'Income'`, `is_income = true`, `parent_id = null`, and `balance = 0`, linked to the new user's ID.
+
+**Used by triggers:**
+- `on_new_user_create_income_budget` — fires `AFTER INSERT ON auth.users`
+
+---
 
 ### `update_budget_balance_on_transaction()`
 

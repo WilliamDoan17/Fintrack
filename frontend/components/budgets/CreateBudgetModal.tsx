@@ -3,7 +3,7 @@ import { createBudget } from '../../backend/services/budgets'
 import useBudgets from '../../hooks/useBudgets'
 import { useNotification } from '../../contexts/NotificationContext'
 
-const CreateBudgetModal = ({ budgetQuery: { refetch }, onClose, parentId = null }: { budgetQuery: ReturnType<typeof useBudgets>, onClose: () => void, parentId?: string | null }) => {
+const CreateBudgetModal = ({ spendingBudgetQuery: { refetch }, onClose, parentId = null }: { spendingBudgetQuery: ReturnType<typeof useBudgets>, onClose: () => void, parentId?: string | null }) => {
   const [name, setName] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | null>(null)

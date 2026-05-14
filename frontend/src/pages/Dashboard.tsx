@@ -1,6 +1,8 @@
-import useBudgets from '../../hooks/useBudgets'
+import useSpendingBudgets from '../../hooks/useSpendingBudgets'
+import useIncomeBudget from '../../hooks/useIncomeBudget'
 import { useState } from 'react'
-import BudgetContainer from '../../components/budgets/BudgetContainer'
+import SpendingBudgetContainer from '../../components/budgets/SpendingBudgetContainer'
+import IncomeBudgetCard from '../../components/budgets/IncomeBudgetCard'
 import CreateBudgetModal from '../../components/budgets/CreateBudgetModal'
 import CreateBudgetButton from '../../components/budgets/CreateBudgetButton'
 import TransactionContainer from '../../components/transactions/TransactionContainer'
@@ -12,7 +14,8 @@ type ModalState = { type: 'createBudget' }
 
 const Dashboard = () => {
   const [modalState, setModalState] = useState<ModalState | null>(null)
-  const budgetQuery = useBudgets(null)
+  const spendingBudgetQuery = useSpendingBudgets(null)
+  const { budget: incomeBudget } = useIncomeBudget()
   const transactionQuery = useTransactions(null)
   const transferQuery = useTransfers(null)
 
@@ -36,23 +39,31 @@ const Dashboard = () => {
               </div>
               <TransactionContainer
                 transactionQuery={transactionQuery}
-                budgetQuery={budgetQuery}
+                spendingBudgetQuery={spendingBudgetQuery}
                 transferQuery={transferQuery}
               />
             </div>
           </div>
-          {/* Budgets Section */}
+          {/* Income Budget */}
+          {incomeBudget && (
+            <div>
+              <h2 className="text-gray-400 text-sm uppercase tracking-widest mb-4">Income</h2>
+              <IncomeBudgetCard budget={incomeBudget} />
+            </div>
+          )}
+
+          {/* Spending Budgets */}
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-gray-400 text-sm uppercase tracking-widest">Your Budgets</h2>
               <CreateBudgetButton onClick={() => setModalState({ type: 'createBudget' })} />
             </div>
-            <BudgetContainer budgetQuery={budgetQuery} />
+            <SpendingBudgetContainer spendingBudgetQuery={spendingBudgetQuery} />
           </div>
         </div>
       </div>
       {modalState?.type === 'createBudget' && (
-        <CreateBudgetModal budgetQuery={budgetQuery} onClose={() => setModalState(null)} />
+        <CreateBudgetModal spendingBudgetQuery={spendingBudgetQuery} onClose={() => setModalState(null)} />
       )}
     </div>
   )

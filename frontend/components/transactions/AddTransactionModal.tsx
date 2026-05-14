@@ -4,13 +4,19 @@ import { createTransaction } from '../../backend/services/transactions'
 import type { TransactionType } from '../../backend/types/transactions'
 import { useNotification } from '../../contexts/NotificationContext'
 
-const AddTransactionModal = ({ transactionQuery: { refetch }, onClose, budgetId }: { transactionQuery: ReturnType<typeof useTransactions>, onClose: () => void, budgetId: string }) => {
+const AddTransactionModal = ({ transactionQuery: { refetch }, onClose, budgetId, budgetType }: {
+  transactionQuery: ReturnType<typeof useTransactions>
+  onClose: () => void
+  budgetId: string
+  budgetType: 'spending' | 'income'
+}) => {
   const [name, setName] = useState<string>('')
-  const [type, setType] = useState<TransactionType>('add')
   const [amount, setAmount] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | null>(null)
   const { notify } = useNotification()
+
+  const type: TransactionType = budgetType === 'income' ? 'add' : 'withdraw'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,33 +55,6 @@ const AddTransactionModal = ({ transactionQuery: { refetch }, onClose, budgetId 
             />
           </div>
 
-          {/* Type */}
-          <div className="flex flex-col gap-2">
-            <label className="text-sm text-gray-400">Type</label>
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => setType('add')}
-                className={`flex-1 py-2 rounded border transition-all cursor-pointer ${type === 'add'
-                  ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
-                  : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
-                  }`}
-              >
-                + Add
-              </button>
-              <button
-                type="button"
-                onClick={() => setType('withdraw')}
-                className={`flex-1 py-2 rounded border transition-all cursor-pointer ${type === 'withdraw'
-                  ? 'bg-red-500/10 border-red-500 text-red-400'
-                  : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
-                  }`}
-              >
-                - Withdraw
-              </button>
-            </div>
-          </div>
-
           {/* Amount */}
           <div className="flex flex-col gap-1">
             <label htmlFor='add-transaction-amount' className="text-sm text-gray-400">Amount</label>
@@ -84,7 +63,7 @@ const AddTransactionModal = ({ transactionQuery: { refetch }, onClose, budgetId 
               <input
                 type="text"
                 id='add-transaction-amount'
-                value={amount !== '' ? amount : ''}
+                value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 min={0}
                 step={0.01}

@@ -23,11 +23,32 @@ export const getAllBudgets = async (): Promise<Budget[]> => {
   return data ?? []
 }
 
-export const getRootBudgets = async (): Promise<Budget[]> => {
+export const getIncomeBudget = async (): Promise<Budget> => {
+  const { data, error } = await supabase
+    .from('budgets')
+    .select('*')
+    .eq('is_income', true)
+    .single()
+  if (error) throw error
+  return data
+}
+
+export const getAllSpendingBudgets = async (): Promise<Budget[]> => {
+  const { data, error } = await supabase
+    .from('budgets')
+    .select('*')
+    .eq('is_income', false)
+
+  if (error) throw error
+  return data ?? []
+}
+
+export const getRootSpendingBudgets = async (): Promise<Budget[]> => {
   const { data, error } = await supabase
     .from('budgets')
     .select('*')
     .is('parent_id', null)
+    .eq('is_income', false)
 
   if (error) throw error
   return data ?? []

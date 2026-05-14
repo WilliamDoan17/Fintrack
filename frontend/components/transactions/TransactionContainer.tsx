@@ -11,6 +11,7 @@ import DeleteTransactionConfirmModal from './DeleteTransactionConfirmModal'
 import MoveTransactionModal from './MoveTransactionModal'
 import UpdateTransferModal from '../transfers/UpdateTransferModal'
 import DeleteTransferConfirmModal from '../transfers/DeleteTransferConfirmModal'
+import type useSpendingBudgets from "../../hooks/useSpendingBudgets"
 
 type ModalState =
   | { type: 'update', transaction: Transaction }
@@ -51,7 +52,7 @@ const TransactionContainerSkeleton = () => (
   </div>
 )
 
-const TransactionContainer = ({ transactionQuery, transferQuery, budgetQuery, budgetId, limit = 3 }: { transactionQuery: ReturnType<typeof useTransactions>, transferQuery?: ReturnType<typeof useTransfers>, budgetQuery: ReturnType<typeof useBudgets>, budgetId?: string, limit?: number }) => {
+const TransactionContainer = ({ transactionQuery, transferQuery, spendingBudgetQuery, budgetId, limit = 3 }: { transactionQuery: ReturnType<typeof useTransactions>, transferQuery?: ReturnType<typeof useTransfers>, spendingBudgetQuery?: ReturnType<typeof useSpendingBudgets>, budgetId?: string, limit?: number }) => {
   const { transactions, loading, error } = transactionQuery
   const [modalState, setModalState] = useState<ModalState | null>(null)
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
@@ -363,7 +364,7 @@ const TransactionContainer = ({ transactionQuery, transferQuery, budgetQuery, bu
           transaction={modalState.transaction}
           onSuccess={() => {
             transactionQuery.refetch()
-            budgetQuery.refetch()
+            spendingBudgetQuery?.refetch()
           }}
           onClose={() => setModalState(null)}
         />

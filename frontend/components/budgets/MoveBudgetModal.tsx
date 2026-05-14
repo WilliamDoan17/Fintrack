@@ -1,11 +1,11 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import type { Budget } from '../../backend/types/budgets'
-import useBudgetStructure from '../../hooks/useBudgetStructure'
+import useSpendingBudgetStructure from '../../hooks/useSpendingBudgetStructure'
 import { updateBudget } from '../../backend/services/budgets'
 import { useNotification } from '../../contexts/NotificationContext'
 
 const MoveBudgetModal = ({ budget, onClose }: { budget: Budget, onClose: () => void }) => {
-  const { structure, loading, error } = useBudgetStructure()
+  const { structure, loading, error } = useSpendingBudgetStructure()
   const [input, setInput] = useState('')
   const [moving, setMoving] = useState(false)
   const [open, setOpen] = useState(false)

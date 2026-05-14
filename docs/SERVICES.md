@@ -26,7 +26,9 @@ This document defines the services for Fintrack.
 - **deleteBudget(budget_id)** → `void` — deletes a budget and all its sub-budgets (cascade); fails if target is the income budget (enforced by RLS)
 - **getBudget(budget_id)** → `Budget` — fetches a single budget by id
 - **getIncomeBudget()** → `Budget` — fetches the current user's income budget (`is_income = true`)
-- **getRootBudgets()** → `Budget[]` — fetches all top-level spending budgets (no parent, `is_income = false`) for the current user
+- **getAllBudgets()** → `Budget[]` — fetches all budgets (income + spending) for the current user
+- **getAllSpendingBudgets()** → `Budget[]` — fetches all spending budgets (`is_income = false`) for the current user
+- **getRootSpendingBudgets()** → `Budget[]` — fetches top-level spending budgets (no parent, `is_income = false`) for the current user
 - **getChildBudgets(parent_id)** → `Budget[]` — fetches direct children of a given budget
 
 ---
