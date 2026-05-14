@@ -7,14 +7,15 @@ const IncomeBudgetCard = ({ budget }: { budget: Budget }) => {
 
   return (
     <div
-      className="bg-gray-900 border border-emerald-900/40 rounded-xl p-5 cursor-pointer hover:border-emerald-700 hover:shadow-emerald-900/20 hover:shadow-lg transition-all h-full"
+      className="bg-gray-900 border border-emerald-900/40 rounded-xl p-5 cursor-pointer hover:border-emerald-700 hover:shadow-emerald-900/20 hover:shadow-lg transition-all h-full flex flex-col items-center"
       onClick={() => navigate('/income')}
     >
-      <p className="text-xs text-emerald-600 uppercase tracking-widest mb-1">Income</p>
-      <p className="text-white font-semibold text-lg mb-2">{budget.name}</p>
-      <p className={`font-bold text-xl ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
-        {isPositive ? '+' : '-'}${Math.abs(budget.balance).toFixed(2)}
-      </p>
+      <p className="text-xs text-gray-500 uppercase tracking-widest">{budget.name}</p>
+      <div className="flex-1 flex items-center justify-center">
+        <p className={`font-bold text-2xl md:text-3xl ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
+          {isPositive ? '+' : '-'}${Math.abs(budget.balance).toFixed(2)}
+        </p>
+      </div>
     </div>
   )
 }

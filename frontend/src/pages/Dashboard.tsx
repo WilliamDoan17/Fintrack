@@ -29,9 +29,15 @@ const Dashboard = () => {
         </div>
         <div className="flex flex-col gap-8 md:gap-10">
           {/* Summary Row: Balance + Income */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-            <BalanceSummary transactionQuery={transactionQuery} />
-            {incomeBudget && <IncomeBudgetCard budget={incomeBudget} />}
+          <div className="flex flex-col md:flex-row gap-6 items-stretch">
+            <div className="flex-1">
+              <BalanceSummary transactionQuery={transactionQuery} />
+            </div>
+            {incomeBudget && (
+              <div className="w-full md:w-56 shrink-0">
+                <IncomeBudgetCard budget={incomeBudget} />
+              </div>
+            )}
           </div>
 
           {/* Recent Transactions */}
