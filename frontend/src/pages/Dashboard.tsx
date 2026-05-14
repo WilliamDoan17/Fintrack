@@ -28,29 +28,21 @@ const Dashboard = () => {
           <p className="text-gray-500 text-sm mt-1">Manage and track your finances</p>
         </div>
         <div className="flex flex-col gap-8 md:gap-10">
-          {/* Balance + Recent Transactions */}
-          <div className="flex flex-col lg:flex-row gap-6 items-start">
-            <div className="w-full lg:w-[30%] shrink-0">
-              <BalanceSummary transactionQuery={transactionQuery} />
-            </div>
-            <div className="w-full flex-1">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-gray-400 text-sm uppercase tracking-widest">Recent Transactions</h2>
-              </div>
-              <TransactionContainer
-                transactionQuery={transactionQuery}
-                spendingBudgetQuery={spendingBudgetQuery}
-                transferQuery={transferQuery}
-              />
-            </div>
+          {/* Summary Row: Balance + Income */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+            <BalanceSummary transactionQuery={transactionQuery} />
+            {incomeBudget && <IncomeBudgetCard budget={incomeBudget} />}
           </div>
-          {/* Income Budget */}
-          {incomeBudget && (
-            <div>
-              <h2 className="text-gray-400 text-sm uppercase tracking-widest mb-4">Income</h2>
-              <IncomeBudgetCard budget={incomeBudget} />
-            </div>
-          )}
+
+          {/* Recent Transactions */}
+          <div>
+            <h2 className="text-gray-400 text-sm uppercase tracking-widest mb-4">Recent Transactions</h2>
+            <TransactionContainer
+              transactionQuery={transactionQuery}
+              spendingBudgetQuery={spendingBudgetQuery}
+              transferQuery={transferQuery}
+            />
+          </div>
 
           {/* Spending Budgets */}
           <div>

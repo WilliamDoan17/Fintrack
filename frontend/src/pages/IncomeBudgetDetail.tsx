@@ -50,22 +50,18 @@ const IncomeBudgetDetailContent = ({ budget, refetch }: { budget: Budget, refetc
           }
         </div>
 
-        <div className="flex flex-col gap-8 md:gap-10">
-          <div className="flex flex-col lg:flex-row gap-6 items-start">
-            <div className="w-full lg:w-[30%] shrink-0">
-              <BalanceSummary transactionQuery={transactionQuery} transferQuery={transferQuery} budgetId={budget.id} />
+        <div className="flex flex-col gap-6">
+          <BalanceSummary transactionQuery={transactionQuery} transferQuery={transferQuery} budgetId={budget.id} />
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-gray-400 text-sm uppercase tracking-widest">Income Transactions</h2>
+              <AddTransactionButton onClick={() => setModalState({ type: 'addTransaction' })} />
             </div>
-            <div className="w-full flex-1">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-gray-400 text-sm uppercase tracking-widest">Income Transactions</h2>
-                <AddTransactionButton onClick={() => setModalState({ type: 'addTransaction' })} />
-              </div>
-              <TransactionContainer
-                transactionQuery={transactionQuery}
-                transferQuery={transferQuery}
-                budgetId={budget.id}
-              />
-            </div>
+            <TransactionContainer
+              transactionQuery={transactionQuery}
+              transferQuery={transferQuery}
+              budgetId={budget.id}
+            />
           </div>
         </div>
       </div>
