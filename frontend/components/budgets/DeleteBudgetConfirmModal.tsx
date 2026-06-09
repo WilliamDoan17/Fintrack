@@ -1,27 +1,21 @@
-import { useState } from 'react'
-import { deleteBudget } from '../../backend/services/budgets'
+import { useDeleteBudget } from '../../hooks/budgets'
 import { useNavigate } from 'react-router-dom'
 import { useNotification } from '../../contexts/NotificationContext'
 
 const DeleteBudgetConfirmModal = ({ budgetId, budgetName, onClose }: { budgetId: string, budgetName: string, onClose: () => void }) => {
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<Error | null>(null)
   const navigate = useNavigate()
   const { notify } = useNotification()
+  const { mutate: deleteBudget, isPending, error } = useDeleteBudget()
 
-  const handleDeleteBudget = async () => {
-    setLoading(true)
-    deleteBudget(budgetId)
-      .then(() => {
+  const handleDelete = () => {
+    deleteBudget(budgetId, {
+      onSuccess: () => {
         notify('Budget deleted', 'success')
         onClose()
         navigate('/dashboard')
-      })
-      .catch((err) => {
-        notify(err.message, 'error')
-        setError(err)
-      })
-      .finally(() => setLoading(false))
+      },
+      onError: (err) => notify(err.message, 'error'),
+    })
   }
 
   return (
@@ -41,11 +35,11 @@ const DeleteBudgetConfirmModal = ({ budgetId, budgetName, onClose }: { budgetId:
             Cancel
           </button>
           <button
-            disabled={loading}
-            onClick={handleDeleteBudget}
+            disabled={isPending}
+            onClick={handleDelete}
             className="bg-red-500 hover:bg-red-400 active:bg-red-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Deleting...' : 'Confirm Delete'}
+            {isPending ? 'Deleting...' : 'Confirm Delete'}
           </button>
         </div>
       </div>

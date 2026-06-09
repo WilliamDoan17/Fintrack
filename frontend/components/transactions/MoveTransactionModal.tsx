@@ -1,13 +1,13 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import type { Transaction } from '../../backend/types/transactions'
-import useBudgetStructure from '../../hooks/useBudgetStructure'
-import { updateTransaction } from '../../backend/services/transactions'
+import { useSpendingBudgetStructure } from '../../hooks/budgets'
+import { useUpdateTransaction } from '../../hooks/transactions'
 import { useNotification } from '../../contexts/NotificationContext'
 
-const MoveTransactionModal = ({ transaction, onSuccess, onClose }: { transaction: Transaction, onSuccess: () => void, onClose: () => void }) => {
-  const { structure, loading, error } = useBudgetStructure()
+const MoveTransactionModal = ({ transaction, onClose }: { transaction: Transaction, onClose: () => void }) => {
+  const { structure, isLoading, error } = useSpendingBudgetStructure()
+  const { mutate: updateTransaction, isPending: moving } = useUpdateTransaction()
   const [input, setInput] = useState('')
-  const [moving, setMoving] = useState(false)
   const [open, setOpen] = useState(false)
   const [focusedIndex, setFocusedIndex] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -56,7 +56,6 @@ const MoveTransactionModal = ({ transaction, onSuccess, onClose }: { transaction
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!open || hints.length === 0) return
-
     if (e.key === 'ArrowDown') {
       e.preventDefault()
       setFocusedIndex(i => Math.min(i + 1, hints.length - 1))
@@ -71,28 +70,26 @@ const MoveTransactionModal = ({ transaction, onSuccess, onClose }: { transaction
     }
   }
 
-  const handleMove = async () => {
+  const handleMove = (e: React.FormEvent) => {
+    e.preventDefault()
     if (!structure || !input.trim()) return
-    setMoving(true)
-    try {
-      if (!structure.pathToBudgetId.has(input.trim())) {
-        throw Error("No Budget found")
-      }
-      const targetBudgetId = structure.pathToBudgetId.get(input.trim())
-      if (targetBudgetId === transaction.budget_id) {
-        notify('Transaction is already in this budget', 'error')
-        onClose()
-        return
-      }
-      await updateTransaction(transaction.id, { budget_id: targetBudgetId! })
-      notify(`Moved "${transaction.name}" successfully`, 'success')
-      onSuccess()
-      onClose()
-    } catch (err) {
-      notify((err as Error).message, 'error')
-    } finally {
-      setMoving(false)
+    if (!structure.pathToBudgetId.has(input.trim())) {
+      notify('No budget found at that path', 'error')
+      return
     }
+    const targetBudgetId = structure.pathToBudgetId.get(input.trim())!
+    if (targetBudgetId === transaction.budget_id) {
+      notify('Transaction is already in this budget', 'error')
+      onClose()
+      return
+    }
+    updateTransaction({ id: transaction.id, updates: { budget_id: targetBudgetId } }, {
+      onSuccess: () => {
+        notify(`Moved "${transaction.name}" successfully`, 'success')
+        onClose()
+      },
+      onError: (err) => notify(err.message, 'error'),
+    })
   }
 
   return (
@@ -107,8 +104,7 @@ const MoveTransactionModal = ({ transaction, onSuccess, onClose }: { transaction
           Current: <span className="text-gray-300">{currentBudgetPath || '...'}</span>
         </div>
 
-        <form onSubmit={e => { e.preventDefault(); handleMove() }} className="flex flex-col gap-4">
-
+        <form onSubmit={handleMove} className="flex flex-col gap-4">
           <div ref={containerRef} className="relative">
             <input
               type="text"
@@ -120,7 +116,7 @@ const MoveTransactionModal = ({ transaction, onSuccess, onClose }: { transaction
               className="w-full bg-gray-800 border border-gray-700 focus:border-emerald-400 outline-none rounded-lg px-4 py-2 text-white placeholder:text-gray-500 text-sm transition-all"
             />
 
-            {open && !loading && hints.length > 0 && (
+            {open && !isLoading && hints.length > 0 && (
               <ul className="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg overflow-hidden z-10 max-h-48 overflow-y-auto">
                 {hints.map((path, index) => (
                   <li
@@ -138,7 +134,7 @@ const MoveTransactionModal = ({ transaction, onSuccess, onClose }: { transaction
             )}
           </div>
 
-          {loading && <p className="text-gray-500 text-sm">Loading budgets...</p>}
+          {isLoading && <p className="text-gray-500 text-sm">Loading budgets...</p>}
           {error && <p className="text-red-400 text-sm">Failed to load budgets</p>}
 
           <div className="flex gap-2 justify-end">
@@ -157,7 +153,6 @@ const MoveTransactionModal = ({ transaction, onSuccess, onClose }: { transaction
               {moving ? 'Moving...' : 'Move'}
             </button>
           </div>
-
         </form>
 
       </div>

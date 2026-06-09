@@ -1,17 +1,17 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import type { Budget } from '../../backend/types/budgets'
-import useBudgetStructure from '../../hooks/useBudgetStructure'
-import { createTransfer } from '../../backend/services/transfers'
+import { useSpendingBudgetStructure } from '../../hooks/budgets'
+import { useCreateTransfer } from '../../hooks/transfers'
 import { useNotification } from '../../contexts/NotificationContext'
 
-const CreateTransferModal = ({ budget, onSuccess, onClose }: { budget: Budget, onSuccess?: () => void, onClose: () => void }) => {
-  const { structure, loading, error } = useBudgetStructure()
+const CreateTransferModal = ({ budget, onClose }: { budget: Budget, onClose: () => void }) => {
+  const { structure, isLoading, error } = useSpendingBudgetStructure()
+  const { mutate: createTransfer, isPending: submitting } = useCreateTransfer()
   const [toInput, setToInput] = useState('')
   const [amount, setAmount] = useState('')
   const [name, setName] = useState('')
   const [open, setOpen] = useState(false)
   const [focusedIndex, setFocusedIndex] = useState(-1)
-  const [submitting, setSubmitting] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const { notify } = useNotification()
 
@@ -65,7 +65,7 @@ const CreateTransferModal = ({ budget, onSuccess, onClose }: { budget: Budget, o
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!structure) return
     const toBudgetId = structure.pathToBudgetId.get(toInput.trim())
@@ -73,20 +73,13 @@ const CreateTransferModal = ({ budget, onSuccess, onClose }: { budget: Budget, o
       notify('No budget found at that path', 'error')
       return
     }
-    setSubmitting(true)
-    createTransfer({
-      from_budget_id: budget.id,
-      to_budget_id: toBudgetId,
-      amount: parseFloat(amount),
-      name,
-    })
-      .then(() => {
+    createTransfer({ from_budget_id: budget.id, to_budget_id: toBudgetId, amount: parseFloat(amount), name }, {
+      onSuccess: () => {
         notify('Transfer successful', 'success')
-        onSuccess?.()
         onClose()
-      })
-      .catch((err) => notify(err.message, 'error'))
-      .finally(() => setSubmitting(false))
+      },
+      onError: (err) => notify(err.message, 'error'),
+    })
   }
 
   return (
@@ -112,7 +105,7 @@ const CreateTransferModal = ({ budget, onSuccess, onClose }: { budget: Budget, o
                 placeholder="Start typing a budget path..."
                 className="w-full bg-gray-800 border border-gray-700 focus:border-emerald-400 outline-none rounded px-3 py-2 text-white placeholder:text-gray-600 text-sm transition-all"
               />
-              {open && !loading && hints.length > 0 && (
+              {open && !isLoading && hints.length > 0 && (
                 <ul className="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg overflow-hidden z-10 max-h-48 overflow-y-auto">
                   {hints.map((path, index) => (
                     <li
@@ -129,7 +122,7 @@ const CreateTransferModal = ({ budget, onSuccess, onClose }: { budget: Budget, o
                 </ul>
               )}
             </div>
-            {loading && <p className="text-gray-500 text-xs">Loading budgets...</p>}
+            {isLoading && <p className="text-gray-500 text-xs">Loading budgets...</p>}
             {error && <p className="text-red-400 text-xs">Failed to load budgets</p>}
           </div>
 

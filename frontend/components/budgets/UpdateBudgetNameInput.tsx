@@ -1,27 +1,21 @@
-import { type Dispatch, type FormEvent, type SetStateAction, useState } from "react"
-import { updateBudget } from '../../backend/services/budgets'
+import { type Dispatch, type FormEvent, type SetStateAction, useState } from 'react'
+import { useUpdateBudget } from '../../hooks/budgets'
 import { useNotification } from '../../contexts/NotificationContext'
 
-const UpdateBudgetNameInput = ({ budgetId, budgetName, onSuccess, setIsOpen }: { budgetId: string, budgetName: string, onSuccess: () => Promise<void>, setIsOpen: Dispatch<SetStateAction<boolean>> }) => {
+const UpdateBudgetNameInput = ({ budgetId, budgetName, setIsOpen }: { budgetId: string, budgetName: string, setIsOpen: Dispatch<SetStateAction<boolean>> }) => {
   const [name, setName] = useState<string>(budgetName)
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<Error | null>(null)
   const { notify } = useNotification()
+  const { mutate: updateBudget, isPending, error } = useUpdateBudget()
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    updateBudget(budgetId, { name: name.trim() })
-      .then(() => {
+    updateBudget({ id: budgetId, updates: { name: name.trim() } }, {
+      onSuccess: () => {
         notify('Budget name updated', 'success')
-        onSuccess()
         setIsOpen(false)
-      })
-      .catch((err) => {
-        notify(err.message, 'error')
-        setError(err)
-      })
-      .finally(() => setLoading(false))
+      },
+      onError: (err) => notify(err.message, 'error'),
+    })
   }
 
   return (
@@ -44,10 +38,10 @@ const UpdateBudgetNameInput = ({ budgetId, budgetName, onSuccess, setIsOpen }: {
           </button>
           <button
             type="submit"
-            disabled={loading}
+            disabled={isPending}
             className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white text-sm font-medium px-3 py-1 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Saving...' : 'Confirm'}
+            {isPending ? 'Saving...' : 'Confirm'}
           </button>
         </div>
       </div>

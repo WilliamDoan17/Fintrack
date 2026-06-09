@@ -1,5 +1,5 @@
 import AuthContext from '../contexts/AuthContext'
-import useAuth from '../hooks/useAuth';
+import { useAuth } from '../hooks/auth'
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { user, loading, error } = useAuth();

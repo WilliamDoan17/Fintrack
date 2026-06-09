@@ -1,4 +1,4 @@
-import useSpendingBudgets from '../../hooks/useSpendingBudgets'
+import { useSpendingBudgets } from '../../hooks/budgets'
 import SpendingBudgetCard from './SpendingBudgetCard'
 
 const SpendingBudgetContainerSkeleton = () => (
@@ -13,8 +13,10 @@ const SpendingBudgetContainerSkeleton = () => (
   </div>
 )
 
-const SpendingBudgetContainer = ({ spendingBudgetQuery: { budgets, loading, error } }: { spendingBudgetQuery: ReturnType<typeof useSpendingBudgets> }) => {
-  if (loading) return <SpendingBudgetContainerSkeleton />
+const SpendingBudgetContainer = ({ parentId = null }: { parentId?: string | null }) => {
+  const { budgets, isLoading, error } = useSpendingBudgets(parentId)
+
+  if (isLoading) return <SpendingBudgetContainerSkeleton />
   if (error) return <p className="text-red-400 text-sm">Something went wrong</p>
   if (budgets.length === 0) return <p className="text-gray-500 text-sm">No budgets yet. Create one to get started.</p>
 

@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react'
-import useIncomeBudget from '../../hooks/useIncomeBudget'
-import useTransactions from '../../hooks/useTransactions'
-import useTransfers from '../../hooks/useTransfers'
+import { useIncomeBudget } from '../../hooks/budgets'
 import PageLoader from '../../components/loaders/PageLoader'
 import BalanceSummary from '../../components/transactions/BalanceSummary'
 import TransactionContainer from '../../components/transactions/TransactionContainer'
@@ -18,9 +16,7 @@ type ModalState =
   { type: 'addTransaction' } |
   { type: 'createTransfer' }
 
-const IncomeBudgetDetailContent = ({ budget, refetch }: { budget: Budget, refetch: () => Promise<void> }) => {
-  const transactionQuery = useTransactions(budget.id)
-  const transferQuery = useTransfers(budget.id)
+const IncomeBudgetDetailContent = ({ budget }: { budget: Budget }) => {
   const [isEditingName, setIsEditingName] = useState<boolean>(false)
   const [modalState, setModalState] = useState<ModalState | null>(null)
 
@@ -35,7 +31,6 @@ const IncomeBudgetDetailContent = ({ budget, refetch }: { budget: Budget, refetc
             ? <UpdateBudgetNameInput
               budgetId={budget.id}
               budgetName={budget.name}
-              onSuccess={refetch}
               setIsOpen={setIsEditingName}
             />
             : <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -51,42 +46,29 @@ const IncomeBudgetDetailContent = ({ budget, refetch }: { budget: Budget, refetc
         </div>
 
         <div className="flex flex-col gap-6">
-          <BalanceSummary transactionQuery={transactionQuery} transferQuery={transferQuery} budgetId={budget.id} />
+          <BalanceSummary budgetId={budget.id} />
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-gray-400 text-sm uppercase tracking-widest">Income Transactions</h2>
               <AddTransactionButton onClick={() => setModalState({ type: 'addTransaction' })} />
             </div>
-            <TransactionContainer
-              transactionQuery={transactionQuery}
-              transferQuery={transferQuery}
-              budgetId={budget.id}
-            />
+            <TransactionContainer budgetId={budget.id} />
           </div>
         </div>
       </div>
 
       {modalState?.type === 'addTransaction' && (
-        <AddTransactionModal
-          transactionQuery={transactionQuery}
-          budgetId={budget.id}
-          budgetType='income'
-          onClose={() => setModalState(null)}
-        />
+        <AddTransactionModal budgetId={budget.id} budgetType='income' onClose={() => setModalState(null)} />
       )}
       {modalState?.type === 'createTransfer' && (
-        <CreateTransferModal
-          budget={budget}
-          onSuccess={transferQuery.refetch}
-          onClose={() => setModalState(null)}
-        />
+        <CreateTransferModal budget={budget} onClose={() => setModalState(null)} />
       )}
     </div>
   )
 }
 
 const IncomeBudgetDetail = () => {
-  const { budget, loading, error, refetch } = useIncomeBudget()
+  const { budget, isLoading, error } = useIncomeBudget()
   const { setBackTo } = useNavigation()
 
   useEffect(() => {
@@ -94,14 +76,14 @@ const IncomeBudgetDetail = () => {
     return () => setBackTo(null)
   }, [budget, error, setBackTo])
 
-  if (loading) return <PageLoader />
+  if (isLoading) return <PageLoader />
   if (error || !budget) return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center">
       <p className="text-red-400 text-sm">Cannot find income budget</p>
     </div>
   )
 
-  return <IncomeBudgetDetailContent budget={budget} refetch={refetch} />
+  return <IncomeBudgetDetailContent budget={budget} />
 }
 
 export default IncomeBudgetDetail
