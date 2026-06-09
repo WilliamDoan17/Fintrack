@@ -1,13 +1,11 @@
-import { useParams } from "react-router-dom"
-import { useState, useEffect } from "react";
-import useBudgetInfo from "../../hooks/useBudgetInfo";
-import useSpendingBudgets from "../../hooks/useSpendingBudgets";
-import useTransactions from "../../hooks/useTransactions";
-import PageLoader from "../../components/loaders/PageLoader";
-import CreateBudgetButton from "../../components/budgets/CreateBudgetButton";
-import SpendingBudgetContainer from "../../components/budgets/SpendingBudgetContainer";
-import CreateBudgetModal from "../../components/budgets/CreateBudgetModal";
-import TransactionContainer from "../../components/transactions/TransactionContainer";
+import { useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useBudget } from '../../hooks/budgets'
+import PageLoader from '../../components/loaders/PageLoader'
+import CreateBudgetButton from '../../components/budgets/CreateBudgetButton'
+import SpendingBudgetContainer from '../../components/budgets/SpendingBudgetContainer'
+import CreateBudgetModal from '../../components/budgets/CreateBudgetModal'
+import TransactionContainer from '../../components/transactions/TransactionContainer'
 import AddTransactionModal from '../../components/transactions/AddTransactionModal'
 import AddTransactionButton from '../../components/transactions/AddTransactionButton'
 import BalanceSummary from '../../components/transactions/BalanceSummary'
@@ -19,7 +17,6 @@ import MoveBudgetButton from '../../components/budgets/MoveBudgetButton'
 import MoveBudgetModal from '../../components/budgets/MoveBudgetModal'
 import CreateTransferButton from '../../components/transfers/CreateTransferButton'
 import CreateTransferModal from '../../components/transfers/CreateTransferModal'
-import useTransfers from '../../hooks/useTransfers'
 import { useNavigation } from '../../contexts/NavigationContext'
 
 type ModalState =
@@ -30,13 +27,10 @@ type ModalState =
   { type: 'createTransfer' }
 
 const BudgetDetail = () => {
-  const { id: budgetId } = useParams();
-  const { budget: budgetInfo, loading, error, refetch: fetchBudgetInfo } = useBudgetInfo(budgetId ?? null)
+  const { id: budgetId } = useParams()
+  const { budget: budgetInfo, isLoading, error } = useBudget(budgetId ?? null)
   const [isEditingName, setIsEditingName] = useState<boolean>(false)
   const [modalState, setModalState] = useState<ModalState | null>(null)
-  const spendingBudgetQuery = useSpendingBudgets(budgetId ?? null);
-  const transactionQuery = useTransactions(budgetId ?? null);
-  const transferQuery = useTransfers(budgetId ?? null);
   const { setBackTo } = useNavigation()
 
   useEffect(() => {
@@ -48,7 +42,7 @@ const BudgetDetail = () => {
     return () => setBackTo(null)
   }, [budgetInfo, error, setBackTo])
 
-  if (loading) return <PageLoader />
+  if (isLoading) return <PageLoader />
   if (error) return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center">
       <p className="text-red-400 text-sm">Cannot find budget info</p>
@@ -66,7 +60,6 @@ const BudgetDetail = () => {
             ? <UpdateBudgetNameInput
               budgetId={budgetId ?? ''}
               budgetName={budgetInfo?.name ?? ''}
-              onSuccess={fetchBudgetInfo}
               setIsOpen={setIsEditingName}
             />
             : <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -90,19 +83,14 @@ const BudgetDetail = () => {
           {/* Balance + Transactions */}
           <div className="flex flex-col lg:flex-row gap-6 items-start">
             <div className="w-full lg:w-[30%] shrink-0">
-              <BalanceSummary transactionQuery={transactionQuery} transferQuery={transferQuery} budgetId={budgetId} />
+              <BalanceSummary budgetId={budgetId} />
             </div>
             <div className="w-full flex-1">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-gray-400 text-sm uppercase tracking-widest">Recent Transactions</h2>
                 <AddTransactionButton onClick={() => setModalState({ type: 'addTransaction' })} />
               </div>
-              <TransactionContainer
-                spendingBudgetQuery={spendingBudgetQuery}
-                transactionQuery={transactionQuery}
-                transferQuery={transferQuery}
-                budgetId={budgetId}
-              />
+              <TransactionContainer budgetId={budgetId} />
             </div>
           </div>
 
@@ -112,25 +100,16 @@ const BudgetDetail = () => {
               <h2 className="text-gray-400 text-sm uppercase tracking-widest">Sub-budgets</h2>
               <CreateBudgetButton onClick={() => setModalState({ type: 'createBudget' })} />
             </div>
-            <SpendingBudgetContainer spendingBudgetQuery={spendingBudgetQuery} />
+            <SpendingBudgetContainer parentId={budgetId} />
           </div>
         </div>
       </div>
 
       {modalState?.type === 'createBudget' && (
-        <CreateBudgetModal
-          spendingBudgetQuery={spendingBudgetQuery}
-          parentId={budgetId}
-          onClose={() => setModalState(null)}
-        />
+        <CreateBudgetModal parentId={budgetId} onClose={() => setModalState(null)} />
       )}
       {modalState?.type === 'addTransaction' && budgetId && (
-        <AddTransactionModal
-          transactionQuery={transactionQuery}
-          budgetId={budgetId}
-          budgetType='spending'
-          onClose={() => setModalState(null)}
-        />
+        <AddTransactionModal budgetId={budgetId} budgetType='spending' onClose={() => setModalState(null)} />
       )}
       {modalState?.type === 'deleteBudgetConfirm' && (
         <DeleteBudgetConfirmModal
@@ -140,17 +119,10 @@ const BudgetDetail = () => {
         />
       )}
       {modalState?.type === 'moveBudget' && budgetInfo && (
-        <MoveBudgetModal
-          budget={budgetInfo}
-          onClose={() => setModalState(null)}
-        />
+        <MoveBudgetModal budget={budgetInfo} onClose={() => setModalState(null)} />
       )}
       {modalState?.type === 'createTransfer' && budgetInfo && (
-        <CreateTransferModal
-          budget={budgetInfo}
-          onSuccess={transferQuery.refetch}
-          onClose={() => setModalState(null)}
-        />
+        <CreateTransferModal budget={budgetInfo} onClose={() => setModalState(null)} />
       )}
     </div>
   )

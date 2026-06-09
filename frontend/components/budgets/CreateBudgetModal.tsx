@@ -1,28 +1,21 @@
 import { useState } from 'react'
-import { createBudget } from '../../backend/services/budgets'
-import useBudgets from '../../hooks/useBudgets'
+import { useCreateBudget } from '../../hooks/budgets'
 import { useNotification } from '../../contexts/NotificationContext'
 
-const CreateBudgetModal = ({ spendingBudgetQuery: { refetch }, onClose, parentId = null }: { spendingBudgetQuery: ReturnType<typeof useBudgets>, onClose: () => void, parentId?: string | null }) => {
+const CreateBudgetModal = ({ onClose, parentId = null }: { onClose: () => void, parentId?: string | null }) => {
   const [name, setName] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<Error | null>(null)
   const { notify } = useNotification()
+  const { mutate: createBudget, isPending, error } = useCreateBudget()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    createBudget({ name: name.trim(), parent_id: parentId })
-      .then(() => {
+    createBudget({ name: name.trim(), parent_id: parentId }, {
+      onSuccess: () => {
         notify('Budget created', 'success')
-        refetch()
         onClose()
-      })
-      .catch((err) => {
-        notify(err.message, 'error')
-        setError(err)
-      })
-      .finally(() => setLoading(false))
+      },
+      onError: (err) => notify(err.message, 'error'),
+    })
   }
 
   return (
@@ -53,10 +46,10 @@ const CreateBudgetModal = ({ spendingBudgetQuery: { refetch }, onClose, parentId
             </button>
             <button
               type='submit'
-              disabled={loading}
+              disabled={isPending}
               className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating...' : 'Create Budget'}
+              {isPending ? 'Creating...' : 'Create Budget'}
             </button>
           </div>
         </form>

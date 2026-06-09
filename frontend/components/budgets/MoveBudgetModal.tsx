@@ -1,13 +1,12 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import type { Budget } from '../../backend/types/budgets'
-import useSpendingBudgetStructure from '../../hooks/useSpendingBudgetStructure'
-import { updateBudget } from '../../backend/services/budgets'
+import { useSpendingBudgetStructure, useUpdateBudget } from '../../hooks/budgets'
 import { useNotification } from '../../contexts/NotificationContext'
 
 const MoveBudgetModal = ({ budget, onClose }: { budget: Budget, onClose: () => void }) => {
-  const { structure, loading, error } = useSpendingBudgetStructure()
+  const { structure, isLoading, error } = useSpendingBudgetStructure()
+  const { mutate: updateBudget, isPending: moving } = useUpdateBudget()
   const [input, setInput] = useState('')
-  const [moving, setMoving] = useState(false)
   const [open, setOpen] = useState(false)
   const [focusedIndex, setFocusedIndex] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -29,12 +28,10 @@ const MoveBudgetModal = ({ budget, onClose }: { budget: Budget, onClose: () => v
     })
   }, [input, structure, currentPath])
 
-  // reset focused index when hints change
   useEffect(() => {
     setFocusedIndex(-1)
   }, [hints])
 
-  // close dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -47,8 +44,8 @@ const MoveBudgetModal = ({ budget, onClose }: { budget: Budget, onClose: () => v
 
   useEffect(() => {
     if (structure) {
-      const parentPath = budget.parent_id === null ? '/' : (structure?.budgetIdToPath.get(budget.parent_id) ?? '')
-      setInput(parentPath)
+      const p = budget.parent_id === null ? '/' : (structure.budgetIdToPath.get(budget.parent_id) ?? '')
+      setInput(p)
     }
   }, [structure, budget])
 
@@ -60,7 +57,6 @@ const MoveBudgetModal = ({ budget, onClose }: { budget: Budget, onClose: () => v
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!open || hints.length === 0) return
-
     if (e.key === 'ArrowDown') {
       e.preventDefault()
       setFocusedIndex(i => Math.min(i + 1, hints.length - 1))
@@ -75,23 +71,22 @@ const MoveBudgetModal = ({ budget, onClose }: { budget: Budget, onClose: () => v
     }
   }
 
-  const handleMove = async () => {
+  const handleMove = (e: React.FormEvent) => {
+    e.preventDefault()
     if (!structure || !input.trim()) return
-    setMoving(true)
-    try {
-      if (input.trim() !== '/' && !structure.pathToBudgetId.has(input.trim())) {
-        throw Error("No Budget found");
-      }
-      const targetBudgetId = structure.pathToBudgetId.get(input.trim())
-      const newParentId = input.trim() === '/' ? null : targetBudgetId
-      await updateBudget(budget.id, { parent_id: newParentId })
-      notify(`Moved "${budget.name}" successfully`, 'success')
-      onClose()
-    } catch (err) {
-      notify((err as Error).message, 'error')
-    } finally {
-      setMoving(false)
+    if (input.trim() !== '/' && !structure.pathToBudgetId.has(input.trim())) {
+      notify('No budget found at that path', 'error')
+      return
     }
+    const targetBudgetId = structure.pathToBudgetId.get(input.trim())
+    const newParentId = input.trim() === '/' ? null : (targetBudgetId ?? null)
+    updateBudget({ id: budget.id, updates: { parent_id: newParentId } }, {
+      onSuccess: () => {
+        notify(`Moved "${budget.name}" successfully`, 'success')
+        onClose()
+      },
+      onError: (err) => notify(err.message, 'error'),
+    })
   }
 
   return (
@@ -106,9 +101,7 @@ const MoveBudgetModal = ({ budget, onClose }: { budget: Budget, onClose: () => v
           Current: <span className="text-gray-300">{parentPath || '...'}</span>
         </div>
 
-        <form onSubmit={e => { e.preventDefault(); handleMove() }} className="flex flex-col gap-4">
-
-          {/* Dropdown */}
+        <form onSubmit={handleMove} className="flex flex-col gap-4">
           <div ref={containerRef} className="relative">
             <input
               type="text"
@@ -120,7 +113,7 @@ const MoveBudgetModal = ({ budget, onClose }: { budget: Budget, onClose: () => v
               className="w-full bg-gray-800 border border-gray-700 focus:border-emerald-400 outline-none rounded-lg px-4 py-2 text-white placeholder:text-gray-500 text-sm transition-all"
             />
 
-            {open && !loading && hints.length > 0 && (
+            {open && !isLoading && hints.length > 0 && (
               <ul className="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg overflow-hidden z-10 max-h-48 overflow-y-auto">
                 {hints.map((path, index) => (
                   <li
@@ -138,7 +131,7 @@ const MoveBudgetModal = ({ budget, onClose }: { budget: Budget, onClose: () => v
             )}
           </div>
 
-          {loading && <p className="text-gray-500 text-sm">Loading budgets...</p>}
+          {isLoading && <p className="text-gray-500 text-sm">Loading budgets...</p>}
           {error && <p className="text-red-400 text-sm">Failed to load budgets</p>}
 
           <div className="flex gap-2 justify-end">
@@ -157,7 +150,6 @@ const MoveBudgetModal = ({ budget, onClose }: { budget: Budget, onClose: () => v
               {moving ? 'Moving...' : 'Move'}
             </button>
           </div>
-
         </form>
 
       </div>

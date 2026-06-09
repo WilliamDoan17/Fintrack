@@ -1,4 +1,4 @@
-import useSpendingBudgets from '../../hooks/useSpendingBudgets'
+import { useSpendingBudgets } from '../../hooks/budgets'
 import BudgetCard from './BudgetCard'
 
 const BudgetContainerSkeleton = () => (
@@ -13,18 +13,17 @@ const BudgetContainerSkeleton = () => (
   </div>
 )
 
-const BudgetContainer = ({ spendingBudgetQuery: { budgets, loading, error } }: { spendingBudgetQuery: ReturnType<typeof useSpendingBudgets> }) => {
-  if (loading) return <BudgetContainerSkeleton />
+const BudgetContainer = ({ parentId = null }: { parentId?: string | null }) => {
+  const { budgets, isLoading, error } = useSpendingBudgets(parentId)
+
+  if (isLoading) return <BudgetContainerSkeleton />
   if (error) return <p className="text-red-400 text-sm">Something went wrong</p>
   if (budgets.length === 0) return <p className="text-gray-500 text-sm">No budgets yet. Create one to get started.</p>
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {budgets.map(budget => (
-        <BudgetCard
-          key={budget.id}
-          budget={budget}
-        />
+        <BudgetCard key={budget.id} budget={budget} />
       ))}
     </div>
   )
