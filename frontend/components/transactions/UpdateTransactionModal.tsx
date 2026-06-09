@@ -1,29 +1,24 @@
 import { useState } from 'react'
-import { updateTransaction, type Transaction, type TransactionType } from '../../backend/services/transactions'
+import { useUpdateTransaction } from '../../hooks/transactions'
+import type { Transaction, TransactionType } from '../../backend/types/transactions'
 import { useNotification } from '../../contexts/NotificationContext'
 
-const UpdateTransactionModal = ({ transaction, onSuccess, onClose }: { transaction: Transaction, onSuccess: () => void, onClose: () => void }) => {
+const UpdateTransactionModal = ({ transaction, onClose }: { transaction: Transaction, onClose: () => void }) => {
   const [name, setName] = useState<string>(transaction.name)
   const [type, setType] = useState<TransactionType>(transaction.type)
   const [amount, setAmount] = useState<string>(transaction.amount.toString())
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<Error | null>(null)
   const { notify } = useNotification()
+  const { mutate: updateTransaction, isPending, error } = useUpdateTransaction()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    updateTransaction(transaction.id, { name, type, amount: parseFloat(amount) })
-      .then(() => {
+    updateTransaction({ id: transaction.id, updates: { name, type, amount: parseFloat(amount) } }, {
+      onSuccess: () => {
         notify('Transaction updated', 'success')
-        onSuccess()
         onClose()
-      })
-      .catch((err) => {
-        notify(err.message, 'error')
-        setError(err)
-      })
-      .finally(() => setLoading(false))
+      },
+      onError: (err) => notify(err.message, 'error'),
+    })
   }
 
   return (
@@ -82,7 +77,7 @@ const UpdateTransactionModal = ({ transaction, onSuccess, onClose }: { transacti
               <input
                 type="text"
                 id='update-transaction-amount'
-                value={amount !== '' ? amount : ''}
+                value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 min={0}
                 step={0.01}
@@ -105,10 +100,10 @@ const UpdateTransactionModal = ({ transaction, onSuccess, onClose }: { transacti
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={isPending}
               className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Updating...' : 'Update Transaction'}
+              {isPending ? 'Updating...' : 'Update Transaction'}
             </button>
           </div>
 

@@ -1,37 +1,29 @@
 import { useState } from 'react'
-import useTransactions from '../../hooks/useTransactions'
-import { createTransaction } from '../../backend/services/transactions'
+import { useCreateTransaction } from '../../hooks/transactions'
 import type { TransactionType } from '../../backend/types/transactions'
 import { useNotification } from '../../contexts/NotificationContext'
 
-const AddTransactionModal = ({ transactionQuery: { refetch }, onClose, budgetId, budgetType }: {
-  transactionQuery: ReturnType<typeof useTransactions>
+const AddTransactionModal = ({ onClose, budgetId, budgetType }: {
   onClose: () => void
   budgetId: string
   budgetType: 'spending' | 'income'
 }) => {
   const [name, setName] = useState<string>('')
   const [amount, setAmount] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<Error | null>(null)
   const { notify } = useNotification()
+  const { mutate: createTransaction, isPending, error } = useCreateTransaction()
 
   const type: TransactionType = budgetType === 'income' ? 'add' : 'withdraw'
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    createTransaction({ name, type, amount: parseFloat(amount), budget_id: budgetId })
-      .then(() => {
+    createTransaction({ name, type, amount: parseFloat(amount), budget_id: budgetId }, {
+      onSuccess: () => {
         notify('Transaction added', 'success')
-        refetch()
         onClose()
-      })
-      .catch((err) => {
-        notify(err.message, 'error')
-        setError(err)
-      })
-      .finally(() => setLoading(false))
+      },
+      onError: (err) => notify(err.message, 'error'),
+    })
   }
 
   return (
@@ -86,10 +78,10 @@ const AddTransactionModal = ({ transactionQuery: { refetch }, onClose, budgetId,
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={isPending}
               className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Adding...' : '+ Add Transaction'}
+              {isPending ? 'Adding...' : '+ Add Transaction'}
             </button>
           </div>
 

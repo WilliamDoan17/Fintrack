@@ -1,25 +1,19 @@
-import { useState } from 'react'
-import { type Transaction, deleteTransaction } from '../../backend/services/transactions'
+import { useDeleteTransaction } from '../../hooks/transactions'
+import type { Transaction } from '../../backend/types/transactions'
 import { useNotification } from '../../contexts/NotificationContext'
 
-const DeleteTransactionConfirmModal = ({ transaction, onSuccess, onClose }: { transaction: Transaction, onSuccess: () => Promise<void>, onClose: () => void }) => {
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<Error | null>(null)
+const DeleteTransactionConfirmModal = ({ transaction, onClose }: { transaction: Transaction, onClose: () => void }) => {
   const { notify } = useNotification()
+  const { mutate: deleteTransaction, isPending, error } = useDeleteTransaction()
 
-  const handleDelete = async () => {
-    setLoading(true)
-    deleteTransaction(transaction.id)
-      .then(() => {
+  const handleDelete = () => {
+    deleteTransaction(transaction.id, {
+      onSuccess: () => {
         notify('Transaction deleted', 'success')
-        onSuccess()
         onClose()
-      })
-      .catch((err) => {
-        notify(err.message, 'error')
-        setError(err)
-      })
-      .finally(() => setLoading(false))
+      },
+      onError: (err) => notify(err.message, 'error'),
+    })
   }
 
   return (
@@ -36,11 +30,11 @@ const DeleteTransactionConfirmModal = ({ transaction, onSuccess, onClose }: { tr
             Cancel
           </button>
           <button
-            disabled={loading}
+            disabled={isPending}
             onClick={handleDelete}
             className="bg-red-500 hover:bg-red-400 active:bg-red-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Deleting...' : 'Delete Transaction'}
+            {isPending ? 'Deleting...' : 'Delete Transaction'}
           </button>
         </div>
       </div>
