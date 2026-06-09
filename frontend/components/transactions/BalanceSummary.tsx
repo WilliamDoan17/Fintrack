@@ -1,12 +1,14 @@
-import useTransactions from '../../hooks/useTransactions'
-import useTransfers from '../../hooks/useTransfers'
+import { useTransactions } from '../../hooks/transactions'
+import { useTransfers } from '../../hooks/transfers'
 
-const BalanceSummary = ({ transactionQuery: { transactions, loading, error }, transferQuery, budgetId }: {
-  transactionQuery: ReturnType<typeof useTransactions>
-  transferQuery?: ReturnType<typeof useTransfers>
-  budgetId?: string
-}) => {
-  if (loading) return (
+const BalanceSummary = ({ budgetId }: { budgetId?: string }) => {
+  const { transactions, isLoading: txLoading, error: txError } = useTransactions(budgetId ?? null)
+  const { transfers, isLoading: trLoading, error: trError } = useTransfers(budgetId ?? null)
+
+  const isLoading = txLoading || trLoading
+  const error = txError || trError
+
+  if (isLoading) return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 flex items-center justify-center">
       <p className="text-gray-500 text-sm">Loading balance...</p>
     </div>
@@ -31,15 +33,13 @@ const BalanceSummary = ({ transactionQuery: { transactions, loading, error }, tr
   let transfersIn = 0
   let transfersOut = 0
 
-  if (transferQuery) {
-    transferQuery.transfers.forEach(({ from_budget_id, amount }) => {
-      if (from_budget_id === budgetId) {
-        transfersOut += amount
-      } else {
-        transfersIn += amount
-      }
-    })
-  }
+  transfers.forEach(({ from_budget_id, amount }) => {
+    if (from_budget_id === budgetId) {
+      transfersOut += amount
+    } else {
+      transfersIn += amount
+    }
+  })
 
   const balance = income - expenses + transfersIn - transfersOut
 
@@ -79,4 +79,3 @@ const BalanceSummary = ({ transactionQuery: { transactions, loading, error }, tr
 }
 
 export default BalanceSummary
-

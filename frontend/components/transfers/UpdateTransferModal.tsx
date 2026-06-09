@@ -1,28 +1,23 @@
 import { useState } from 'react'
-import { updateTransfer, type Transfer } from '../../backend/services/transfers'
+import type { Transfer } from '../../backend/types/transfers'
+import { useUpdateTransfer } from '../../hooks/transfers'
 import { useNotification } from '../../contexts/NotificationContext'
 
-const UpdateTransferModal = ({ transfer, onSuccess, onClose }: { transfer: Transfer, onSuccess: () => void, onClose: () => void }) => {
+const UpdateTransferModal = ({ transfer, onClose }: { transfer: Transfer, onClose: () => void }) => {
   const [name, setName] = useState(transfer.name)
   const [amount, setAmount] = useState(transfer.amount.toString())
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<Error | null>(null)
   const { notify } = useNotification()
+  const { mutate: updateTransfer, isPending, error } = useUpdateTransfer()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    updateTransfer(transfer.id, { name, amount: parseFloat(amount) })
-      .then(() => {
+    updateTransfer({ id: transfer.id, updates: { name, amount: parseFloat(amount) } }, {
+      onSuccess: () => {
         notify('Transfer updated', 'success')
-        onSuccess()
         onClose()
-      })
-      .catch((err) => {
-        notify(err.message, 'error')
-        setError(err)
-      })
-      .finally(() => setLoading(false))
+      },
+      onError: (err) => notify(err.message, 'error'),
+    })
   }
 
   return (
@@ -71,10 +66,10 @@ const UpdateTransferModal = ({ transfer, onSuccess, onClose }: { transfer: Trans
             </button>
             <button
               type="submit"
-              disabled={loading || !name || !amount}
+              disabled={isPending || !name || !amount}
               className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Updating...' : 'Update Transfer'}
+              {isPending ? 'Updating...' : 'Update Transfer'}
             </button>
           </div>
 

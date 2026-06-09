@@ -1,25 +1,19 @@
-import { useState } from 'react'
-import { deleteTransfer, type Transfer } from '../../backend/services/transfers'
+import type { Transfer } from '../../backend/types/transfers'
+import { useDeleteTransfer } from '../../hooks/transfers'
 import { useNotification } from '../../contexts/NotificationContext'
 
-const DeleteTransferConfirmModal = ({ transfer, onSuccess, onClose }: { transfer: Transfer, onSuccess: () => void, onClose: () => void }) => {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<Error | null>(null)
+const DeleteTransferConfirmModal = ({ transfer, onClose }: { transfer: Transfer, onClose: () => void }) => {
   const { notify } = useNotification()
+  const { mutate: deleteTransfer, isPending, error } = useDeleteTransfer()
 
   const handleDelete = () => {
-    setLoading(true)
-    deleteTransfer(transfer.id)
-      .then(() => {
+    deleteTransfer(transfer.id, {
+      onSuccess: () => {
         notify('Transfer deleted', 'success')
-        onSuccess()
         onClose()
-      })
-      .catch((err) => {
-        notify(err.message, 'error')
-        setError(err)
-      })
-      .finally(() => setLoading(false))
+      },
+      onError: (err) => notify(err.message, 'error'),
+    })
   }
 
   return (
@@ -38,11 +32,11 @@ const DeleteTransferConfirmModal = ({ transfer, onSuccess, onClose }: { transfer
             Cancel
           </button>
           <button
-            disabled={loading}
+            disabled={isPending}
             onClick={handleDelete}
             className="bg-red-500 hover:bg-red-400 active:bg-red-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Deleting...' : 'Delete Transfer'}
+            {isPending ? 'Deleting...' : 'Delete Transfer'}
           </button>
         </div>
       </div>
