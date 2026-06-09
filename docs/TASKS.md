@@ -17,31 +17,29 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
     - `feat: tanstack-query for transactions` ✅
     - `feat: tanstack-query for transfers` ✅
   - [x] fix ts import errors — none (tsc clean)
-  - [ ] push, open PR, confirm merge, delete branch
+  - [x] push, open PR, confirm merge, delete branch
 
-  ---
+  ***
 
   **Query keys**
 
-  | hook | key |
-  |---|---|
+  | hook                           | key                              |
+  | ------------------------------ | -------------------------------- |
   | `useSpendingBudgets(parentId)` | `['spending-budgets', parentId]` |
-  | `useBudget(id)` | `['budget', id]` |
-  | `useIncomeBudget()` | `['income-budget']` |
-  | `useSpendingBudgetStructure()` | `['spending-budget-structure']` |
-  | `useTransactions(budgetId)` | `['transactions', budgetId]` |
-  | `useTransfers(budgetId)` | `['transfers', budgetId]` |
+  | `useBudget(id)`                | `['budget', id]`                 |
+  | `useIncomeBudget()`            | `['income-budget']`              |
+  | `useSpendingBudgetStructure()` | `['spending-budget-structure']`  |
+  | `useTransactions(budgetId)`    | `['transactions', budgetId]`     |
+  | `useTransfers(budgetId)`       | `['transfers', budgetId]`        |
 
   **Invalidation strategy — broad prefix invalidation**
 
   Because budget balance propagates up the tree (via `apply_balance_delta`), and because budget moves change parent relationships, surgical per-key invalidation is fragile. All mutation hooks use broad prefix invalidation:
-
   - Budget mutations invalidate: `['spending-budgets']`, `['budget']`, `['income-budget']`, `['spending-budget-structure']`
   - Transaction mutations invalidate: `['transactions']`, `['budget']`, `['spending-budgets']`
   - Transfer mutations invalidate: `['transfers']`, `['budget']`, `['spending-budgets']`
 
   **Naming decisions**
-
   - Mutation hooks follow service verbs: `useCreateBudget`, `useUpdateBudget`, `useDeleteBudget`, `useCreateTransaction`, `useUpdateTransaction`, `useDeleteTransaction`, `useCreateTransfer`, `useUpdateTransfer`, `useDeleteTransfer`
   - UI component names are unchanged (`AddTransactionModal`, `CreateTransferModal`, etc.)
 
