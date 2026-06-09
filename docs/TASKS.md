@@ -5,19 +5,18 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
 <details>
   <summary>Jun 08, 2026</summary>
 
-- [ ] refactor to use `tanstack-query`
+- [x] refactor to use `tanstack-query`
   - [x] open branch `refactor/tanstack-query`
   - [x] rewrite plan (this entry)
-  - [ ] update related docs (`HOOKS.md`)
+  - [x] update related docs (`HOOKS.md`)
     - commit: `docs: update hooks for tanstack-query refactor`
-  - [ ] implement — one commit per domain:
-    - `feat: tanstack-query setup` — install `@tanstack/react-query`, wrap `<App>` in `<QueryClientProvider>`
-    - `feat: tanstack-query for auth` — consolidate into `hooks/auth.ts`; `useAuth` is unchanged (Supabase auth state, no tanstack-query)
-    - `feat: tanstack-query for budgets` — create `hooks/budgets.ts`; update all budget components and pages; delete old individual budget hook files
-    - `feat: tanstack-query for transactions` — create `hooks/transactions.ts`; update all transaction components and pages; delete old files
-    - `feat: tanstack-query for transfers` — create `hooks/transfers.ts`; update all transfer components and pages; delete old files
-  - [ ] fix ts import errors (only those introduced by this refactor)
-    - commit: `fix: ts errors`
+  - [x] implement — one commit per domain:
+    - `feat: tanstack-query setup` ✅
+    - `feat: tanstack-query for auth` ✅
+    - `feat: tanstack-query for budgets` ✅
+    - `feat: tanstack-query for transactions` ✅
+    - `feat: tanstack-query for transfers` ✅
+  - [x] fix ts import errors — none (tsc clean)
   - [ ] push, open PR, confirm merge, delete branch
 
   ---
