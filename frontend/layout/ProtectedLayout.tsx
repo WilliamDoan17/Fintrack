@@ -1,9 +1,9 @@
 import { useContext, useState } from 'react'
 import { Outlet, useNavigate, NavLink } from 'react-router-dom'
-import AuthContext from '../../contexts/AuthContext'
-import { useNavigation } from '../../contexts/NavigationContext'
-import { useNotification } from '../../contexts/NotificationContext'
-import { logout } from '../../backend/services/auth'
+import AuthContext from '../contexts/AuthContext'
+import { useNavigation } from '../contexts/NavigationContext'
+import { useNotification } from '../contexts/NotificationContext'
+import { logout } from '../backend/services/auth'
 
 const NavigationArrow = () => {
   const navigate = useNavigate()
