@@ -13,11 +13,23 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
       - has `NavigationArrow` & `SideBar` inside, not outside
   - update docs
   - push & wait for review, if okay then merge & delete branch
-- [ ] Transactions Page (branch: `feat/transaction-page`):
-  - Create a transactions page (wire to `/transactions`, put in protected routes)
-  - Transactions page is a page that has filtering and searching for transactions, also for each transaction, show the
-    path of the budget the transaction lies in
-  - First write a plan for this, we will discuss about it then we update the detailed steps
+- [ ] Spending Page (branch: `feat/spending-page`):
+  - Scoped to `withdraw` transactions only — answers "where is my money going?"
+  - [ ] wire `/spending` route in `App.tsx` and add nav link to `Sidebar`
+    - commit: `feat: add /spending route and nav link`
+  - [ ] `components/spending/SpendingRow.tsx` — single row: name, budget path, date, amount
+    - commit: `feat: SpendingRow component`
+  - [ ] `src/pages/Spending.tsx` — full page
+    - data: `useTransactions(null)` filtered to `type === 'withdraw'` + `useSpendingBudgetStructure()` for path resolution
+    - header: "Spending" title + total spent (sum of filtered results)
+    - filters: name search, amount range (min/max), date range (from/to), budget path autocomplete (same pattern as `MoveBudgetModal`)
+    - pagination: 25 per page
+    - commit: `feat: Spending page`
+  - [ ] update `TransactionContainer` — replace "View all" expand button with a `Link` to `/spending`
+    - commit: `refactor: replace TransactionContainer expand with link to /spending`
+  - [ ] update docs
+    - commit: `docs: spending page`
+  - [ ] push, open PR, confirm merge, delete branch
 
 </details>
 
