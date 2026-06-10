@@ -11,10 +11,13 @@ frontend/
 │   ├── main.tsx            — React entry point
 │   ├── App.tsx             — router + provider composition
 │   └── pages/              — top-level route components (see PAGES.md)
+├── layout/
+│   └── ProtectedLayout.tsx — app shell (Sidebar, NavigationArrow, Outlet)
+├── routes/
+│   └── ProtectedRoute.tsx  — auth guard; redirects unauthenticated users to /
 ├── components/
 │   ├── budgets/            — budget UI (cards, modals, buttons)
 │   ├── transactions/       — transaction UI (cards, modals, balance summary)
-│   ├── protected-layout/   — Sidebar, NavigationArrow, ProtectedLayout wrapper
 │   ├── loaders/            — PageLoader, skeleton loaders
 │   └── Toast.tsx           — rendered by NotificationProvider
 ├── hooks/                  — data-fetching hooks (one per domain)
@@ -67,7 +70,7 @@ Buttons set `modalState`; modals render conditionally and close via `setModalSta
 
 ### Routing
 - Routes composed in `src/App.tsx`.
-- Protected routes nested under `ProtectedLayout` (sidebar + auth gate).
+- `ProtectedRoute` (`routes/`) guards auth; `ProtectedLayout` (`layout/`) wraps the app shell (sidebar + back arrow).
 - `NavigationContext.setBackTo(path)` powers the in-app back arrow; pages set it on mount, clear on unmount.
 
 ### Styling
