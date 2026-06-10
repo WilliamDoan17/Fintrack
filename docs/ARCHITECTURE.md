@@ -11,7 +11,7 @@ frontend/
 │   ├── main.tsx            — React entry point
 │   ├── App.tsx             — router + provider composition
 │   └── pages/              — top-level route components (see PAGES.md)
-├── layout/
+├── layouts/
 │   └── ProtectedLayout.tsx — app shell (Sidebar, NavigationArrow, Outlet)
 ├── routes/
 │   └── ProtectedRoute.tsx  — auth guard; redirects unauthenticated users to /
