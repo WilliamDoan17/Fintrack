@@ -3,6 +3,25 @@
 Daily log of tasks worked on. One `<details>` block per day, newest on top.
 
 <details>
+  <summary>Jun 10, 2026</summary>
+
+- [ ] split protected-layout folder `frontend/protected-layout`:
+  - branch: `refactor/routes-and-layout`
+  - move everything in the protected-layout folder, each one cost 1 commit, into:
+    - `routes/ProtectedRoute.tsx`
+    - `layouts/ProtectedLayout.tsx`:
+      - has `NavigationArrow` & `SideBar` inside, not outside
+  - update docs
+  - push & wait for review, if okay then merge & delete branch
+- [ ] Transactions Page (branch: `feat/transaction-page`):
+  - Create a transactions page (wire to `/transactions`, put in protected routes)
+  - Transactions page is a page that has filtering and searching for transactions, also for each transaction, show the
+    path of the budget the transaction lies in
+  - First write a plan for this, we will discuss about it then we update the detailed steps
+
+</details>
+
+<details>
   <summary>Jun 08, 2026</summary>
 
 - [x] refactor to use `tanstack-query`
