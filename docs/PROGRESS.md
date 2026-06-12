@@ -20,7 +20,7 @@
 
 | Phase  | Description                                                                                                | Status  |
 | ------ | ---------------------------------------------------------------------------------------------------------- | ------- |
-| S2-1   | useReactQuery                                                                                              | ⬜      |
+| S2-1   | useReactQuery                                                                                              | ✅      |
 | S2-2   | Dark / Light Mode                                                                                          | ⬜      |
 | S2-3   | Responsive UI                                                                                              | ⬜      |
 | S2-4   | BudgetCard Balance                                                                                         | ✅      |
