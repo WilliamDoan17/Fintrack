@@ -4,7 +4,30 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
 
 <details>
   <summary>Jun 12, 2026</summary>
-</details>
+
+- [x] Spending Page (branch: `feat/spending-page`):
+  - Scoped to `withdraw` transactions only — answers "where is my money going?"
+  - [x] wire `/spending` route in `App.tsx` and add nav link to `Sidebar`
+    - commit: `feat: add /spending route and nav link`
+  - [x] `components/spending/SpendingRow.tsx` — single row: name, budget path, date, amount
+    - commit: `feat: SpendingRow component`
+  - [x] `src/pages/Spending.tsx` — full page
+    - data: `useTransactions(null)` filtered to `type === 'withdraw'` + `useSpendingBudgetStructure()` for path resolution
+    - header: "Spending" title + total spent (sum of filtered results)
+    - filters: name search, amount range (min/max), date range (from/to), budget path autocomplete (same pattern as `MoveBudgetModal`)
+    - pagination: 25 per page
+    - commit: `feat: Spending page`
+  - [x] update `TransactionContainer` — replace "View all" expand button with a `Link` to `/spending`
+    - commit: `refactor: replace TransactionContainer expand with link to /spending`
+  - [x] update docs
+    - commit: `docs: spending page`
+  - [ ] push, open PR, confirm merge, delete branch
+
+- [ ] update components docs:
+  - go through all components and update them to `COMPONENTS.MD`
+  - commit: `docs: update components`
+
+  </details>
 
 <details>
   <summary>Jun 10, 2026</summary>
