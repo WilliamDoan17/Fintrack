@@ -16,7 +16,7 @@ type ModalState =
   { type: 'addTransaction' } |
   { type: 'createTransfer' }
 
-const IncomeBudgetDetailContent = ({ budget }: { budget: Budget }) => {
+const IncomeDetailContent = ({ budget }: { budget: Budget }) => {
   const [isEditingName, setIsEditingName] = useState<boolean>(false)
   const [modalState, setModalState] = useState<ModalState | null>(null)
 
@@ -67,7 +67,7 @@ const IncomeBudgetDetailContent = ({ budget }: { budget: Budget }) => {
   )
 }
 
-const IncomeBudgetDetail = () => {
+const IncomeDetail = () => {
   const { budget, isLoading, error } = useIncomeBudget()
   const { setBackTo } = useNavigation()
 
@@ -83,7 +83,7 @@ const IncomeBudgetDetail = () => {
     </div>
   )
 
-  return <IncomeBudgetDetailContent budget={budget} />
+  return <IncomeDetailContent budget={budget} />
 }
 
-export default IncomeBudgetDetail
+export default IncomeDetail

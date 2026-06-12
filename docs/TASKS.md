@@ -21,7 +21,7 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
     - commit: `refactor: replace TransactionContainer expand with link to /spending`
   - [x] update docs
     - commit: `docs: spending page`
-  - [ ] push, open PR, confirm merge, delete branch
+  - [x] push, open PR, confirm merge, delete branch
 
 - [x] update components docs:
   - go through all components and update them to `COMPONENTS.MD`
@@ -32,6 +32,8 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
   - breadcrumbs above budget name, same typography as subtitle
   - shows full budget path; ancestors are clickable links, current budget is plain text
   - top-level budgets show just their own name
+
+- [ ] change `IncomeBudgetDetail` to `IncomeDetail`
 
 </details>
 

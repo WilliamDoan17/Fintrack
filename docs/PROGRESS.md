@@ -33,7 +33,7 @@
 | S2-10b | Income — RLS                                                                                               | ✅      |
 | S2-10c | Income — Services + Types                                                                                  | ✅      |
 | S2-10d | /spending page                                                                                             | ✅      |
-| S2-11  | /budgets page (hierarchy tree)                                                                             | ⬜      |
+| S2-11  | budget breadcrumbs                                                                                         | ✅      |
 | S2-10e | Income — UI (income page + allocate flow)                                                                  | ✅      |
 | S2-10f | Income — Enforce strict envelope (restrict add to income budget only)                                      | ✅      |
 | S2-10g | Income — Fix flicker on /income (component split pattern)                                                  | ✅      |
