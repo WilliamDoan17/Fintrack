@@ -33,7 +33,7 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
   - shows full budget path; ancestors are clickable links, current budget is plain text
   - top-level budgets show just their own name
 
-- [ ] change `IncomeBudgetDetail` to `IncomeDetail`
+- [x] change `IncomeBudgetDetail` to `IncomeDetail`
 
 </details>
 
