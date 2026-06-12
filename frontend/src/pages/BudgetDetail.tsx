@@ -18,6 +18,7 @@ import MoveBudgetModal from '../../components/budgets/MoveBudgetModal'
 import CreateTransferButton from '../../components/transfers/CreateTransferButton'
 import CreateTransferModal from '../../components/transfers/CreateTransferModal'
 import { useNavigation } from '../../contexts/NavigationContext'
+import BudgetBreadcrumbs from '../../components/budgets/BudgetBreadcrumbs'
 
 type ModalState =
   { type: 'createBudget' } |
@@ -55,7 +56,7 @@ const BudgetDetail = () => {
 
         {/* Header */}
         <div className="mb-8 md:mb-10">
-          <p className="text-gray-500 text-sm uppercase tracking-widest mb-1">Budget</p>
+          <BudgetBreadcrumbs budgetId={budgetId ?? ''} />
           {isEditingName
             ? <UpdateBudgetNameInput
               budgetId={budgetId ?? ''}
