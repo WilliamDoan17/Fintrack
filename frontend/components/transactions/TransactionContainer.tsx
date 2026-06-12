@@ -236,6 +236,13 @@ const TransactionContainer = ({
 
   return (
     <div className="flex flex-col gap-3 bg-gray-900 border border-gray-800 rounded-xl p-4">
+
+      {merged.length > limit && viewAll === 'link' && (
+        <Link to="/spending" className="text-gray-400 hover:text-emerald-400 text-sm transition-all mt-2">
+          View all spending →
+        </Link>
+      )}
+
       {merged.slice(0, limit).map(item =>
         item.kind === 'transaction' ? (
           <TransactionCard
@@ -256,11 +263,6 @@ const TransactionContainer = ({
         )
       )}
 
-      {merged.length > limit && viewAll === 'link' && (
-        <Link to="/spending" className="text-gray-400 hover:text-emerald-400 text-sm transition-all mt-2">
-          View all spending →
-        </Link>
-      )}
 
       {merged.length > limit && viewAll === 'expand' && (
         <button
