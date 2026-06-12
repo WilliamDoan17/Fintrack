@@ -189,6 +189,17 @@ Single row for the Spending page. Displays transaction name, budget path (gray),
 
 ---
 
+## Spending Components (`components/spending/`)
+
+### `SpendingRow`
+Single row for the Spending page. Displays transaction name, budget path, amount (red), and date.
+
+**Props:** `{ transaction: Transaction, budgetPath: string }`
+
+**Used by:** `Spending` page
+
+---
+
 ## Transfer Components (`components/transfers/`)
 
 ### `TransferCard`
