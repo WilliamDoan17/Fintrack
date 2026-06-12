@@ -90,7 +90,7 @@ const BudgetDetail = () => {
                 <h2 className="text-gray-400 text-sm uppercase tracking-widest">Recent Transactions</h2>
                 <AddTransactionButton onClick={() => setModalState({ type: 'addTransaction' })} />
               </div>
-              <TransactionContainer budgetId={budgetId} />
+              <TransactionContainer budgetId={budgetId} viewAll="expand" />
             </div>
           </div>
 

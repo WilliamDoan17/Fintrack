@@ -16,22 +16,18 @@ Public page for signing in or creating an account. Has a tab bar to switch betwe
 ## `/dashboard` — Dashboard (`src/pages/Dashboard.tsx`)
 Financial overview page for authenticated users. Layout top-to-bottom:
 - **Summary row** — `BalanceSummary` and `IncomeBudgetCard` side by side at equal height
-- **Recent Transactions** — full-width preview with "View all" expanded overlay
+- **Recent Transactions** — full-width preview; "View all spending →" links to `/spending`
 - **Your Budgets** — root spending budgets grid with a create budget button
 
 ---
 
-## `/transactions` — Transactions (`src/pages/Transactions.tsx`)
-Full transaction history for authenticated users. Shows:
-- All transactions across all budgets (paginated, searchable, filterable)
-- Edit/delete/move actions per transaction
-
----
-
-## `/budgets` — Budgets (`src/pages/Budgets.tsx`)
-Budget management page for authenticated users. Shows:
-- Full budget hierarchy as a navigable tree
-- Create, rename, move, and delete budgets
+## `/spending` — Spending (`src/pages/Spending.tsx`)
+Full spending history for authenticated users. Shows only `withdraw` transactions across all spending budgets. Features:
+- **Header** — "Spending" title + total spent (sum of filtered results)
+- **Filters** — name search, amount range (min/max), date range (from/to), budget path autocomplete with keyboard navigation
+- **List** — `SpendingRow` per transaction (name, budget path, amount, date); 25 per page pagination
+- Data: `useTransactions(null)` filtered to `type === 'withdraw'` + `useSpendingBudgetStructure()` for path resolution
+- Loading: skeleton rows while data fetches
 
 ---
 

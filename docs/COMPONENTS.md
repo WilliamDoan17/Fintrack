@@ -111,11 +111,9 @@ Icon button that triggers the add transaction modal.
 ---
 
 ### `TransactionContainer`
-Lists transactions and transfers for a budget. Supports pagination, search, and type/amount filters via an expanded overlay.
+Lists the most recent transactions and transfers for a budget (preview mode). Shows up to `limit` items; when there are more, renders a "View all spending →" link to `/spending`. Calls `useTransactions` and `useTransfers` internally.
 
-**Props:** `{ transactionQuery, transferQuery?, spendingBudgetQuery?, budgetId?, limit? }`
-
-`spendingBudgetQuery` is optional — only needed when the container is used in a spending budget context and needs to refetch budgets after a transaction is moved.
+**Props:** `{ budgetId?: string, limit?: number }`
 
 ---
 
@@ -123,6 +121,17 @@ Lists transactions and transfers for a budget. Supports pagination, search, and 
 Displays balance, income, expenses, and transfer totals for a budget.
 
 **Props:** `{ transactionQuery, transferQuery?, budgetId? }`
+
+---
+
+## Spending Components (`components/spending/`)
+
+### `SpendingRow`
+Single row for the Spending page. Displays transaction name, budget path, amount (red), and date.
+
+**Props:** `{ transaction: Transaction, budgetPath: string }`
+
+**Used by:** `Spending` page
 
 ---
 
