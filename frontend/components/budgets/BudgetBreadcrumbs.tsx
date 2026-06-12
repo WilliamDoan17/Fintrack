@@ -7,19 +7,19 @@ const BudgetBreadcrumbs = ({ budgetId }: { budgetId: string }) => {
   const path = structure?.budgetIdToPath.get(budgetId) ?? ''
   const segments = path.split('/').filter(Boolean)
 
+  if (segments.length <= 1) return null
+
   return (
     <p className="text-gray-500 text-sm uppercase tracking-widest mb-1">
-      <Link to="/dashboard" className="hover:text-gray-300 transition-colors">Dashboard</Link>
-      {segments.map((name, i) => {
+      {segments.slice(0, -1).map((name, i) => {
         const segPath = '/' + segments.slice(0, i + 1).join('/')
         const segId = structure?.pathToBudgetId.get(segPath)
-        const isLast = i === segments.length - 1
         return (
           <span key={segPath}>
-            <span className="mx-1.5">/</span>
-            {isLast || !segId
-              ? name
-              : <Link to={`/budget/${segId}`} className="hover:text-gray-300 transition-colors">{name}</Link>
+            {i > 0 && <span className="mx-1.5">/</span>}
+            {segId
+              ? <Link to={`/budget/${segId}`} className="hover:text-gray-300 transition-colors">{name}</Link>
+              : name
             }
           </span>
         )
