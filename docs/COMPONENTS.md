@@ -7,24 +7,6 @@ Source files live in `frontend/components/`.
 
 ## Budget Components (`components/budgets/`)
 
-### `BudgetCard`
-Generic budget card. Displays name and balance (emerald/red), navigates to `/budget/:id` on click. Visually identical to `SpendingBudgetCard`.
-
-**Props:** `{ budget: Budget }`
-
-**Used by:** `BudgetContainer`
-
----
-
-### `BudgetContainer`
-Grid container for spending budgets using `BudgetCard`. Accepts an optional `parentId` to scope to sub-budgets. Handles loading skeleton and empty state.
-
-**Props:** `{ parentId?: string | null }`
-
-**Used by:** `BudgetDetail` (sub-budget grid)
-
----
-
 ### `SpendingBudgetCard`
 Spending budget card. Same appearance as `BudgetCard`, navigates to `/budget/:id` on click.
 
@@ -39,7 +21,7 @@ Grid container for spending budgets using `SpendingBudgetCard`. Accepts an optio
 
 **Props:** `{ parentId?: string | null }`
 
-**Used by:** `Dashboard`, `BudgetDetail`
+**Used by:** `Dashboard`, `BudgetDetail` (sub-budget grid)
 
 ---
 

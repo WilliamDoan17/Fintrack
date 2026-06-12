@@ -27,6 +27,8 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
   - go through all components and update them to `COMPONENTS.MD`
   - commit: `docs: update components`
 
+- [ ] /budgets page:
+  - Shows budget in a hierarchy k
   </details>
 
 <details>
