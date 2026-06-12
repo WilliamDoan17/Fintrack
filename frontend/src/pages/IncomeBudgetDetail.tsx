@@ -52,7 +52,7 @@ const IncomeBudgetDetailContent = ({ budget }: { budget: Budget }) => {
               <h2 className="text-gray-400 text-sm uppercase tracking-widest">Income Transactions</h2>
               <AddTransactionButton onClick={() => setModalState({ type: 'addTransaction' })} />
             </div>
-            <TransactionContainer budgetId={budget.id} />
+            <TransactionContainer budgetId={budget.id} viewAll="expand" />
           </div>
         </div>
       </div>
