@@ -5,7 +5,7 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
 <details>
   <summary>Jun 10, 2026</summary>
 
-- [ ] split protected-layout folder `frontend/protected-layout`:
+- [x] split protected-layout folder `frontend/protected-layout`:
   - branch: `refactor/routes-and-layout`
   - move everything in the protected-layout folder, each one cost 1 commit, into:
     - `routes/ProtectedRoute.tsx`
