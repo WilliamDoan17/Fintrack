@@ -23,11 +23,17 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
     - commit: `docs: spending page`
   - [ ] push, open PR, confirm merge, delete branch
 
-- [ ] update components docs:
+- [x] update components docs:
   - go through all components and update them to `COMPONENTS.MD`
   - commit: `docs: update components`
 
-  </details>
+- [x] budget breadcrumbs:
+  - branch: `feat/budget-breadcrumbs`
+  - breadcrumbs above budget name, same typography as subtitle
+  - shows full budget path; ancestors are clickable links, current budget is plain text
+  - top-level budgets show just their own name
+
+</details>
 
 <details>
   <summary>Jun 10, 2026</summary>
