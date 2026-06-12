@@ -7,8 +7,26 @@ Source files live in `frontend/components/`.
 
 ## Budget Components (`components/budgets/`)
 
+### `BudgetCard`
+Generic budget card. Displays name and balance (emerald/red), navigates to `/budget/:id` on click. Visually identical to `SpendingBudgetCard`.
+
+**Props:** `{ budget: Budget }`
+
+**Used by:** `BudgetContainer`
+
+---
+
+### `BudgetContainer`
+Grid container for spending budgets using `BudgetCard`. Accepts an optional `parentId` to scope to sub-budgets. Handles loading skeleton and empty state.
+
+**Props:** `{ parentId?: string | null }`
+
+**Used by:** `BudgetDetail` (sub-budget grid)
+
+---
+
 ### `SpendingBudgetCard`
-Displays a single spending budget card. Navigates to `/budget/:id` on click.
+Spending budget card. Same appearance as `BudgetCard`, navigates to `/budget/:id` on click.
 
 **Props:** `{ budget: Budget }`
 
@@ -17,9 +35,9 @@ Displays a single spending budget card. Navigates to `/budget/:id` on click.
 ---
 
 ### `SpendingBudgetContainer`
-Grid container for spending budgets. Handles loading skeleton and empty state.
+Grid container for spending budgets using `SpendingBudgetCard`. Accepts an optional `parentId` to scope to sub-budgets. Handles loading skeleton and empty state.
 
-**Props:** `{ spendingBudgetQuery: ReturnType<typeof useSpendingBudgets> }`
+**Props:** `{ parentId?: string | null }`
 
 **Used by:** `Dashboard`, `BudgetDetail`
 
@@ -44,7 +62,7 @@ Icon button that triggers the create budget modal.
 ### `CreateBudgetModal`
 Modal form for creating a new spending budget.
 
-**Props:** `{ spendingBudgetQuery, parentId?, onClose }`
+**Props:** `{ onClose: () => void, parentId?: string | null }`
 
 ---
 
@@ -79,7 +97,7 @@ Modal with path-based autocomplete for moving a spending budget to a new parent.
 ### `UpdateBudgetNameButton`
 Edit icon button that toggles inline name editing.
 
-**Props:** `{ setIsOpen: (v: boolean) => void }`
+**Props:** `{ setIsOpen: Dispatch<SetStateAction<boolean>> }`
 
 ---
 
@@ -92,14 +110,27 @@ Inline form for editing a budget's name.
 
 ## Transaction Components (`components/transactions/`)
 
-### `AddTransactionModal`
-Modal form for adding a transaction. `budgetType` determines the transaction type and hides the type selector:
-- `'spending'` — type is always `withdraw`
-- `'income'` — type is always `add`
+### `TransactionCard`
+Single transaction row. Displays name, type label, amount (emerald for add, red for withdraw), and Move / edit / delete action buttons.
 
-**Props:** `{ transactionQuery, budgetId, budgetType: 'spending' | 'income', onClose }`
+**Props:** `{ transaction: Transaction, onEdit: () => void, onDelete: () => void, onMove: () => void }`
 
-**Used by:** `BudgetDetail`, `IncomeBudgetDetail`
+**Used by:** `TransactionContainer`
+
+---
+
+### `TransactionContainer`
+Merged preview of recent transactions and transfers for a budget, sorted descending by date. Renders up to `limit` items (default 3).
+
+`viewAll` controls overflow behavior:
+- `'link'` (default) — renders a "View all spending →" link to `/spending` when there are more items than `limit`
+- `'expand'` — renders a "View all N transactions" button that opens `ExpandedView`
+
+`ExpandedView` is an internal modal with search, type filter, amount range, and paginated results (10/page).
+
+**Props:** `{ budgetId?: string, limit?: number, viewAll?: 'link' | 'expand' }`
+
+**Used by:** `Dashboard` (`viewAll='link'`), `BudgetDetail` / `IncomeBudgetDetail` (`viewAll='expand'`)
 
 ---
 
@@ -110,24 +141,65 @@ Icon button that triggers the add transaction modal.
 
 ---
 
-### `TransactionContainer`
-Lists the most recent transactions and transfers for a budget (preview mode). Shows up to `limit` items; when there are more, renders a "View all spending →" link to `/spending`. Calls `useTransactions` and `useTransfers` internally.
+### `AddTransactionModal`
+Modal form for adding a transaction. `budgetType` determines the transaction type and hides the type selector:
+- `'spending'` — type is always `withdraw`
+- `'income'` — type is always `add`
 
-**Props:** `{ budgetId?: string, limit?: number }`
+**Props:** `{ onClose: () => void, budgetId: string, budgetType: 'spending' | 'income' }`
+
+**Used by:** `BudgetDetail`, `IncomeBudgetDetail`
+
+---
+
+### `UpdateTransactionButton`
+Edit icon button (pencil) that triggers the update transaction modal.
+
+**Props:** `{ onClick: () => void }`
+
+---
+
+### `UpdateTransactionModal`
+Modal form for editing an existing transaction's name, type, and amount.
+
+**Props:** `{ transaction: Transaction, onClose: () => void }`
+
+---
+
+### `DeleteTransactionButton`
+Trash icon button that triggers the delete confirmation modal.
+
+**Props:** `{ onClick: () => void }`
+
+---
+
+### `DeleteTransactionConfirmModal`
+Confirmation modal for deleting a transaction. Action is irreversible.
+
+**Props:** `{ transaction: Transaction, onClose: () => void }`
+
+---
+
+### `MoveTransactionModal`
+Modal with path-based autocomplete for reassigning a transaction to a different spending budget. Pre-fills with the transaction's current budget path. Uses `useSpendingBudgetStructure`.
+
+**Props:** `{ transaction: Transaction, onClose: () => void }`
 
 ---
 
 ### `BalanceSummary`
-Displays balance, income, expenses, and transfer totals for a budget.
+Displays balance, income, expenses, and transfer totals. Calls `useTransactions` and `useTransfers` internally. When `budgetId` is omitted, summarizes across all transactions/transfers. Transfer in/out rows only render when non-zero.
 
-**Props:** `{ transactionQuery, transferQuery?, budgetId? }`
+**Props:** `{ budgetId?: string }`
+
+**Used by:** `Dashboard`, `BudgetDetail`, `IncomeBudgetDetail`
 
 ---
 
 ## Spending Components (`components/spending/`)
 
 ### `SpendingRow`
-Single row for the Spending page. Displays transaction name, budget path, amount (red), and date.
+Single row for the Spending page. Displays transaction name, budget path (gray), amount (red), and date.
 
 **Props:** `{ transaction: Transaction, budgetPath: string }`
 
@@ -136,6 +208,15 @@ Single row for the Spending page. Displays transaction name, budget path, amount
 ---
 
 ## Transfer Components (`components/transfers/`)
+
+### `TransferCard`
+Single transfer row. Shows transfer name and "transfer in" / "transfer out" label relative to `budgetId`. Amount is emerald for in, red for out. Has edit and delete action buttons.
+
+**Props:** `{ transfer: Transfer, budgetId: string, onEdit: () => void, onDelete: () => void }`
+
+**Used by:** `TransactionContainer`
+
+---
 
 ### `CreateTransferButton`
 Icon button that triggers the create transfer modal.
@@ -151,13 +232,35 @@ Modal for creating a transfer between two budgets.
 
 ---
 
-### `UpdateTransferModal` / `UpdateTransferButton`
+### `UpdateTransferButton` / `UpdateTransferModal`
 Inline edit for an existing transfer.
 
 ---
 
-### `DeleteTransferButton` / `DeleteTransferModal`
-Delete flow for an existing transfer.
+### `DeleteTransferButton` / `DeleteTransferConfirmModal`
+Delete flow for an existing transfer. Deletion reverses the balance on both budgets.
+
+---
+
+## Loaders (`components/loaders/`)
+
+### `PageLoader`
+Full-screen centered spinner. Used as a suspense/loading fallback during page-level data fetches.
+
+**Props:** none
+
+**Used by:** `IncomeBudgetDetail`, `BudgetDetail`
+
+---
+
+## Shared (`components/`)
+
+### `Toast`
+Notification toast for success and error states. Renders a check icon (emerald) or info icon (red) with a message.
+
+**Props:** `{ notification: Notification }`
+
+**Used by:** `NotificationProvider`
 
 ---
 
@@ -166,15 +269,15 @@ Delete flow for an existing transfer.
 ### `Dashboard`
 Financial overview page. Layout top-to-bottom:
 1. Summary row — `BalanceSummary` (flex-1) + `IncomeBudgetCard` (fixed width) side by side at equal height
-2. Recent Transactions (full width)
-3. Spending Budgets (full width) with create button
+2. Recent Transactions (full width) — `TransactionContainer` with `viewAll='link'`
+3. Spending Budgets (full width) — `SpendingBudgetContainer` with create button
 
 **Route:** `/dashboard`
 
 ---
 
 ### `BudgetDetail`
-Detail page for a spending budget. Shows balance, transactions, transfers, sub-budgets, and all budget actions (rename, move, delete, create sub-budget, add transaction, create transfer).
+Detail page for a spending budget. Shows balance, transactions/transfers, sub-budgets, and all budget actions (rename, move, delete, create sub-budget, add transaction, create transfer). Uses `TransactionContainer` with `viewAll='expand'`.
 
 **Route:** `/budget/:id`
 
@@ -183,8 +286,21 @@ Detail page for a spending budget. Shows balance, transactions, transfers, sub-b
 ### `IncomeBudgetDetail`
 Detail page for the income budget. Split into a loader shell (`IncomeBudgetDetail`) and content component (`IncomeBudgetDetailContent`) — dependent queries only mount after the income budget ID is available, preventing a two-phase loading flicker.
 
-Layout is vertically stacked: `BalanceSummary` on top, then income transactions below.
+Layout is vertically stacked: `BalanceSummary` on top, then income transactions below. Uses `TransactionContainer` with `viewAll='expand'`.
 
 No delete, move, or create sub-budget actions.
 
 **Route:** `/income`
+
+---
+
+### `Spending`
+Full spending ledger — all `withdraw` transactions across all budgets. Paginated at 25/page. Supports filters:
+- Name search
+- Amount range (min/max)
+- Date range (from/to)
+- Budget path autocomplete (prefix match via `useSpendingBudgetStructure`)
+
+Header shows total count and total amount spent for the current filter set.
+
+**Route:** `/spending`
