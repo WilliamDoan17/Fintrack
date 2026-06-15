@@ -42,8 +42,11 @@ Protected page for the user's income budget. Shows:
 
 ## `/budget/:id` — Budget Detail (`src/pages/BudgetDetail.tsx`)
 Detail page for a specific budget. Shows:
-- Budget name (inline editable) with rename, move, and delete actions
+- Budget name (inline editable) with rename, move, delete, and settings actions
 - Balance summary for the budget (recursive — includes sub-budgets)
 - Transactions for the budget and all sub-budgets (paginated, searchable, filterable) with add/edit/delete/move actions
 - Sub-budgets list with a create sub-budget button
 - Back navigation via `NavigationContext`
+
+**Settings modal** (in-file component `SettingsModal`): opened via the Settings button in the header. Contains:
+- `balance_threshold` — optional number input; pre-populated with the current value if set, blank otherwise. Saved via `useUpdateBudget`.
