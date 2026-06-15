@@ -9,13 +9,31 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
   - [ ] Add threshold to column
     - Update to schema docs
     - SQL code for updating budget table (on chat, for copy)
-  - [ ] Warning + Alert Tag on `SpendingBudgetCard`
+  - [ ] Add fields for creating/update budgets
+    - Update `TYPES.md` to include `balance_threshold`
+    - Implement it to `backend/types/budgets.ts`
+    - Update the create budget form to include `balance_threshold`
+  - [ ] Settings for budget (Update budget's `balance_threshold`)
+    - Add settings button to `BudgetDetail` (Inline)
+    - Add `SettingsModal` to `BudgetDetail` (in-file component, doesn't need to be in `COMMPONENTS.md`, and add this to
+      the ModalState as well)
+      - Form for the settings, for now include:
+        - Budget threshold
+      - Save & Cancel button
+    - Update docs(pages): `BudgetDetail`: summary of how the page looks like, including the settings update
+
+  - [ ] Alert Tag on `SpendingBudgetCard`
     - Update docs `COMPONENTS.md` to include the Tag and describe how to tag looks like on the Card
     - Wait for approval & implement
-  - [ ] Warning + Alert Component on `BudgetDetail`
+  - [ ] Alert Component on `BudgetDetail`
     - Update docs `COMPONENTS.md` to describe the components
     - Wait for approval & implement
-- [ ] Update docs to include `allow_negative_balance` settings for budget + notification system together to phase 3
+
+- [ ] Refactor: less components (only keep big components, smal components like buttons get inline coded)
+      `refactor/reduce-component-count`
+  - Move `BudgetDetail`'s `SettingsModal` to `components/`
+
+- [x] Update docs to include `allow_negative_balance` settings for budget + notification system together to phase 3
       (separate, do first and prioritize `allow_negative_balance` settings)
 
 </details>

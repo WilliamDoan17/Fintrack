@@ -26,6 +26,8 @@ Users can:
 
 ### Stage 3 — Advanced & Scale
 Users can:
+- Configure per-budget `allow_negative_balance` setting (prioritized first in Stage 3 — extends the threshold/alert system built in Stage 2; when disabled, transactions that would push balance below `balance_threshold` are blocked)
+- Receive budget notifications (paired with `allow_negative_balance` — covers threshold alerts, over-limit events, and future triggers; requires a notifications table)
 - Track transactions in multiple currencies
 - Schedule one-time and recurring transactions (AutoPay)
 - Manage active sessions and revoke access
