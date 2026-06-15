@@ -5,12 +5,27 @@ const SpendingBudgetCard = ({ budget }: { budget: Budget }) => {
   const navigate = useNavigate()
   const isPositive = budget.balance >= 0
 
+  const tag = budget.balance_threshold !== null
+    ? budget.balance <= budget.balance_threshold
+      ? { label: 'Alert', className: 'bg-red-900/50 text-red-400' }
+      : budget.balance <= budget.balance_threshold * 1.2
+        ? { label: 'Warning', className: 'bg-yellow-900/50 text-yellow-400' }
+        : null
+    : null
+
   return (
     <div
       className="bg-gray-900 border border-gray-800 rounded-xl p-5 cursor-pointer hover:border-emerald-900 hover:shadow-emerald-900/20 hover:shadow-lg transition-all"
       onClick={() => navigate(`/budget/${budget.id}`)}
     >
-      <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Budget</p>
+      <div className="flex items-start justify-between mb-1">
+        <p className="text-xs text-gray-500 uppercase tracking-widest">Budget</p>
+        {tag && (
+          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${tag.className}`}>
+            {tag.label}
+          </span>
+        )}
+      </div>
       <p className="text-white font-semibold text-lg mb-2">{budget.name}</p>
       <p className={`font-bold text-xl ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
         {isPositive ? '+' : '-'}${Math.abs(budget.balance).toFixed(2)}
