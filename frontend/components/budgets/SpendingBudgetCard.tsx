@@ -5,9 +5,7 @@ const SpendingBudgetCard = ({ budget }: { budget: Budget }) => {
   const navigate = useNavigate()
   const isPositive = budget.balance >= 0
 
-  const tag = budget.balance_threshold !== null && budget.balance <= budget.balance_threshold
-    ? { label: 'Alert', className: 'bg-red-900/50 text-red-400' }
-    : null
+  const isAlert = budget.balance_threshold !== null && budget.balance <= budget.balance_threshold
 
   return (
     <div
@@ -16,9 +14,9 @@ const SpendingBudgetCard = ({ budget }: { budget: Budget }) => {
     >
       <div className="flex items-start justify-between mb-1">
         <p className="text-xs text-gray-500 uppercase tracking-widest">Budget</p>
-        {tag && (
-          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${tag.className}`}>
-            {tag.label}
+        {isAlert && (
+          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-900/50 text-red-400">
+            Alert
           </span>
         )}
       </div>
