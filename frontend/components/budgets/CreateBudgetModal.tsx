@@ -4,12 +4,14 @@ import { useNotification } from '../../contexts/NotificationContext'
 
 const CreateBudgetModal = ({ onClose, parentId = null }: { onClose: () => void, parentId?: string | null }) => {
   const [name, setName] = useState<string>('')
+  const [balanceThreshold, setBalanceThreshold] = useState<string>('')
   const { notify } = useNotification()
   const { mutate: createBudget, isPending, error } = useCreateBudget()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    createBudget({ name: name.trim(), parent_id: parentId }, {
+    const threshold = balanceThreshold === '' ? null : parseFloat(balanceThreshold)
+    createBudget({ name: name.trim(), parent_id: parentId, balance_threshold: threshold }, {
       onSuccess: () => {
         notify('Budget created', 'success')
         onClose()
@@ -32,6 +34,19 @@ const CreateBudgetModal = ({ onClose, parentId = null }: { onClose: () => void, 
               onChange={(e) => setName(e.target.value)}
               id='budget-create-name'
               placeholder="e.g. Groceries, Rent, Travel"
+              className="bg-gray-800 text-white border border-gray-700 rounded px-3 py-2 focus:outline-none focus:border-emerald-400 transition-all placeholder:text-gray-600"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor='budget-create-threshold' className="text-sm text-gray-400">Balance Threshold <span className="text-gray-600">(optional)</span></label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={balanceThreshold}
+              onChange={(e) => setBalanceThreshold(e.target.value)}
+              id='budget-create-threshold'
+              placeholder="e.g. 100"
               className="bg-gray-800 text-white border border-gray-700 rounded px-3 py-2 focus:outline-none focus:border-emerald-400 transition-all placeholder:text-gray-600"
             />
           </div>
