@@ -19,7 +19,7 @@ This document states the data schema for Fintrack project.
 | name | text | not null, check name <> '' |
 | parent_id | uuid | null, FK → budgets(id) on delete cascade |
 | balance | numeric(15, 2) | not null, default 0 |
-| spend_limit | numeric(15, 2) | null, check spend_limit > 0 |
+| balance_threshold | numeric(15, 2) | null, check balance_threshold >= 0 |
 | is_income | boolean | not null, default false |
 
 #### Indexes
