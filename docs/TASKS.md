@@ -3,6 +3,24 @@
 Daily log of tasks worked on. One `<details>` block per day, newest on top.
 
 <details>
+  <summary>Jun 15, 2026</summary>
+
+- [ ] Budget Limit + Warning + Alert (`feat/budget-limit`)
+  - [ ] Add limit to column
+    - Update to schema docs
+    - SQL code for updating budget table (on chat, for copy)
+  - [ ] Warning + Alert Tag on `SpendingBudgetCard`
+    - Update docs `COMPONENTS.md` to include the Tag and describe how to tag looks like on the Card
+    - Wait for approval & implement
+  - [ ] Warning + Alert Component on `BudgetDetail`
+    - Update docs `COMPONENTS.md` to describe the components
+    - Wait for approval & implement
+- [ ] Update docs to include `allow_negative_balance` settings for budget + notification system together to phase 3
+      (separate, do first and prioritize `allow_negative_balance` settings)
+
+</details>
+
+<details>
   <summary>Jun 12, 2026</summary>
 
 - [x] Spending Page (branch: `feat/spending-page`):
