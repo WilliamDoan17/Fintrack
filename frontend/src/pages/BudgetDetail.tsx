@@ -1,6 +1,8 @@
 import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { useBudget } from '../../hooks/budgets'
+import { useBudget, useUpdateBudget } from '../../hooks/budgets'
+import { useNotification } from '../../contexts/NotificationContext'
+import type { Budget } from '../../backend/types/budgets'
 import PageLoader from '../../components/loaders/PageLoader'
 import CreateBudgetButton from '../../components/budgets/CreateBudgetButton'
 import SpendingBudgetContainer from '../../components/budgets/SpendingBudgetContainer'
@@ -27,6 +29,69 @@ type ModalState =
   { type: 'moveBudget' } |
   { type: 'createTransfer' } |
   { type: 'settings' }
+
+const SettingsModal = ({ budget, onClose }: { budget: Budget, onClose: () => void }) => {
+  const [threshold, setThreshold] = useState<string>(
+    budget.balance_threshold !== null ? String(budget.balance_threshold) : ''
+  )
+  const { mutate: updateBudget, isPending, error } = useUpdateBudget()
+  const { notify } = useNotification()
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const balance_threshold = threshold === '' ? null : parseFloat(threshold)
+    updateBudget({ id: budget.id, updates: { balance_threshold } }, {
+      onSuccess: () => {
+        notify('Settings saved', 'success')
+        onClose()
+      },
+      onError: (err) => notify(err.message, 'error'),
+    })
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 md:p-8 w-full max-w-md shadow-xl">
+        <h2 className="text-white text-xl font-semibold mb-1">Budget Settings</h2>
+        <p className="text-gray-500 text-sm mb-6">Configure settings for <span className="text-gray-300">{budget.name}</span>.</p>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="settings-threshold" className="text-sm text-gray-400">
+              Balance Threshold <span className="text-gray-600">(optional)</span>
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              id="settings-threshold"
+              value={threshold}
+              onChange={(e) => setThreshold(e.target.value)}
+              placeholder="e.g. 100"
+              className="bg-gray-800 text-white border border-gray-700 rounded px-3 py-2 focus:outline-none focus:border-emerald-400 transition-all placeholder:text-gray-600"
+            />
+          </div>
+          {error && <p className="text-red-400 text-sm">{error.message}</p>}
+          <div className="flex gap-3 justify-end mt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded text-gray-400 hover:text-white transition-all cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isPending}
+              className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isPending ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
 
 const BudgetDetail = () => {
   const { id: budgetId } = useParams()
@@ -131,6 +196,9 @@ const BudgetDetail = () => {
       )}
       {modalState?.type === 'createTransfer' && budgetInfo && (
         <CreateTransferModal budget={budgetInfo} onClose={() => setModalState(null)} />
+      )}
+      {modalState?.type === 'settings' && budgetInfo && (
+        <SettingsModal budget={budgetInfo} onClose={() => setModalState(null)} />
       )}
     </div>
   )
