@@ -5,8 +5,8 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
 <details>
   <summary>Jun 15, 2026</summary>
 
-- [ ] Budget Limit + Warning + Alert (`feat/budget-limit`)
-  - [ ] Add limit to column
+- [ ] Budget Threshold + Warning + Alert (`feat/budget-limit`)
+  - [ ] Add threshold to column
     - Update to schema docs
     - SQL code for updating budget table (on chat, for copy)
   - [ ] Warning + Alert Tag on `SpendingBudgetCard`
