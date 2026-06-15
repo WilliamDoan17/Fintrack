@@ -5,12 +5,8 @@ const SpendingBudgetCard = ({ budget }: { budget: Budget }) => {
   const navigate = useNavigate()
   const isPositive = budget.balance >= 0
 
-  const tag = budget.balance_threshold !== null
-    ? budget.balance <= budget.balance_threshold
-      ? { label: 'Alert', className: 'bg-red-900/50 text-red-400' }
-      : budget.balance <= budget.balance_threshold * 1.2
-        ? { label: 'Warning', className: 'bg-yellow-900/50 text-yellow-400' }
-        : null
+  const tag = budget.balance_threshold !== null && budget.balance <= budget.balance_threshold
+    ? { label: 'Alert', className: 'bg-red-900/50 text-red-400' }
     : null
 
   return (

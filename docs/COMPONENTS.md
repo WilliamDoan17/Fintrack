@@ -8,7 +8,9 @@ Source files live in `frontend/components/`.
 ## Budget Components (`components/budgets/`)
 
 ### `SpendingBudgetCard`
-Spending budget card. Same appearance as `BudgetCard`, navigates to `/budget/:id` on click.
+Spending budget card. Navigates to `/budget/:id` on click. When `balance_threshold` is set on the budget, displays a small inline **Alert** tag (`bg-red-900/50 text-red-400`) in the top-right corner when `balance ≤ balance_threshold`.
+
+Tag is rendered inline, not extracted as a separate component.
 
 **Props:** `{ budget: Budget }`
 
