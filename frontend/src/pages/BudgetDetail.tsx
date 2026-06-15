@@ -55,8 +55,8 @@ const SettingsModal = ({ budget, onClose }: { budget: Budget, onClose: () => voi
         <h2 className="text-white text-xl font-semibold mb-1">Budget Settings</h2>
         <p className="text-gray-500 text-sm mb-6">Configure settings for <span className="text-gray-300">{budget.name}</span>.</p>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <label htmlFor="settings-threshold" className="text-sm text-gray-400">
+          <div className="flex items-center justify-between gap-4">
+            <label htmlFor="settings-threshold" className="text-sm text-gray-400 shrink-0">
               Balance Threshold <span className="text-gray-600">(optional)</span>
             </label>
             <input
@@ -67,7 +67,7 @@ const SettingsModal = ({ budget, onClose }: { budget: Budget, onClose: () => voi
               value={threshold}
               onChange={(e) => setThreshold(e.target.value)}
               placeholder="e.g. 100"
-              className="bg-gray-800 text-white border border-gray-700 rounded px-3 py-2 focus:outline-none focus:border-emerald-400 transition-all placeholder:text-gray-600"
+              className="bg-gray-800 text-white border border-gray-700 rounded px-3 py-2 focus:outline-none focus:border-emerald-400 transition-all placeholder:text-gray-600 w-36"
             />
           </div>
           {error && <p className="text-red-400 text-sm">{error.message}</p>}
