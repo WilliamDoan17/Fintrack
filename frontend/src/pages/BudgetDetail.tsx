@@ -151,6 +151,12 @@ const BudgetDetail = () => {
             </div>
           }
         </div>
+        {budgetInfo?.balance_threshold !== null && budgetInfo !== null && budgetInfo.balance <= (budgetInfo.balance_threshold ?? Infinity) && (
+          <div className="mb-6 px-4 py-3 rounded-lg bg-red-900/20 border border-red-900/50 text-red-400 text-sm">
+            Balance has reached the alert threshold.
+          </div>
+        )}
+
         <div className="flex flex-col gap-8 md:gap-10">
 
           {/* Balance + Transactions */}

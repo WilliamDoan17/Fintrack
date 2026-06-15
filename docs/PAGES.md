@@ -48,5 +48,7 @@ Detail page for a specific budget. Shows:
 - Sub-budgets list with a create sub-budget button
 - Back navigation via `NavigationContext`
 
+**Alert banner**: displayed between the header and main content when `balance_threshold` is set and `balance ≤ balance_threshold`. Full-width banner (`bg-red-900/20 border border-red-900/50 text-red-400`) with the message: `"Balance has reached the alert threshold."`. Rendered inline.
+
 **Settings modal** (in-file component `SettingsModal`): opened via the Settings button in the header. Contains:
 - `balance_threshold` — optional number input; pre-populated with the current value if set, blank otherwise. Saved via `useUpdateBudget`.

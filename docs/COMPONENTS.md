@@ -16,10 +16,6 @@ Tag is rendered inline, not extracted as a separate component.
 
 **Used by:** `SpendingBudgetContainer`
 
----
-
-### Alert Banner (`BudgetDetail` inline)
-Displayed between the header and main content on `BudgetDetail` when `balance_threshold` is set and `balance ≤ balance_threshold`. Full-width banner (`bg-red-900/20 border border-red-900/50 text-red-400`) with the message: `"Balance has reached the alert threshold."`. Rendered inline, not extracted as a separate component.
 
 ---
 
