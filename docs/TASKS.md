@@ -2,18 +2,27 @@
 
 Daily log of tasks worked on. One `<details>` block per day, newest on top.
 
+<detail>
+  <summary>Carry Over</summary>
+
+- [ ] Refactor: less components (only keep big components, smal components like buttons get inline coded)
+      `refactor/reduce-component-count`
+  - Move `BudgetDetail`'s `SettingsModal` to `components/`
+
+</detail>
+
 <details>
   <summary>Jun 15, 2026</summary>
 
-- [ ] Budget Threshold + Warning + Alert (`feat/budget-limit`)
-  - [ ] Add threshold to column
+- [x] Budget Threshold + Warning + Alert (`feat/budget-limit`)
+  - [x] Add threshold to column
     - Update to schema docs
     - SQL code for updating budget table (on chat, for copy)
-  - [ ] Add fields for creating/update budgets
+  - [x] Add fields for creating/update budgets
     - Update `TYPES.md` to include `balance_threshold`
     - Implement it to `backend/types/budgets.ts`
     - Update the create budget form to include `balance_threshold`
-  - [ ] Settings for budget (Update budget's `balance_threshold`)
+  - [x] Settings for budget (Update budget's `balance_threshold`)
     - Add settings button to `BudgetDetail` (Inline)
     - Add `SettingsModal` to `BudgetDetail` (in-file component, doesn't need to be in `COMMPONENTS.md`, and add this to
       the ModalState as well)
@@ -22,16 +31,12 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
       - Save & Cancel button
     - Update docs(pages): `BudgetDetail`: summary of how the page looks like, including the settings update
 
-  - [ ] Alert Tag on `SpendingBudgetCard`
+  - [x] Alert Tag on `SpendingBudgetCard`
     - Update docs `COMPONENTS.md` to include the Tag and describe how to tag looks like on the Card
     - Wait for approval & implement
-  - [ ] Alert Component on `BudgetDetail`
+  - [x] Alert Component on `BudgetDetail`
     - Update docs `COMPONENTS.md` to describe the components
     - Wait for approval & implement
-
-- [ ] Refactor: less components (only keep big components, smal components like buttons get inline coded)
-      `refactor/reduce-component-count`
-  - Move `BudgetDetail`'s `SettingsModal` to `components/`
 
 - [x] Update docs to include `allow_negative_balance` settings for budget + notification system together to phase 3
       (separate, do first and prioritize `allow_negative_balance` settings)
