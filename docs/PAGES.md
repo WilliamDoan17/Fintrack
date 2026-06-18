@@ -15,7 +15,7 @@ Public page for signing in or creating an account. Has a tab bar to switch betwe
 
 ## `/dashboard` — Dashboard (`src/pages/Dashboard.tsx`)
 Financial overview page for authenticated users. Layout top-to-bottom:
-- **Summary row** — `BalanceSummary` and `IncomeBudgetCard` side by side at equal height
+- **Summary row** — `BalanceSummary` (page-local) and `IncomeBudgetCard` side by side at equal height. Balance = income − expenses across all spending transactions; transfers are excluded because they are internal moves and do not affect net balance.
 - **Recent Transactions** — full-width preview; "View all spending →" links to `/spending`
 - **Your Budgets** — root spending budgets grid with a create budget button
 
@@ -31,19 +31,18 @@ Full spending history for authenticated users. Shows only `withdraw` transaction
 
 ---
 
-## `/income` — Income Budget Detail (`src/pages/IncomeBudgetDetail.tsx`)
+## `/income` — Income Budget Detail (`src/pages/IncomeDetail.tsx`)
 Protected page for the user's income budget. Shows:
 - Income budget name (inline editable, cannot be deleted or moved)
-- Balance summary (full width)
-- Income transactions list with add transaction and create transfer buttons
-- Transfers in/out visible alongside transactions
+- `BalanceSummary` (page-local) — full width; includes transfers in/out for this budget
+- Income transactions list with add transaction and create transfer buttons; Move button is hidden (income transactions cannot be reassigned to a spending budget)
 
 ---
 
 ## `/budget/:id` — Budget Detail (`src/pages/BudgetDetail.tsx`)
 Detail page for a specific budget. Shows:
 - Budget name (inline editable) with rename, move, delete, and settings actions
-- Balance summary for the budget (recursive — includes sub-budgets)
+- `BalanceSummary` (page-local) — includes transfers in/out for this budget
 - Transactions for the budget and all sub-budgets (paginated, searchable, filterable) with add/edit/delete/move actions
 - Sub-budgets list with a create sub-budget button
 - Back navigation via `NavigationContext`

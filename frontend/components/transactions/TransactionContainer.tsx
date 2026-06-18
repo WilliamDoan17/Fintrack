@@ -103,11 +103,13 @@ const TransactionContainerSkeleton = () => (
 const ExpandedView = ({
   items,
   budgetId,
+  hideMoveButton,
   onClose,
   setModalState,
 }: {
   items: CardItem[]
   budgetId?: string
+  hideMoveButton?: boolean
   onClose: () => void
   setModalState: (state: ModalState) => void
 }) => {
@@ -207,7 +209,7 @@ const ExpandedView = ({
                 transaction={item.data}
                 onEdit={() => setModalState({ type: 'update', transaction: item.data })}
                 onDelete={() => setModalState({ type: 'delete', transaction: item.data })}
-                onMove={() => setModalState({ type: 'move', transaction: item.data })}
+                {...(!hideMoveButton && { onMove: () => setModalState({ type: 'move', transaction: item.data }) })}
               />
             ) : (
               <TransferCard
@@ -267,10 +269,12 @@ const TransactionContainer = ({
   budgetId,
   limit = 3,
   viewAll = 'link',
+  hideMoveButton,
 }: {
   budgetId?: string
   limit?: number
   viewAll?: 'link' | 'expand'
+  hideMoveButton?: boolean
 }) => {
   const { transactions, isLoading: txLoading, error: txError } = useTransactions(budgetId ?? null)
   const { transfers } = useTransfers(budgetId ?? null)
@@ -299,7 +303,7 @@ const TransactionContainer = ({
             transaction={item.data}
             onEdit={() => setModalState({ type: 'update', transaction: item.data })}
             onDelete={() => setModalState({ type: 'delete', transaction: item.data })}
-            onMove={() => setModalState({ type: 'move', transaction: item.data })}
+            {...(!hideMoveButton && { onMove: () => setModalState({ type: 'move', transaction: item.data }) })}
           />
         ) : (
           <TransferCard
@@ -325,6 +329,7 @@ const TransactionContainer = ({
         <ExpandedView
           items={merged}
           budgetId={budgetId}
+          hideMoveButton={hideMoveButton}
           onClose={() => setIsExpanded(false)}
           setModalState={setModalState}
         />
