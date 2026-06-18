@@ -1,0 +1,67 @@
+non architecture problem:
+- updating transfer doesn't show where it comes from and where it is targeting, the to part should be open for editing 
+  - can be fixed from the frontend side
+- transfers and transactions have shared container (can be fixed from frontend side), this creates clarity problems for
+  later
+- TransferCard s doesn't show which to and from they are
+
+- old architecture:
+  - uses transaction type to distinguish between adding and withdrawing money from the system
+  - income is wrapped in budget `is_income` property and treated as a budget
+  => this architecture mixes between income management and free budget management, creating ambiguous
+
+- our app goal:
+  - income and spending is clear and locked, with honest view of financial condition
+  - has integration with bank APIs
+  - liability management
+
+- why old architecture clashes w/ our goal:
+  - mixing between income spending management / freestyle budget management => worst of both worlds
+    -> loose view of financial modules
+  - hard for integration with banking APIs, as they don't anchor a fixed place for importing bank statements
+  - for later, money from multiple sources will break the terms & record 
+
+- why was old architecture implemented?
+  - simplicity
+  - easy learning curve
+
+=> this pathway offers simplicity but add more problems for future use and development
+
+- new architecture proposed:
+  - incomes stand as an independent row that logs incomes only
+  - transactions logs spending only
+  - budgets only counts for spending budgets 
+  - allocations helps with moving income to budgets
+  - transfers helps with moving money from budget to budget
+  - (for later): liability helps with loans & owes
+
+- why this works: 
+  - clear and clean purpose of data models
+  - easy for later integration
+
+- difficulties:
+  - midway - consumes time and work
+  - rewrite a lot of stuff
+
+- reorganize plan:
+  0. frontend fixes
+    - TransferCard: show from/to budget names
+    - UpdateTransfer: display from_budget (read-only), allow editing to_budget
+    - split TransferContainer from TransactionContainer
+  0.5 document rewrite: 
+    - rewrite scope, build_plan, progress & architecture to use this
+  1. introduce incomes 
+    - write incomes schema, hooks, services, types, rls
+    - migrate any transaction type 'add' to income (dev stage, no worries)
+    - wire incomes to page /income
+  2. remove transaction type
+    - update budget calculation function to remove 'add' transaction type and use transactions as minus
+    - remove transaction type from database, schema, types 
+    - update create, update transaction components to not include transaction type
+  3.  introduce allocations:
+    - write allocations schema, hooks, services, types, rls
+    - migrate any transfers from (income_budget as from) to allocations
+    - update budget calculation function to use allocations
+    - delete all `is_income` budget and `is_income` column
+    - wire to /income
+    - add unallocated balance, /income 
