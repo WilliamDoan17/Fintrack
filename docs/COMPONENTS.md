@@ -54,9 +54,9 @@ Inline form for editing a budget's name.
 
 ### `TransactionCard`
 
-Single transaction row. Displays name, type label, amount (emerald for add, red for withdraw), and Move / edit / delete action buttons. Edit and delete are local icon button functions (`EditButton`, `DeleteButton`) defined inside the file.
+Single transaction row. Displays name, type label, amount (emerald for add, red for withdraw), and edit / delete action buttons. Renders a Move button only when `onMove` is provided. Edit and delete are local icon button functions (`EditButton`, `DeleteButton`) defined inside the file.
 
-**Props:** `{ transaction: Transaction, onEdit: () => void, onDelete: () => void, onMove: () => void }`
+**Props:** `{ transaction: Transaction, onEdit: () => void, onDelete: () => void, onMove?: () => void }`
 
 **Used by:** `TransactionContainer`
 
@@ -71,13 +71,15 @@ Merged preview of recent transactions and transfers for a budget, sorted descend
 - `'link'` (default) — renders a "View all spending →" link to `/spending` when there are more items than `limit`
 - `'expand'` — renders a "View all N transactions" button that opens `ExpandedView`
 
+`hideMoveButton` — when true, suppresses the Move button on transaction rows. Used on income pages where transactions cannot be reassigned to a spending budget.
+
 `ExpandedView` is an internal modal with search, type filter, amount range, and paginated results (10/page).
 
 Contains a local `TransferCard` function for rendering transfer rows, with `EditButton` and `DeleteButton` icon helpers defined alongside it.
 
-**Props:** `{ budgetId?: string, limit?: number, viewAll?: 'link' | 'expand' }`
+**Props:** `{ budgetId?: string, limit?: number, viewAll?: 'link' | 'expand', hideMoveButton?: boolean }`
 
-**Used by:** `Dashboard` (`viewAll='link'`), `BudgetDetail` / `IncomeDetail` (`viewAll='expand'`)
+**Used by:** `Dashboard` (`viewAll='link'`), `BudgetDetail` (`viewAll='expand'`), `IncomeDetail` (`viewAll='expand'`, `hideMoveButton`)
 
 ---
 
@@ -117,14 +119,6 @@ Modal with path-based autocomplete for reassigning a transaction to a different 
 **Props:** `{ transaction: Transaction, onClose: () => void }`
 
 ---
-
-### `BalanceSummary`
-
-Displays balance, income, expenses, and transfer totals. Calls `useTransactions` and `useTransfers` internally. When `budgetId` is omitted, summarizes across all transactions/transfers. Transfer in/out rows only render when non-zero.
-
-**Props:** `{ budgetId?: string }`
-
-**Used by:** `Dashboard`, `BudgetDetail`, `IncomeDetail`
 
 ---
 
