@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 const SpendingBudgetCard = ({ budget }: { budget: Budget }) => {
   const navigate = useNavigate()
   const isPositive = budget.balance >= 0
-  const isAlert = budget.balance_threshold !== null && budget.balance <= budget.balance_threshold
+  const isAlert = budget.balance < 0 || (budget.balance_threshold !== null && budget.balance <= budget.balance_threshold)
 
   return (
     <div
