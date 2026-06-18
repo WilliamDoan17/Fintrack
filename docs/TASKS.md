@@ -11,7 +11,7 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
 
 - [ ] Budget Transaction Warning Modal (branch: `feat/transaction-warning-modal`)
   - `components/transaction/TransactionWarningModal`
-  -
+  - Write it to use `useCreateTransaction` (`hooks/transactions.ts`)
 
 </detail>
 
