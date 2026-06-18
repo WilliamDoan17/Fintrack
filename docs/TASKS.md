@@ -2,14 +2,24 @@
 
 Daily log of tasks worked on. One `<details>` block per day, newest on top.
 
+<details>
+  <summary>Carry Over</summary>
+
+- [ ] hotfix: balance calculation
+  - remove MoveButton at `Income`'s TransactionCard (or make a new Container)
+  - split the transfer and spending transactions out for visualization
+  - fix BalanceSummary's balance calculation
+
+</details>
+
 <detail>
   <summary>Jun 17, 2026</summary>
 
-- [ ] Refactor: less components (only keep big components, small components like buttons get inline coded)
+- [x] Refactor: less components (only keep big components, small components like buttons get inline coded)
       `refactor/reduce-component-count`
   - Move `BudgetDetail`'s `SettingsModal` to `components/`
 
-- [ ] Budget Transaction Warning Modal (branch: `feat/transaction-warning-modal`)
+- [x] Budget Transaction Warning Modal (branch: `feat/transaction-warning-modal`)
   - `components/transaction/TransactionWarningModal`
   - Write it to use `useCreateTransaction` (`hooks/transactions.ts`)
 
