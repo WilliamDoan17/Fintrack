@@ -3,12 +3,13 @@
 Daily log of tasks worked on. One `<details>` block per day, newest on top.
 
 <details>
-  <summary>Carry Over</summary>
+  <summary>Jun 18, 2026</summary>
 
 - [ ] hotfix: balance calculation
   - remove MoveButton at `Income`'s TransactionCard (or make a new Container)
-  - split the transfer and spending transactions out for visualization
   - fix BalanceSummary's balance calculation
+
+- [ ] fix: update-transfers-transactions
 
 </details>
 
