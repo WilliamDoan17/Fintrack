@@ -1,13 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type Dispatch, type SetStateAction } from 'react'
 import { useIncomeBudget } from '../../hooks/budgets'
 import PageLoader from '../../components/loaders/PageLoader'
 import BalanceSummary from '../../components/transactions/BalanceSummary'
 import TransactionContainer from '../../components/transactions/TransactionContainer'
 import AddTransactionModal from '../../components/transactions/AddTransactionModal'
-import AddTransactionButton from '../../components/transactions/AddTransactionButton'
 import UpdateBudgetNameInput from '../../components/budgets/UpdateBudgetNameInput'
-import UpdateBudgetNameButton from '../../components/budgets/UpdateBudgetNameButton'
-import CreateTransferButton from '../../components/transfers/CreateTransferButton'
 import CreateTransferModal from '../../components/transfers/CreateTransferModal'
 import { useNavigation } from '../../contexts/NavigationContext'
 import type { Budget } from '../../backend/types/budgets'
@@ -15,6 +12,18 @@ import type { Budget } from '../../backend/types/budgets'
 type ModalState =
   { type: 'addTransaction' } |
   { type: 'createTransfer' }
+
+const EditNameButton = ({ setIsOpen }: { setIsOpen: Dispatch<SetStateAction<boolean>> }) => (
+  <button
+    onClick={() => setIsOpen(true)}
+    className="text-gray-500 hover:text-emerald-400 transition-all cursor-pointer"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+    </svg>
+  </button>
+)
 
 const IncomeDetailContent = ({ budget }: { budget: Budget }) => {
   const [isEditingName, setIsEditingName] = useState<boolean>(false)
@@ -36,10 +45,15 @@ const IncomeDetailContent = ({ budget }: { budget: Budget }) => {
             : <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <h1 className="text-white text-2xl md:text-3xl font-bold">{budget.name}</h1>
-                <UpdateBudgetNameButton setIsOpen={setIsEditingName} />
+                <EditNameButton setIsOpen={setIsEditingName} />
               </div>
               <div className="flex gap-2">
-                <CreateTransferButton onClick={() => setModalState({ type: 'createTransfer' })} />
+                <button
+                  onClick={() => setModalState({ type: 'createTransfer' })}
+                  className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-gray-300 hover:text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] border border-gray-700"
+                >
+                  Transfer
+                </button>
               </div>
             </div>
           }
@@ -50,7 +64,12 @@ const IncomeDetailContent = ({ budget }: { budget: Budget }) => {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-gray-400 text-sm uppercase tracking-widest">Income Transactions</h2>
-              <AddTransactionButton onClick={() => setModalState({ type: 'addTransaction' })} />
+              <button
+                onClick={() => setModalState({ type: 'addTransaction' })}
+                className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+              >
+                + Add Transaction
+              </button>
             </div>
             <TransactionContainer budgetId={budget.id} viewAll="expand" />
           </div>

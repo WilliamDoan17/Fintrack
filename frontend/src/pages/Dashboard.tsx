@@ -1,13 +1,32 @@
 import { useIncomeBudget } from '../../hooks/budgets'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import type { Budget } from '../../backend/types/budgets'
 import SpendingBudgetContainer from '../../components/budgets/SpendingBudgetContainer'
-import IncomeBudgetCard from '../../components/budgets/IncomeBudgetCard'
 import CreateBudgetModal from '../../components/budgets/CreateBudgetModal'
-import CreateBudgetButton from '../../components/budgets/CreateBudgetButton'
 import TransactionContainer from '../../components/transactions/TransactionContainer'
 import BalanceSummary from '../../components/transactions/BalanceSummary'
 
 type ModalState = { type: 'createBudget' }
+
+const IncomeBudgetCard = ({ budget }: { budget: Budget }) => {
+  const navigate = useNavigate()
+  const isPositive = budget.balance >= 0
+
+  return (
+    <div
+      className="bg-gray-900 border border-emerald-900/40 rounded-xl p-5 cursor-pointer hover:border-emerald-700 hover:shadow-emerald-900/20 hover:shadow-lg transition-all h-full flex flex-col items-center"
+      onClick={() => navigate('/income')}
+    >
+      <p className="text-xs text-gray-500 uppercase tracking-widest">{budget.name}</p>
+      <div className="flex-1 flex items-center justify-center">
+        <p className={`font-bold text-2xl md:text-3xl ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
+          {isPositive ? '+' : '-'}${Math.abs(budget.balance).toFixed(2)}
+        </p>
+      </div>
+    </div>
+  )
+}
 
 const Dashboard = () => {
   const [modalState, setModalState] = useState<ModalState | null>(null)
@@ -44,7 +63,12 @@ const Dashboard = () => {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-gray-400 text-sm uppercase tracking-widest">Your Budgets</h2>
-              <CreateBudgetButton onClick={() => setModalState({ type: 'createBudget' })} />
+              <button
+                onClick={() => setModalState({ type: 'createBudget' })}
+                className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+              >
+                + Create Budget
+              </button>
             </div>
             <SpendingBudgetContainer />
           </div>
