@@ -71,7 +71,7 @@ const IncomeDetailContent = ({ budget }: { budget: Budget }) => {
                 + Add Transaction
               </button>
             </div>
-            <TransactionContainer budgetId={budget.id} viewAll="expand" />
+            <TransactionContainer budgetId={budget.id} viewAll="expand" hideMoveButton />
           </div>
         </div>
       </div>
