@@ -1,26 +1,19 @@
-import { useParams } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import { useBudget, useUpdateBudget } from '../../hooks/budgets'
+import { useParams, Link } from 'react-router-dom'
+import { useState, useEffect, type Dispatch, type SetStateAction } from 'react'
+import { useBudget, useUpdateBudget, useSpendingBudgetStructure } from '../../hooks/budgets'
 import { useNotification } from '../../contexts/NotificationContext'
 import type { Budget } from '../../backend/types/budgets'
 import PageLoader from '../../components/loaders/PageLoader'
-import CreateBudgetButton from '../../components/budgets/CreateBudgetButton'
 import SpendingBudgetContainer from '../../components/budgets/SpendingBudgetContainer'
 import CreateBudgetModal from '../../components/budgets/CreateBudgetModal'
 import TransactionContainer from '../../components/transactions/TransactionContainer'
 import AddTransactionModal from '../../components/transactions/AddTransactionModal'
-import AddTransactionButton from '../../components/transactions/AddTransactionButton'
 import BalanceSummary from '../../components/transactions/BalanceSummary'
 import UpdateBudgetNameInput from '../../components/budgets/UpdateBudgetNameInput'
-import UpdateBudgetNameButton from '../../components/budgets/UpdateBudgetNameButton'
-import DeleteBudgetButton from '../../components/budgets/DeleteBudgetButton'
 import DeleteBudgetConfirmModal from '../../components/budgets/DeleteBudgetConfirmModal'
-import MoveBudgetButton from '../../components/budgets/MoveBudgetButton'
 import MoveBudgetModal from '../../components/budgets/MoveBudgetModal'
-import CreateTransferButton from '../../components/transfers/CreateTransferButton'
 import CreateTransferModal from '../../components/transfers/CreateTransferModal'
 import { useNavigation } from '../../contexts/NavigationContext'
-import BudgetBreadcrumbs from '../../components/budgets/BudgetBreadcrumbs'
 
 type ModalState =
   { type: 'createBudget' } |
@@ -29,6 +22,43 @@ type ModalState =
   { type: 'moveBudget' } |
   { type: 'createTransfer' } |
   { type: 'settings' }
+
+const BudgetBreadcrumbs = ({ budgetId }: { budgetId: string }) => {
+  const { structure } = useSpendingBudgetStructure()
+  const path = structure?.budgetIdToPath.get(budgetId) ?? ''
+  const segments = path.split('/').filter(Boolean)
+
+  return (
+    <p className="text-gray-500 text-sm uppercase tracking-widest mb-1">
+      {segments.map((name, i) => {
+        const segPath = '/' + segments.slice(0, i + 1).join('/')
+        const segId = structure?.pathToBudgetId.get(segPath)
+        const isLast = i === segments.length - 1
+        return (
+          <span key={segPath}>
+            {i > 0 && <span className="mx-1.5">/</span>}
+            {isLast || !segId
+              ? name
+              : <Link to={`/budget/${segId}`} className="hover:text-gray-300 transition-colors">{name}</Link>
+            }
+          </span>
+        )
+      })}
+    </p>
+  )
+}
+
+const EditNameButton = ({ setIsOpen }: { setIsOpen: Dispatch<SetStateAction<boolean>> }) => (
+  <button
+    onClick={() => setIsOpen(true)}
+    className="text-gray-500 hover:text-emerald-400 transition-all cursor-pointer"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+    </svg>
+  </button>
+)
 
 const SettingsModal = ({ budget, onClose }: { budget: Budget, onClose: () => void }) => {
   const [threshold, setThreshold] = useState<string>(
@@ -132,21 +162,35 @@ const BudgetDetail = () => {
             : <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <h1 className="text-white text-2xl md:text-3xl font-bold">{budgetInfo?.name}</h1>
-                <UpdateBudgetNameButton setIsOpen={setIsEditingName} />
+                <EditNameButton setIsOpen={setIsEditingName} />
               </div>
               <div className="flex gap-2">
-                <CreateTransferButton onClick={() => setModalState({ type: 'createTransfer' })} />
-                <MoveBudgetButton
-                  budget={budgetInfo}
-                  onClick={() => setModalState({ type: 'moveBudget' })}
-                />
+                <button
+                  onClick={() => setModalState({ type: 'createTransfer' })}
+                  className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-gray-300 hover:text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] border border-gray-700"
+                >
+                  Transfer
+                </button>
+                {budgetInfo && (
+                  <button
+                    onClick={() => setModalState({ type: 'moveBudget' })}
+                    className="px-4 py-2 text-sm text-gray-400 hover:text-white cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  >
+                    Move
+                  </button>
+                )}
                 <button
                   onClick={() => setModalState({ type: 'settings' })}
                   className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-gray-300 hover:text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] border border-gray-700"
                 >
                   Settings
                 </button>
-                <DeleteBudgetButton onClick={() => setModalState({ type: 'deleteBudgetConfirm' })} />
+                <button
+                  onClick={() => setModalState({ type: 'deleteBudgetConfirm' })}
+                  className="bg-red-500 hover:bg-red-400 active:bg-red-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Delete Budget
+                </button>
               </div>
             </div>
           }
@@ -167,7 +211,12 @@ const BudgetDetail = () => {
             <div className="w-full flex-1">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-gray-400 text-sm uppercase tracking-widest">Recent Transactions</h2>
-                <AddTransactionButton onClick={() => setModalState({ type: 'addTransaction' })} />
+                <button
+                  onClick={() => setModalState({ type: 'addTransaction' })}
+                  className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  + Add Transaction
+                </button>
               </div>
               <TransactionContainer budgetId={budgetId} viewAll="expand" />
             </div>
@@ -177,7 +226,12 @@ const BudgetDetail = () => {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-gray-400 text-sm uppercase tracking-widest">Sub-budgets</h2>
-              <CreateBudgetButton onClick={() => setModalState({ type: 'createBudget' })} />
+              <button
+                onClick={() => setModalState({ type: 'createBudget' })}
+                className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+              >
+                + Create Budget
+              </button>
             </div>
             <SpendingBudgetContainer parentId={budgetId} />
           </div>

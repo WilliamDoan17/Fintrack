@@ -3,11 +3,15 @@
 Daily log of tasks worked on. One `<details>` block per day, newest on top.
 
 <detail>
-  <summary>Carry Over</summary>
+  <summary>Jun 17, 2026</summary>
 
-- [ ] Refactor: less components (only keep big components, smal components like buttons get inline coded)
+- [ ] Refactor: less components (only keep big components, small components like buttons get inline coded)
       `refactor/reduce-component-count`
   - Move `BudgetDetail`'s `SettingsModal` to `components/`
+
+- [ ] Budget Transaction Warning Modal (branch: `feat/transaction-warning-modal`)
+  - `components/transaction/TransactionWarningModal`
+  -
 
 </detail>
 
