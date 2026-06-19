@@ -2,16 +2,26 @@
 
 Daily log of tasks worked on. One `<details>` block per day, newest on top.
 
+---
+
+<details>
+  <summary>Jun 19, 2026</summary>
+  
+- [ ] UI update for Transfers and Transaction (branch: `fix/ui-transactions-transfers`
+  - TransferCard: show from/to budget names
+  - UpdateTransfer: display from_budget (read-only), allow editing to_budget
+  - split TransferContainer from TransactionContainer
+  - update docs
+
+</details>
+
 <details>
   <summary>Jun 18, 2026</summary>
 
-- [ ] hotfix: balance calculation
+- [x] hotfix: balance calculation
   - remove MoveButton at `Income`'s TransactionCard (or make a new Container)
   - fix BalanceSummary's balance calculation
-
-- [ ] fix: update-transfers-transactions
-
-</details>
+  </details>
 
 <detail>
   <summary>Jun 17, 2026</summary>
