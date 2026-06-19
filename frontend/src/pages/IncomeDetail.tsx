@@ -2,6 +2,8 @@ import { useState, useEffect, type Dispatch, type SetStateAction } from 'react'
 import { useIncomeBudget } from '../../hooks/budgets'
 import PageLoader from '../../components/loaders/PageLoader'
 import TransactionContainer from '../../components/transactions/TransactionContainer'
+import TransferContainer from '../../components/transfers/TransferContainer'
+import Tabs from '../../components/Tabs'
 import { useTransactions } from '../../hooks/transactions'
 import { useTransfers } from '../../hooks/transfers'
 import AddTransactionModal from '../../components/transactions/AddTransactionModal'
@@ -29,20 +31,12 @@ const BalanceSummary = ({ budgetId }: { budgetId: string }) => {
   )
 
   let income = 0
-  let expenses = 0
-  transactions.forEach(({ type, amount }) => {
-    if (type === 'add') income += amount
-    else expenses += amount
-  })
+  transactions.forEach(({ type, amount }) => { if (type === 'add') income += amount })
 
-  let transfersIn = 0
   let transfersOut = 0
-  transfers.forEach(({ from_budget_id, amount }) => {
-    if (from_budget_id === budgetId) transfersOut += amount
-    else transfersIn += amount
-  })
+  transfers.forEach(({ from_budget_id, amount }) => { if (from_budget_id === budgetId) transfersOut += amount })
 
-  const balance = income - expenses + transfersIn - transfersOut
+  const balance = income - transfersOut
 
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 md:p-6 flex flex-col gap-4">
@@ -58,21 +52,11 @@ const BalanceSummary = ({ budgetId }: { budgetId: string }) => {
           <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Income</p>
           <p className="text-emerald-400 font-semibold text-base md:text-lg">+${income.toFixed(2)}</p>
         </div>
-        <div className="flex flex-col items-center">
-          <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Expenses</p>
-          <p className="text-red-400 font-semibold text-base md:text-lg">-${expenses.toFixed(2)}</p>
-        </div>
-        {(transfersIn > 0 || transfersOut > 0) && (
-          <>
-            <div className="flex flex-col items-center">
-              <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Transferred In</p>
-              <p className="text-emerald-400 font-semibold text-base md:text-lg">+${transfersIn.toFixed(2)}</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Transferred Out</p>
-              <p className="text-red-400 font-semibold text-base md:text-lg">-${transfersOut.toFixed(2)}</p>
-            </div>
-          </>
+        {transfersOut > 0 && (
+          <div className="flex flex-col items-center">
+            <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Transferred Out</p>
+            <p className="text-red-400 font-semibold text-base md:text-lg">-${transfersOut.toFixed(2)}</p>
+          </div>
         )}
       </div>
     </div>
@@ -112,37 +96,39 @@ const IncomeDetailContent = ({ budget }: { budget: Budget }) => {
               budgetName={budget.name}
               setIsOpen={setIsEditingName}
             />
-            : <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <h1 className="text-white text-2xl md:text-3xl font-bold">{budget.name}</h1>
-                <EditNameButton setIsOpen={setIsEditingName} />
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setModalState({ type: 'createTransfer' })}
-                  className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-gray-300 hover:text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] border border-gray-700"
-                >
-                  Transfer
-                </button>
-              </div>
+            : <div className="flex items-center gap-3">
+              <h1 className="text-white text-2xl md:text-3xl font-bold">{budget.name}</h1>
+              <EditNameButton setIsOpen={setIsEditingName} />
             </div>
           }
         </div>
 
         <div className="flex flex-col gap-6">
           <BalanceSummary budgetId={budget.id} />
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-gray-400 text-sm uppercase tracking-widest">Income Transactions</h2>
-              <button
-                onClick={() => setModalState({ type: 'addTransaction' })}
-                className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
-              >
-                + Add Transaction
-              </button>
-            </div>
-            <TransactionContainer budgetId={budget.id} viewAll="expand" hideMoveButton />
+          <div className="flex items-center justify-end gap-2">
+            <button
+              onClick={() => setModalState({ type: 'createTransfer' })}
+              className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-gray-300 hover:text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] border border-gray-700"
+            >
+              Transfer
+            </button>
+            <button
+              onClick={() => setModalState({ type: 'addTransaction' })}
+              className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+            >
+              + Add Income
+            </button>
           </div>
+          <Tabs tabs={[
+            {
+              label: 'Transactions',
+              content: <TransactionContainer budgetId={budget.id} viewAll="paginate" hideMoveButton />,
+            },
+            {
+              label: 'Transfers',
+              content: <TransferContainer budgetId={budget.id} viewAll="paginate" />,
+            },
+          ]} />
         </div>
       </div>
 
