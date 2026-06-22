@@ -242,17 +242,15 @@ const TransferContainer = ({
   budgetId,
   limit,
   viewAll,
-  viewExpanded = false,
 }: {
   budgetId?: string
   limit?: number
-  viewAll?: 'paginate'
-  viewExpanded?: boolean
+  viewAll?: 'paginate' | 'expanded'
 }) => {
   const { transfers, isLoading, error } = useTransfers(budgetId ?? null)
   const [modalState, setModalState] = useState<ModalState | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [expandedOpen, setExpandedOpen] = useState(false)
 
   if (isLoading) return <TransferContainerSkeleton />
   if (error) return <p className="text-red-400 text-sm">Error loading transfers</p>
@@ -276,9 +274,9 @@ const TransferContainer = ({
             onDelete={() => setModalState({ type: 'delete', transfer })}
           />
         ))}
-        {viewExpanded && transfers.length > displayLimit && (
+        {viewAll === 'expanded' && transfers.length > displayLimit && (
           <button
-            onClick={() => setIsExpanded(true)}
+            onClick={() => setExpandedOpen(true)}
             className="text-gray-400 hover:text-emerald-400 text-sm transition-all cursor-pointer text-left"
           >
             View all ({transfers.length}) →
@@ -290,11 +288,11 @@ const TransferContainer = ({
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
       )}
 
-      {isExpanded && (
+      {expandedOpen && (
         <ExpandedView
           transfers={transfers}
           budgetId={budgetId}
-          onClose={() => setIsExpanded(false)}
+          onClose={() => setExpandedOpen(false)}
           setModalState={setModalState}
         />
       )}

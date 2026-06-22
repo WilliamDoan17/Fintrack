@@ -184,18 +184,16 @@ const TransactionContainer = ({
   limit = 3,
   viewAll,
   hideMoveButton,
-  viewExpanded = false,
 }: {
   budgetId?: string
   limit?: number
-  viewAll?: 'link' | 'paginate'
+  viewAll?: 'link' | 'paginate' | 'expanded'
   hideMoveButton?: boolean
-  viewExpanded?: boolean
 }) => {
   const { transactions, isLoading, error } = useTransactions(budgetId ?? null)
   const [modalState, setModalState] = useState<ModalState | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [expandedOpen, setExpandedOpen] = useState(false)
 
   if (isLoading) return <TransactionContainerSkeleton />
   if (error) return <p className="text-red-400 text-sm">Error loading transactions</p>
@@ -223,9 +221,9 @@ const TransactionContainer = ({
             View all spending →
           </Link>
         )}
-        {viewExpanded && transactions.length > limit && (
+        {viewAll === 'expanded' && transactions.length > limit && (
           <button
-            onClick={() => setIsExpanded(true)}
+            onClick={() => setExpandedOpen(true)}
             className="text-gray-400 hover:text-emerald-400 text-sm transition-all cursor-pointer text-left"
           >
             View all ({transactions.length}) →
@@ -237,11 +235,11 @@ const TransactionContainer = ({
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
       )}
 
-      {isExpanded && (
+      {expandedOpen && (
         <ExpandedView
           transactions={transactions}
           hideMoveButton={hideMoveButton}
-          onClose={() => setIsExpanded(false)}
+          onClose={() => setExpandedOpen(false)}
           setModalState={setModalState}
         />
       )}
