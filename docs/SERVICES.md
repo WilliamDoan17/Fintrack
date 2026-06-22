@@ -1,7 +1,9 @@
 # SERVICES
+
 This document defines the services for Fintrack.
 
 ## Conventions
+
 - Services never accept `user_id` as a parameter
 - `user_id` is always retrieved internally via `supabase.auth.getUser()`
 - RLS handles user-level data protection
@@ -52,3 +54,11 @@ This document defines the services for Fintrack.
 - **getTransfer(transfer_id)** → `Transfer` — fetches a single transfer by id
 - **getAllTransfers()** → `Transfer[]` — fetches all transfers for the current user
 - **getBudgetTransfers(budget_id)** → `Transfer[]` — fetches transfers where the budget is the source or destination (not recursive)
+
+## incomes
+
+- **createIncome(input: IncomeInput)** -> `void` - creates a new income log
+- **updateIncome(income_id: string, updates: Partial<IncomeInput>)** -> `void` - updates fields on an existing income log
+- **deleteIncome(income_id: string)** -> `void` - deletes an income log
+- **getAllIncomes()** -> `Income[]` - fetches all income logs for the current user
+- **getIncome(income_id: string)** -> `Income` - fetches a single income log by id
