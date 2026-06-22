@@ -33,11 +33,10 @@ const Pagination = ({
           <button
             key={p}
             onClick={() => onPageChange(p)}
-            className={`w-8 h-8 rounded text-sm font-medium transition-all cursor-pointer ${
-              currentPage === p
-                ? 'bg-emerald-500 text-white'
-                : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
-            }`}
+            className={`w-8 h-8 rounded text-sm font-medium transition-all cursor-pointer ${currentPage === p
+              ? 'bg-emerald-500 text-white'
+              : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
+              }`}
           >
             {p}
           </button>
