@@ -294,11 +294,11 @@ const BudgetDetail = () => {
             <Tabs tabs={[
               {
                 label: 'Transactions',
-                content: <TransactionContainer budgetId={budgetId} viewAll="expanded" />,
+                content: <TransactionContainer budgetId={budgetId} viewAll="paginate" />,
               },
               {
                 label: 'Transfers',
-                content: budgetId ? <TransferContainer budgetId={budgetId} viewAll="expanded" /> : null,
+                content: budgetId ? <TransferContainer budgetId={budgetId} viewAll="paginate" /> : null,
               },
             ]} />
           </div>
