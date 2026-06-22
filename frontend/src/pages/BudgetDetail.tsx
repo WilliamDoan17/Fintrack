@@ -298,7 +298,7 @@ const BudgetDetail = () => {
               },
               {
                 label: 'Transfers',
-                content: budgetId ? <TransferContainer budgetId={budgetId} viewAll="paginate" /> : null,
+                content: budgetId ? <TransferContainer budgetId={budgetId} viewExpanded={true} /> : null,
               },
             ]} />
           </div>
