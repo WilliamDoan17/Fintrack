@@ -294,7 +294,7 @@ const BudgetDetail = () => {
             <Tabs tabs={[
               {
                 label: 'Transactions',
-                content: <TransactionContainer budgetId={budgetId} viewAll="paginate" />,
+                content: <TransactionContainer budgetId={budgetId} viewExpanded={true} />,
               },
               {
                 label: 'Transfers',
