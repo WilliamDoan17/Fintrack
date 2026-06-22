@@ -1,7 +1,9 @@
 # RLS
+
 This document defines the Row Level Security (RLS) policies for Fintrack's Supabase database.
 
 ## Conventions
+
 - All tables have RLS enabled
 - A user can only perform operations on their own data via `user_id = auth.uid()`
 - `USING` checks the existing row before an operation
@@ -39,7 +41,7 @@ This document defines the Row Level Security (RLS) policies for Fintrack's Supab
 ## transfers
 
 - **SELECT**: `user_id = auth.uid()`
-- **INSERT**: 
+- **INSERT**:
   - user_id = auth.uid()
   - the referenced `from_budget_id` and `to_budget_id` is owned by `auth.uid()`
 - **UPDATE**:
@@ -47,3 +49,14 @@ This document defines the Row Level Security (RLS) policies for Fintrack's Supab
   - `WITH CHECK`: `user_id = auth.uid()` AND the new `from_budget_id` & `to_budget_id` is owned by `auth.uid()`
 - **DELETE**: `user_id = auth.uid()`
 
+---
+
+## incomes
+
+- SELECT: `user_id = auth.uid()`
+- INSERT:
+  - `user_id = auth.uid()`
+- UPDATE:
+  - `USING`: `user_id = auth.uid()`
+  - `WITH CHECK`: `user_id = auth.uid()`
+- DELETE: `user_id = auth.uid()`
