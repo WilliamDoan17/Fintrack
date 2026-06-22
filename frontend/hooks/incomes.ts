@@ -15,15 +15,11 @@ export const useIncomes = () => {
   return { incomes, isLoading, error }
 }
 
-const INCOME_INVALIDATION_KEYS = [
-  ['incomes'],
-]
-
 export const useCreateIncome = () => {
   const queryClient = useQueryClient()
   return useMutation<void, Error, IncomeInput>({
     mutationFn: createIncome,
-    onSuccess: () => { INCOME_INVALIDATION_KEYS.forEach(key => queryClient.invalidateQueries({ queryKey: key })) },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['incomes'] }),
   })
 }
 
@@ -31,7 +27,7 @@ export const useUpdateIncome = () => {
   const queryClient = useQueryClient()
   return useMutation<void, Error, { id: string; updates: Partial<IncomeInput> }>({
     mutationFn: ({ id, updates }) => updateIncome(id, updates),
-    onSuccess: () => { INCOME_INVALIDATION_KEYS.forEach(key => queryClient.invalidateQueries({ queryKey: key })) },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['incomes'] }),
   })
 }
 
@@ -39,6 +35,6 @@ export const useDeleteIncome = () => {
   const queryClient = useQueryClient()
   return useMutation<void, Error, string>({
     mutationFn: deleteIncome,
-    onSuccess: () => { INCOME_INVALIDATION_KEYS.forEach(key => queryClient.invalidateQueries({ queryKey: key })) },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['incomes'] }),
   })
 }
