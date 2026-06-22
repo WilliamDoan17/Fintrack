@@ -64,7 +64,7 @@ Single transaction row. Displays name, type label, amount (emerald for add, red 
 
 ### `TransactionContainer`
 
-Merged preview of recent transactions and transfers for a budget, sorted descending by date. Renders up to `limit` items (default 3).
+Preview of recent transactions for a budget. Renders up to `limit` items (default 3).
 
 `viewAll` controls overflow behavior:
 
@@ -74,8 +74,6 @@ Merged preview of recent transactions and transfers for a budget, sorted descend
 `hideMoveButton` — when true, suppresses the Move button on transaction rows. Used on income pages where transactions cannot be reassigned to a spending budget.
 
 `ExpandedView` is an internal modal with search, type filter, amount range, and paginated results (10/page).
-
-Contains a local `TransferCard` function for rendering transfer rows, with `EditButton` and `DeleteButton` icon helpers defined alongside it.
 
 **Props:** `{ budgetId?: string, limit?: number, viewAll?: 'link' | 'expand', hideMoveButton?: boolean }`
 
@@ -132,9 +130,21 @@ Modal for creating a transfer between two budgets. Uses path-based autocomplete 
 
 ---
 
+### `TransferContainer`
+
+Standalone container for displaying transfers for a specific budget. Shows from/to budget names on each row using `useSpendingBudgetStructure` for path lookups. Manages its own update/delete modal state.
+
+`TransferCard` is exported for reuse if needed.
+
+**Props:** `{ budgetId: string }`
+
+**Used by:** `BudgetDetail`
+
+---
+
 ### `UpdateTransferModal`
 
-Modal form for editing an existing transfer's name and amount.
+Modal form for editing an existing transfer. Displays `from_budget` read-only (by name), provides path-based autocomplete for changing `to_budget`, and allows editing name and amount. Uses `useSpendingBudgetStructure`.
 
 **Props:** `{ transfer: Transfer, onClose: () => void }`
 

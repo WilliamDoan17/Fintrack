@@ -5,6 +5,8 @@ import type { Budget } from '../../backend/types/budgets'
 import SpendingBudgetContainer from '../../components/budgets/SpendingBudgetContainer'
 import CreateBudgetModal from '../../components/budgets/CreateBudgetModal'
 import TransactionContainer from '../../components/transactions/TransactionContainer'
+import TransferContainer from '../../components/transfers/TransferContainer'
+import Tabs from '../../components/Tabs'
 import { useTransactions } from '../../hooks/transactions'
 
 const BalanceSummary = () => {
@@ -98,11 +100,11 @@ const Dashboard = () => {
             )}
           </div>
 
-          {/* Recent Transactions */}
-          <div>
-            <h2 className="text-gray-400 text-sm uppercase tracking-widest mb-4">Recent Transactions</h2>
-            <TransactionContainer />
-          </div>
+          {/* Recent Activity */}
+          <Tabs tabs={[
+            { label: 'Transactions', content: <TransactionContainer viewAll="link" /> },
+            { label: 'Transfers', content: <TransferContainer limit={3} /> },
+          ]} />
 
           {/* Spending Budgets */}
           <div>

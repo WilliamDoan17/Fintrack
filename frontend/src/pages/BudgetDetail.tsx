@@ -7,6 +7,8 @@ import PageLoader from '../../components/loaders/PageLoader'
 import SpendingBudgetContainer from '../../components/budgets/SpendingBudgetContainer'
 import CreateBudgetModal from '../../components/budgets/CreateBudgetModal'
 import TransactionContainer from '../../components/transactions/TransactionContainer'
+import TransferContainer from '../../components/transfers/TransferContainer'
+import Tabs from '../../components/Tabs'
 import AddTransactionModal from '../../components/transactions/AddTransactionModal'
 import UpdateBudgetNameInput from '../../components/budgets/UpdateBudgetNameInput'
 import { useTransactions } from '../../hooks/transactions'
@@ -235,12 +237,6 @@ const BudgetDetail = () => {
                 <EditNameButton setIsOpen={setIsEditingName} />
               </div>
               <div className="flex gap-2">
-                <button
-                  onClick={() => setModalState({ type: 'createTransfer' })}
-                  className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-gray-300 hover:text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] border border-gray-700"
-                >
-                  Transfer
-                </button>
                 {budgetInfo && (
                   <button
                     onClick={() => setModalState({ type: 'moveBudget' })}
@@ -276,23 +272,35 @@ const BudgetDetail = () => {
 
         <div className="flex flex-col gap-8 md:gap-10">
 
-          {/* Balance + Transactions */}
-          <div className="flex flex-col lg:flex-row gap-6 items-start">
-            <div className="w-full lg:w-[30%] shrink-0">
-              {budgetId && <BalanceSummary budgetId={budgetId} />}
+          {/* Balance */}
+          {budgetId && <BalanceSummary budgetId={budgetId} />}
+
+          {/* Buttons + Tabs */}
+          <div>
+            <div className="flex items-center justify-end gap-2 mb-4">
+              <button
+                onClick={() => setModalState({ type: 'createTransfer' })}
+                className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-gray-300 hover:text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] border border-gray-700"
+              >
+                Transfer
+              </button>
+              <button
+                onClick={() => setModalState({ type: 'addTransaction' })}
+                className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+              >
+                + Add Transaction
+              </button>
             </div>
-            <div className="w-full flex-1">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-gray-400 text-sm uppercase tracking-widest">Recent Transactions</h2>
-                <button
-                  onClick={() => setModalState({ type: 'addTransaction' })}
-                  className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  + Add Transaction
-                </button>
-              </div>
-              <TransactionContainer budgetId={budgetId} viewAll="expand" />
-            </div>
+            <Tabs tabs={[
+              {
+                label: 'Transactions',
+                content: <TransactionContainer budgetId={budgetId} viewAll="paginate" />,
+              },
+              {
+                label: 'Transfers',
+                content: budgetId ? <TransferContainer budgetId={budgetId} viewAll="paginate" /> : null,
+              },
+            ]} />
           </div>
 
           {/* Sub-budgets Section */}
