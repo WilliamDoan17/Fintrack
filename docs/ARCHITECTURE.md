@@ -3,6 +3,30 @@ This document describes the structure and conventions of the Fintrack frontend.
 
 ---
 
+## Data Model
+
+Fintrack uses a strict separation between income management and spending management. Each domain has a single clear purpose:
+
+| Domain | Purpose |
+| --- | --- |
+| **Incomes** | Independent records that log money entering the system (from salary, freelance, etc.) |
+| **Allocations** | Move money from an income source into a spending budget (the sole entry point for budget funds) |
+| **Budgets** | Spending-only envelopes; balance grows only via allocations, shrinks via transactions and outgoing transfers |
+| **Transactions** | Spending records logged against a budget |
+| **Transfers** | Move money between spending budgets |
+| **Liabilities** *(planned)* | Track loans and debts |
+
+**Why this model:**
+- Each table has an unambiguous purpose — no dual-role types (e.g. `type: 'add' | 'withdraw'`)
+- Income and spending are fully decoupled, giving an honest view of financial condition
+- Bank API imports anchor cleanly to the Incomes table
+- Allocations mirror the envelope method: money must be deliberately assigned before it can be spent
+
+**Previous architecture (deprecated):**
+The original model used a single `transactions` table with a `type: 'add' | 'withdraw'` column and a special `is_income` flag on budgets. This created ambiguity between income tracking and spending tracking, made bank API integration awkward, and conflated two distinct financial concepts into one table.
+
+---
+
 ## Folder Layout
 
 ```
@@ -16,8 +40,11 @@ frontend/
 ├── routes/
 │   └── ProtectedRoute.tsx  — auth guard; redirects unauthenticated users to /
 ├── components/
-│   ├── budgets/            — budget UI (cards, modals, buttons)
-│   ├── transactions/       — transaction UI (cards, modals, balance summary)
+│   ├── budgets/            — budget UI (cards, modals, containers)
+│   ├── transactions/       — transaction UI (cards, modals, containers)
+│   ├── transfers/          — transfer UI (cards, modals, containers)
+│   ├── incomes/            — income UI (cards, modals, containers)
+│   ├── allocations/        — allocation UI (cards, modals, containers)
 │   ├── loaders/            — PageLoader, skeleton loaders
 │   └── Toast.tsx           — rendered by NotificationProvider
 ├── hooks/                  — data-fetching hooks (one per domain)
@@ -35,7 +62,7 @@ frontend/
 
 1. **Pages** — route-level components. Own modal state (`ModalState` discriminated union), call hooks for data, compose containers and buttons.
 2. **Components** — grouped by domain. Buttons trigger modal state changes in the parent page; modals mutate via services and call query refetches.
-3. **Hooks** — one per domain (`useBudgets`, `useTransactions`, `useAuth`, `useBudgetStructure`). Encapsulate fetch + state; expose `{ data, loading, error, refetch }`-style query objects.
+3. **Hooks** — one per domain (`useBudgets`, `useTransactions`, `useTransfers`, `useIncomes`, `useAllocations`). Encapsulate fetch + state; expose `{ data, loading, error, refetch }`-style query objects.
 4. **Contexts + Providers** — shared cross-cutting state: `AuthContext`, `NavigationContext` (in-app back button target), `NotificationContext` (toasts).
 5. **Services** — stateless functions that call Supabase. Never accept `user_id`. Throw on failure.
 6. **Types** — shared interfaces used by both services and UI.
@@ -45,8 +72,8 @@ frontend/
 ## Conventions
 
 ### Data fetching
-- One hook per domain. Pass a scoping id (e.g. `useBudgets(budgetId | null)` — null for root).
-- Hooks expose a query object (`budgetQuery`, `transactionQuery`) passed down to containers and modals.
+- One hook per domain. Pass a scoping id (e.g. `useTransactions(budgetId | null)` — null for all).
+- Hooks expose a query object passed down to containers and modals.
 - Mutations happen in service calls from within modals; on success, call `query.refetch()`.
 
 ### Modal state pattern

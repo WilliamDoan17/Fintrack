@@ -33,13 +33,35 @@
 | S2-10b | Income — RLS                                                                                               | ✅      |
 | S2-10c | Income — Services + Types                                                                                  | ✅      |
 | S2-10d | /spending page                                                                                             | ✅      |
-| S2-11  | budget breadcrumbs                                                                                         | ✅      |
+| S2-11  | Budget breadcrumbs                                                                                         | ✅      |
 | S2-10e | Income — UI (income page + allocate flow)                                                                  | ✅      |
 | S2-10f | Income — Enforce strict envelope (restrict add to income budget only)                                      | ✅      |
 | S2-10g | Income — Fix flicker on /income (component split pattern)                                                  | ✅      |
 | S2-10h | UI Refactor — Dashboard as financial overview, IncomeBudgetCard compact, IncomeBudgetDetail vertical stack | ✅      |
 | S2-12  | Budget Limits + Warnings + Alerts                                                                          | ⬜      |
 | S2-13  | Stats Page                                                                                                 | ⬜      |
+
+---
+
+## Architecture Migration — Clean Data Model
+
+| Phase | Description                                                                                      | Status |
+| ----- | ------------------------------------------------------------------------------------------------ | ------ |
+| AM-0  | Frontend fixes — TransferCard from/to names, UpdateTransferModal to_budget editable, split containers | ⬜     |
+| AM-0.5 | Document rewrite — SCOPE, BUILD_PLAN, PROGRESS, ARCHITECTURE updated for new model             | ✅     |
+| AM-1a | Incomes — schema, RLS, triggers                                                                  | ⬜     |
+| AM-1b | Incomes — services + types + hooks                                                               | ⬜     |
+| AM-1c | Incomes — migrate `type: 'add'` transactions (dev)                                              | ⬜     |
+| AM-1d | Incomes — UI on /income page                                                                     | ⬜     |
+| AM-2a | Remove transaction type — update balance calculation                                             | ⬜     |
+| AM-2b | Remove transaction type — drop from database, schema, types                                      | ⬜     |
+| AM-2c | Remove transaction type — update create/update transaction UI                                    | ⬜     |
+| AM-3a | Allocations — schema, RLS, triggers                                                              | ⬜     |
+| AM-3b | Allocations — services + types + hooks                                                           | ⬜     |
+| AM-3c | Allocations — migrate income transfers → allocations                                             | ⬜     |
+| AM-3d | Allocations — update balance calculation                                                         | ⬜     |
+| AM-3e | Allocations — remove `is_income` budgets and column                                              | ⬜     |
+| AM-3f | Allocations — UI on /income (create, view, delete + unallocated balance)                        | ⬜     |
 
 ---
 
@@ -50,15 +72,21 @@
 | S3-1  | Multi-Currency                                                       | ⬜     |
 | S3-2  | Scheduled & Recurring Transfers (AutoTransfers)                      | ⬜     |
 | S3-3  | Session Management                                                   | ⬜     |
-| S3-4  | Loan & Owes Tracking                                                 | ⬜     |
+| S3-4  | Loan & Owes Tracking (Liabilities)                                   | ⬜     |
 | S3-5  | Bill Splitter                                                        | ⬜     |
-| S3-6a | Bank Linking — Migrate is_income budgets → incomes + accounts tables | ⬜     |
-| S3-6b | Bank Linking — Migrate income transactions → income_transactions     | ⬜     |
-| S3-6c | Bank Linking — Plaid integration (bank accounts → accounts table)    | ⬜     |
-| S3-6d | Bank Linking — Auto-log pulled transactions into income_transactions | ⬜     |
-| S3-7  | Profiles                                                             | ⬜     |
-| S3-8  | AI Agent                                                             | ⬜     |
+| S3-6  | Profiles                                                             | ⬜     |
+| S3-7  | AI Agent                                                             | ⬜     |
 
 ---
 
-**Last updated:** Thu May 14 2026
+## Stage 4 — Bank Integration
+
+| Phase | Description                                              | Status |
+| ----- | -------------------------------------------------------- | ------ |
+| S4-1  | Bank account linking (Plaid or equivalent)               | ⬜     |
+| S4-2  | Auto-import bank statements as income entries            | ⬜     |
+| S4-3  | Reconcile imported records with manual entries           | ⬜     |
+
+---
+
+**Last updated:** Sun Jun 22 2026
