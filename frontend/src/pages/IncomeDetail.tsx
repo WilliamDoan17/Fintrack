@@ -12,7 +12,8 @@ import CreateTransferModal from '../../components/transfers/CreateTransferModal'
 import { useNavigation } from '../../contexts/NavigationContext'
 import type { Budget } from '../../backend/types/budgets'
 import type { Income } from '../../backend/types/incomes'
-import { useCreateIncome, useUpdateIncome, useDeleteIncome } from '../../hooks/incomes'
+import { useIncomes, useCreateIncome, useUpdateIncome, useDeleteIncome } from '../../hooks/incomes'
+import Pagination from '../../components/Pagination'
 import { useNotification } from '../../contexts/NotificationContext'
 
 const IncomeEditButton = ({ onClick }: { onClick: () => void }) => (
@@ -215,6 +216,59 @@ const DeleteIncomeConfirmModal = ({ income, onClose }: { income: Income; onClose
         </div>
       </div>
     </div>
+  )
+}
+
+type IncomeModalState =
+  | { type: 'update'; income: Income }
+  | { type: 'delete'; income: Income }
+
+const IncomeContainerSkeleton = () => (
+  <div className="flex flex-col gap-3">
+    {[...Array(3)].map((_, i) => (
+      <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 bg-gray-800 border border-gray-700 rounded-xl px-5 py-4">
+        <div className="flex flex-col gap-2">
+          <div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
+          <div className="w-20 h-3 bg-gray-700 rounded animate-pulse" />
+        </div>
+        <div className="w-16 h-5 bg-gray-700 rounded animate-pulse" />
+      </div>
+    ))}
+  </div>
+)
+
+const IncomeContainer = ({ limit = 10 }: { limit?: number }) => {
+  const { incomes, isLoading, error } = useIncomes()
+  const [modalState, setModalState] = useState<IncomeModalState | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  if (isLoading) return <IncomeContainerSkeleton />
+  if (error) return <p className="text-red-400 text-sm">Error loading incomes</p>
+  if (incomes.length === 0) return <p className="text-gray-500 text-sm">No income recorded yet.</p>
+
+  const totalPages = Math.max(1, Math.ceil(incomes.length / limit))
+  const displayed = incomes.slice((currentPage - 1) * limit, currentPage * limit)
+
+  return (
+    <>
+      <div className="flex flex-col gap-3">
+        {displayed.map(income => (
+          <IncomeCard
+            key={income.id}
+            income={income}
+            onEdit={() => setModalState({ type: 'update', income })}
+            onDelete={() => setModalState({ type: 'delete', income })}
+          />
+        ))}
+      </div>
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+      {modalState?.type === 'update' && (
+        <UpdateIncomeModal income={modalState.income} onClose={() => setModalState(null)} />
+      )}
+      {modalState?.type === 'delete' && (
+        <DeleteIncomeConfirmModal income={modalState.income} onClose={() => setModalState(null)} />
+      )}
+    </>
   )
 }
 
