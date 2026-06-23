@@ -87,6 +87,20 @@ type ModalState =
 ```
 Buttons set `modalState`; modals render conditionally and close via `setModalState(null)`. Keeps only one modal open at a time.
 
+### Balance calculation
+
+Balance is never stored as a column — it is always derived client-side from React Query cached data.
+
+- **Income balance** — `SUM(incomes) - SUM(allocations out)`
+- **Budget balance** — `SUM(allocations in) - SUM(transactions)`
+- **Overall balance** — `SUM(incomes) - SUM(all transactions)`
+
+Computation happens inside the relevant `BalanceSummary` component, reading from hooks that are already cached on the page. No intermediate balance hooks (`useIncomeBalance`, etc.) are created unless the same calculation is needed in multiple places.
+
+**Why:** storing `.balance` requires triggers on every income, allocation, transfer, and transaction mutation — multiple surfaces that can silently drift. Derived balance is always correct by construction and eliminates an entire class of stale-data bugs.
+
+---
+
 ### Optimistic updates
 - Mutation services throw on failure.
 - UI updates immediately (optimistic), refetches to reconcile, rolls back inside `catch` if the call fails.

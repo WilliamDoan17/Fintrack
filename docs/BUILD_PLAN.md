@@ -40,6 +40,8 @@ Motivated by the need for a clear separation between income and spending, bank A
 - Migrate existing `type: 'add'` transactions to income records (dev only)
 - Wire incomes to /income page
 
+- Drop `.balance` column from budgets — switch all balance display to client-side values derived from React Query cached data (see ARCHITECTURE.md — Balance calculation)
+
 **Step 2 — Remove transaction type:**
 - Update balance calculation to treat all transactions as spending (no `type` column)
 - Remove `type` from database, schema, types, and all UI components
