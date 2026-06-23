@@ -120,6 +120,50 @@ Modal with path-based autocomplete for reassigning a transaction to a different 
 
 ---
 
+## Income Components (`components/incomes/`)
+
+### `IncomeContainer`
+
+Paginated list of income entries for the current user. Fetches via `useIncomes`. Renders `IncomeCard` rows (defined in the same file) with inline edit and delete actions. Manages its own `UpdateIncomeModal` / `DeleteIncomeConfirmModal` modal state.
+
+`IncomeCard` displays name, formatted date, amount (always emerald `+$X.XX`), and edit/delete icon buttons (`EditButton`, `DeleteButton` — defined in the same file).
+
+**Props:** `{ limit?: number }` (default 10)
+
+**Used by:** `IncomeDetail`
+
+---
+
+### `CreateIncomeModal`
+
+Modal form for adding a new income entry. Fields: name, amount. Uses `useCreateIncome`.
+
+**Props:** `{ onClose: () => void }`
+
+**Used by:** `IncomeDetail`
+
+---
+
+### `UpdateIncomeModal`
+
+Modal form for editing an existing income entry's name and amount. Pre-fills with current values. Uses `useUpdateIncome`.
+
+**Props:** `{ income: Income, onClose: () => void }`
+
+**Used by:** `IncomeContainer`
+
+---
+
+### `DeleteIncomeConfirmModal`
+
+Confirmation modal for deleting an income entry. Action is irreversible. Uses `useDeleteIncome`.
+
+**Props:** `{ income: Income, onClose: () => void }`
+
+**Used by:** `IncomeContainer`
+
+---
+
 ## Transfer Components (`components/transfers/`)
 
 ### `CreateTransferModal`
