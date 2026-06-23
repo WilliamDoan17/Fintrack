@@ -1,0 +1,69 @@
+import { useState } from 'react'
+import { useCreateIncome } from '../../hooks/incomes'
+import { useNotification } from '../../contexts/NotificationContext'
+
+const CreateIncomeModal = ({ onClose }: { onClose: () => void }) => {
+  const [name, setName] = useState('')
+  const [amount, setAmount] = useState('')
+  const { notify } = useNotification()
+  const { mutate: createIncome, isPending, error } = useCreateIncome()
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    createIncome({ name, amount: parseFloat(amount) }, {
+      onSuccess: () => { notify('Income added', 'success'); onClose() },
+      onError: (err) => notify(err.message, 'error'),
+    })
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 md:p-8 w-full max-w-md shadow-xl">
+        <h2 className="text-white text-xl font-semibold mb-1">Add Income</h2>
+        <p className="text-gray-500 text-sm mb-6">Record a new income entry.</p>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="create-income-name" className="text-sm text-gray-400">Name</label>
+            <input
+              type="text"
+              id="create-income-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Salary, Freelance, Bonus"
+              className="bg-gray-800 text-white border border-gray-700 rounded px-3 py-2 focus:outline-none focus:border-emerald-400 transition-all placeholder:text-gray-600"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="create-income-amount" className="text-sm text-gray-400">Amount</label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+              <input
+                type="text"
+                id="create-income-amount"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="0"
+                className="bg-gray-800 text-white border border-gray-700 rounded px-3 py-2 pl-7 w-full focus:outline-none focus:border-emerald-400 transition-all"
+              />
+            </div>
+          </div>
+          {error && <p className="text-red-400 text-sm">{error.message}</p>}
+          <div className="flex gap-3 justify-end mt-2">
+            <button type="button" onClick={onClose} className="px-4 py-2 rounded text-gray-400 hover:text-white transition-all cursor-pointer">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isPending}
+              className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isPending ? 'Adding...' : '+ Add Income'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+export default CreateIncomeModal
