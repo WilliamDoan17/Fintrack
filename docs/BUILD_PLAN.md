@@ -36,23 +36,29 @@ Motivated by the need for a clear separation between income and spending, bank A
 - Rewrite SCOPE, BUILD_PLAN, PROGRESS, and ARCHITECTURE to reflect the new model
 
 **Step 1 — Introduce Incomes:**
-- `incomes` table: schema, RLS, triggers, services, types, hooks
-- Migrate existing `type: 'add'` transactions to income records (dev only)
+- `incomes` table: schema, RLS, triggers (additive — safe early)
+- Incomes services, types, hooks
+- Dev migration: `type: 'add'` transactions → incomes (verify on dev first)
 - Wire incomes to /income page
+- Prod migration: run once confirmed on dev
 
 **Step 2 — Remove transaction type:**
-- Drop `type` column from database, schema, and types
-- Update create/update transaction UI to remove type selection
-- `BudgetBalanceSummary` — derive budget balance client-side as `transfers_in - transfers_out - transactions`; drop `.balance` column and all balance triggers (see ARCHITECTURE.md — Balance calculation)
+- Stop writing `type` — update services and UI to never send it
+- Stop reading `type` — remove from TypeScript types, update all display logic
+- `BudgetBalanceSummary` — derive balance client-side as `transfers_in - transfers_out - transactions` (see ARCHITECTURE.md — Balance calculation)
+- DB drop (last): `type` column, `.balance` column, balance triggers and functions
 
 **Step 3 — Introduce Allocations:**
-- `allocations` table: schema, RLS, triggers, services, types, hooks
-- Migrate transfers from income budget → allocations
+- `allocations` table: schema, RLS, triggers (additive — safe early)
+- Allocations services, types, hooks
+- Dev migration: income transfers → allocations (verify on dev first)
 - `IncomeBalanceSummary` — derive income balance as `SUM(incomes) − SUM(allocations out)` on /income
-- Update `BudgetBalanceSummary` — add allocations: `allocations_in + transfers_in - transfers_out - transactions`
-- Remove `is_income` budgets and `is_income` column entirely
+- Update `BudgetBalanceSummary` — `allocations_in + transfers_in - transfers_out - transactions`
 - Wire allocation create/view/delete to /income
 - `OverallBalanceSummary` — derive dashboard balance as `SUM(incomes) − SUM(all transactions)`
+- Remove `is_income` from app — services, hooks, UI
+- Prod migration: run once confirmed on dev
+- DB drop (last): `is_income` column, income budget row, related triggers
 
 ### Stage 3 — Advanced & Scale
 Users can:
