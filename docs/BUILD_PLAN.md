@@ -40,20 +40,19 @@ Motivated by the need for a clear separation between income and spending, bank A
 - Migrate existing `type: 'add'` transactions to income records (dev only)
 - Wire incomes to /income page
 
-- Drop `.balance` column from budgets — switch all balance display to client-side values derived from React Query cached data (see ARCHITECTURE.md — Balance calculation)
-
 **Step 2 — Remove transaction type:**
-- Update balance calculation to treat all transactions as spending (no `type` column)
-- Remove `type` from database, schema, types, and all UI components
-- Update create/update transaction flows to drop type selection
+- Drop `type` column from database, schema, and types
+- Update create/update transaction UI to remove type selection
+- `BudgetBalanceSummary` — derive budget balance client-side as `transfers_in - transfers_out - transactions`; drop `.balance` column and all balance triggers (see ARCHITECTURE.md — Balance calculation)
 
 **Step 3 — Introduce Allocations:**
 - `allocations` table: schema, RLS, triggers, services, types, hooks
 - Migrate transfers from income budget → allocations
-- Update balance calculation to use allocations instead of income transfers
+- `IncomeBalanceSummary` — derive income balance as `SUM(incomes) − SUM(allocations out)` on /income
+- Update `BudgetBalanceSummary` — add allocations: `allocations_in + transfers_in - transfers_out - transactions`
 - Remove `is_income` budgets and `is_income` column entirely
-- Add unallocated balance display to /income
 - Wire allocation create/view/delete to /income
+- `OverallBalanceSummary` — derive dashboard balance as `SUM(incomes) − SUM(all transactions)`
 
 ### Stage 3 — Advanced & Scale
 Users can:
