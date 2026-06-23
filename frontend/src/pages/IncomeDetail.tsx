@@ -1,14 +1,10 @@
 import { useState, useEffect, type Dispatch, type SetStateAction } from 'react'
 import { useIncomeBudget } from '../../hooks/budgets'
 import PageLoader from '../../components/loaders/PageLoader'
-import TransactionContainer from '../../components/transactions/TransactionContainer'
-import TransferContainer from '../../components/transfers/TransferContainer'
 import Tabs from '../../components/Tabs'
 import { useTransactions } from '../../hooks/transactions'
 import { useTransfers } from '../../hooks/transfers'
-import AddTransactionModal from '../../components/transactions/AddTransactionModal'
 import UpdateBudgetNameInput from '../../components/budgets/UpdateBudgetNameInput'
-import CreateTransferModal from '../../components/transfers/CreateTransferModal'
 import { useNavigation } from '../../contexts/NavigationContext'
 import type { Budget } from '../../backend/types/budgets'
 import type { Income } from '../../backend/types/incomes'
@@ -323,10 +319,6 @@ const BalanceSummary = ({ budgetId }: { budgetId: string }) => {
   )
 }
 
-type ModalState =
-  { type: 'addTransaction' } |
-  { type: 'createTransfer' }
-
 const EditNameButton = ({ setIsOpen }: { setIsOpen: Dispatch<SetStateAction<boolean>> }) => (
   <button
     onClick={() => setIsOpen(true)}
@@ -341,7 +333,7 @@ const EditNameButton = ({ setIsOpen }: { setIsOpen: Dispatch<SetStateAction<bool
 
 const IncomeDetailContent = ({ budget }: { budget: Budget }) => {
   const [isEditingName, setIsEditingName] = useState<boolean>(false)
-  const [modalState, setModalState] = useState<ModalState | null>(null)
+  const [showCreateIncome, setShowCreateIncome] = useState(false)
 
   return (
     <div className="min-h-screen bg-gray-950">
@@ -365,15 +357,9 @@ const IncomeDetailContent = ({ budget }: { budget: Budget }) => {
 
         <div className="flex flex-col gap-6">
           <BalanceSummary budgetId={budget.id} />
-          <div className="flex items-center justify-end gap-2">
+          <div className="flex items-center justify-end">
             <button
-              onClick={() => setModalState({ type: 'createTransfer' })}
-              className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-gray-300 hover:text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] border border-gray-700"
-            >
-              Transfer
-            </button>
-            <button
-              onClick={() => setModalState({ type: 'addTransaction' })}
+              onClick={() => setShowCreateIncome(true)}
               className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
             >
               + Add Income
@@ -381,23 +367,18 @@ const IncomeDetailContent = ({ budget }: { budget: Budget }) => {
           </div>
           <Tabs tabs={[
             {
-              label: 'Transactions',
-              content: <TransactionContainer budgetId={budget.id} viewAll="paginate" hideMoveButton />,
+              label: 'Income',
+              content: <IncomeContainer />,
             },
             {
-              label: 'Transfers',
-              content: <TransferContainer budgetId={budget.id} viewAll="paginate" />,
+              label: 'Allocations',
+              content: <p className="text-gray-500 text-sm">Allocations coming soon.</p>,
             },
           ]} />
         </div>
       </div>
 
-      {modalState?.type === 'addTransaction' && (
-        <AddTransactionModal budgetId={budget.id} budgetType='income' onClose={() => setModalState(null)} />
-      )}
-      {modalState?.type === 'createTransfer' && (
-        <CreateTransferModal budget={budget} onClose={() => setModalState(null)} />
-      )}
+      {showCreateIncome && <CreateIncomeModal onClose={() => setShowCreateIncome(false)} />}
     </div>
   )
 }
