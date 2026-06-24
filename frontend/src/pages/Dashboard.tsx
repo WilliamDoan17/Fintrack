@@ -1,13 +1,12 @@
-import { useIncomeBudget } from '../../hooks/budgets'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import type { Budget } from '../../backend/types/budgets'
 import SpendingBudgetContainer from '../../components/budgets/SpendingBudgetContainer'
 import CreateBudgetModal from '../../components/budgets/CreateBudgetModal'
 import TransactionContainer from '../../components/transactions/TransactionContainer'
 import TransferContainer from '../../components/transfers/TransferContainer'
 import Tabs from '../../components/Tabs'
 import { useTransactions } from '../../hooks/transactions'
+import { useIncomes } from '../../hooks/incomes'
 
 const BalanceSummary = () => {
   const { transactions, isLoading, error } = useTransactions(null)
@@ -23,11 +22,10 @@ const BalanceSummary = () => {
     </div>
   )
 
-  let income = 0
+  const income = 0
   let expenses = 0
-  transactions.forEach(({ type, amount }) => {
-    if (type === 'add') income += amount
-    else expenses += amount
+  transactions.forEach(({ amount }) => {
+    expenses += amount
   })
   const balance = income - expenses
 
@@ -56,19 +54,32 @@ const BalanceSummary = () => {
 
 type ModalState = { type: 'createBudget' }
 
-const IncomeBudgetCard = ({ budget }: { budget: Budget }) => {
+const IncomeSummary = () => {
   const navigate = useNavigate()
-  const isPositive = budget.balance >= 0
+  const { incomes, isLoading, error } = useIncomes()
+
+  if (isLoading) return (
+    <div className="bg-gray-900 border border-emerald-900/40 rounded-xl p-5 h-full flex items-center justify-center">
+      <p className="text-gray-500 text-sm">Loading...</p>
+    </div>
+  )
+  if (error) return (
+    <div className="bg-gray-900 border border-emerald-900/40 rounded-xl p-5 h-full flex items-center justify-center">
+      <p className="text-red-400 text-sm">Error loading income</p>
+    </div>
+  )
+
+  const total = incomes.reduce((sum, { amount }) => sum + amount, 0)
 
   return (
     <div
       className="bg-gray-900 border border-emerald-900/40 rounded-xl p-5 cursor-pointer hover:border-emerald-700 hover:shadow-emerald-900/20 hover:shadow-lg transition-all h-full flex flex-col items-center"
       onClick={() => navigate('/income')}
     >
-      <p className="text-xs text-gray-500 uppercase tracking-widest">{budget.name}</p>
+      <p className="text-xs text-gray-500 uppercase tracking-widest">Income</p>
       <div className="flex-1 flex items-center justify-center">
-        <p className={`font-bold text-2xl md:text-3xl ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
-          {isPositive ? '+' : '-'}${Math.abs(budget.balance).toFixed(2)}
+        <p className="font-bold text-2xl md:text-3xl text-emerald-400">
+          +${total.toFixed(2)}
         </p>
       </div>
     </div>
@@ -77,7 +88,6 @@ const IncomeBudgetCard = ({ budget }: { budget: Budget }) => {
 
 const Dashboard = () => {
   const [modalState, setModalState] = useState<ModalState | null>(null)
-  const { budget: incomeBudget } = useIncomeBudget()
 
   return (
     <div className="min-h-screen bg-gray-950">
@@ -93,11 +103,9 @@ const Dashboard = () => {
             <div className="flex-1">
               <BalanceSummary />
             </div>
-            {incomeBudget && (
-              <div className="w-full md:w-56 shrink-0">
-                <IncomeBudgetCard budget={incomeBudget} />
-              </div>
-            )}
+            <div className="w-full md:w-56 shrink-0">
+              <IncomeSummary />
+            </div>
           </div>
 
           {/* Recent Activity */}
