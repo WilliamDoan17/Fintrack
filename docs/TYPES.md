@@ -17,7 +17,6 @@ Source files live in `frontend/backend/types/`.
 | created_at        | string (ISO timestamp) |
 | name              | string                 |
 | parent_id         | string \| null         |
-| balance           | number                 |
 | balance_threshold | number \| null         |
 | is_income         | boolean                |
 
@@ -36,10 +35,6 @@ Note: `is_income` is excluded from `BudgetInput` — it is never set by the user
 ---
 
 ## transactions (`frontend/backend/types/transactions.ts`)
-
-### `TransactionType`
-
-Union: `'add' | 'withdraw'`
 
 ### `Transaction`
 
