@@ -1,11 +1,12 @@
 import type { Budget } from '../../backend/types/budgets'
-import { useSpendingBudgets } from '../../hooks/budgets'
+import { useSpendingBudgets, useBudgetBalance } from '../../hooks/budgets'
 import { useNavigate } from 'react-router-dom'
 
 const SpendingBudgetCard = ({ budget }: { budget: Budget }) => {
   const navigate = useNavigate()
-  const isPositive = budget.balance >= 0
-  const isAlert = budget.balance < 0 || (budget.balance_threshold !== null && budget.balance <= budget.balance_threshold)
+  const { balance } = useBudgetBalance(budget.id)
+  const isPositive = balance >= 0
+  const isAlert = balance < 0 || (budget.balance_threshold !== null && balance <= budget.balance_threshold)
 
   return (
     <div
@@ -22,7 +23,7 @@ const SpendingBudgetCard = ({ budget }: { budget: Budget }) => {
       </div>
       <p className="text-white font-semibold text-lg mb-2">{budget.name}</p>
       <p className={`font-bold text-xl ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
-        {isPositive ? '+' : '-'}${Math.abs(budget.balance).toFixed(2)}
+        {isPositive ? '+' : '-'}${Math.abs(balance).toFixed(2)}
       </p>
     </div>
   )

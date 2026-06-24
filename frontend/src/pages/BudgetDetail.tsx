@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { useState, useEffect, type Dispatch, type SetStateAction } from 'react'
-import { useBudget, useUpdateBudget, useSpendingBudgetStructure } from '../../hooks/budgets'
+import { useBudget, useUpdateBudget, useSpendingBudgetStructure, useBudgetBalance } from '../../hooks/budgets'
 import { useNotification } from '../../contexts/NotificationContext'
 import type { Budget } from '../../backend/types/budgets'
 import PageLoader from '../../components/loaders/PageLoader'
@@ -11,19 +11,13 @@ import TransferContainer from '../../components/transfers/TransferContainer'
 import Tabs from '../../components/Tabs'
 import AddTransactionModal from '../../components/transactions/AddTransactionModal'
 import UpdateBudgetNameInput from '../../components/budgets/UpdateBudgetNameInput'
-import { useTransactions } from '../../hooks/transactions'
-import { useTransfers } from '../../hooks/transfers'
 import DeleteBudgetConfirmModal from '../../components/budgets/DeleteBudgetConfirmModal'
 import MoveBudgetModal from '../../components/budgets/MoveBudgetModal'
 import CreateTransferModal from '../../components/transfers/CreateTransferModal'
 import { useNavigation } from '../../contexts/NavigationContext'
 
 const BalanceSummary = ({ budgetId }: { budgetId: string }) => {
-  const { transactions, isLoading: txLoading, error: txError } = useTransactions(budgetId)
-  const { transfers, isLoading: trLoading, error: trError } = useTransfers(budgetId)
-
-  const isLoading = txLoading || trLoading
-  const error = txError || trError
+  const { balance, incomes, expenses, transfersIn, transfersOut, isLoading, error } = useBudgetBalance(budgetId)
 
   if (isLoading) return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 flex items-center justify-center">
@@ -34,19 +28,7 @@ const BalanceSummary = ({ budgetId }: { budgetId: string }) => {
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 flex items-center justify-center">
       <p className="text-red-400 text-sm">Error loading balance</p>
     </div>
-  )
-
-  const income = 0
-  const expenses = transactions.reduce((sum, { amount }) => sum + amount, 0);
-
-  let transfersIn = 0
-  let transfersOut = 0
-  transfers.forEach(({ from_budget_id, amount }) => {
-    if (from_budget_id === budgetId) transfersOut += amount
-    else transfersIn += amount
-  })
-
-  const balance = income - expenses + transfersIn - transfersOut
+  }
 
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 md:p-6 flex flex-col gap-4">
@@ -60,7 +42,7 @@ const BalanceSummary = ({ budgetId }: { budgetId: string }) => {
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col items-center">
           <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Income</p>
-          <p className="text-emerald-400 font-semibold text-base md:text-lg">+${income.toFixed(2)}</p>
+          <p className="text-emerald-400 font-semibold text-base md:text-lg">+${incomes.toFixed(2)}</p>
         </div>
         <div className="flex flex-col items-center">
           <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Expenses</p>
