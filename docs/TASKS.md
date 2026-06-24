@@ -5,9 +5,37 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
 ---
 
 <details>
+  <summary>Jun 23, 2026</summary>
+
+- [x] Incomes — UI on /income page
+  - Create new Components for Incomes (for now, use only in `IncomeDetail` so make it in file)
+    - `IncomeContainer`
+  - Use Tabs for `IncomeContainer` with label `income` and another tab left blank (Allocations)
+  - `/income` page now use add income buttons and update, delete income within the card in container
+  - Wire income hooks to `/income`
+- [x] Remove transaction type — stop writing `type` (services + UI)
+- [x] Remove transaction type — stop reading `type`, drop from TypeScript types
+- [x] `BudgetBalanceSummary` — derive balance as `transfers_in - transfers_out - transactions` client-side
+- [x] DB drop — `type` column for `transactions`, drop rows of `transactions` with `.type` = `add`, `.balance` column for `budgets`, balance triggers and functions
+  - drop rows of `transactions` with `.type` = `add`
+  - drop transactions `type` column
+  - remove balance calculation triggers and functions
+  - drop budgets `balance` column
+
+</details>
+
+<details>
+  <summary>Jun 22, 2026</summary>
+
+- [x] update docs to prepare for new architecture (commit: `docs: update new architecture`)
+- [x] Incomes — schema, RLS, triggers
+- [x] Incomes — services + types + hooks
+- [x] Incomes — migrate `type: 'add'` transactions (dev)
+
+<details>
   <summary>Jun 19, 2026</summary>
   
-- [ ] UI update for Transfers and Transaction (branch: `fix/ui-transactions-transfers`
+- [x] UI update for Transfers and Transaction (branch: `fix/ui-transactions-transfers`
   - TransferCard: show from/to budget names
   - UpdateTransfer: display from_budget (read-only), allow editing to_budget
   - split TransferContainer from TransactionContainer
