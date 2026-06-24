@@ -10,6 +10,8 @@ import {
   deleteBudget,
 } from '../backend/services/budgets'
 import type { Budget, BudgetInput } from '../backend/types/budgets'
+import { useTransactions } from './transactions'
+import { useTransfers } from './transfers'
 
 export const useSpendingBudgets = (parentId: string | null) => {
   const { data: budgets = [], isLoading, error } = useQuery<Budget[]>({
@@ -34,6 +36,26 @@ export const useIncomeBudget = () => {
     queryFn: getIncomeBudget,
   })
   return { budget, isLoading, error }
+}
+
+export const useBudgetBalance = (budgetId: string) => {
+  const { transactions, isLoading: txLoading, error: txError } = useTransactions(budgetId)
+  const { transfers, isLoading: trLoading, error: trError } = useTransfers(budgetId)
+
+  const isLoading = txLoading || trLoading
+  const error = txError || trError
+
+  const incomes = 0
+  const expenses = transactions.reduce((sum, { amount }) => sum + amount, 0)
+  let transfersIn = 0
+  let transfersOut = 0
+  transfers.forEach(({ from_budget_id, amount }) => {
+    if (from_budget_id === budgetId) transfersOut += amount
+    else transfersIn += amount
+  })
+  const balance = incomes - expenses + transfersIn - transfersOut
+
+  return { balance, incomes, expenses, transfersIn, transfersOut, isLoading, error }
 }
 
 export const useSpendingBudgetStructure = () => {
