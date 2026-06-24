@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useCreateTransaction } from '../../hooks/transactions'
 import { useBudget } from '../../hooks/budgets'
-import type { TransactionType } from '../../backend/types/transactions'
 import { useNotification } from '../../contexts/NotificationContext'
 
 const TransactionWarningModal = ({ message, onConfirm, onCancel }: {
@@ -43,10 +42,8 @@ const AddTransactionModal = ({ onClose, budgetId, budgetType }: {
   const { mutate: createTransaction, isPending, error } = useCreateTransaction()
   const { budget } = useBudget(budgetType === 'spending' ? budgetId : null)
 
-  const type: TransactionType = budgetType === 'income' ? 'add' : 'withdraw'
-
   const submit = () => {
-    createTransaction({ name, type, amount: parseFloat(amount), budget_id: budgetId }, {
+    createTransaction({ name, amount: parseFloat(amount), budget_id: budgetId }, {
       onSuccess: () => {
         notify('Transaction added', 'success')
         onClose()

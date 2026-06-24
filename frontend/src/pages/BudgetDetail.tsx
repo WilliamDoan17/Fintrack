@@ -36,12 +36,8 @@ const BalanceSummary = ({ budgetId }: { budgetId: string }) => {
     </div>
   )
 
-  let income = 0
-  let expenses = 0
-  transactions.forEach(({ type, amount }) => {
-    if (type === 'add') income += amount
-    else expenses += amount
-  })
+  const income = 0
+  const expenses = transactions.reduce((sum, { amount }) => sum + amount, 0);
 
   let transfersIn = 0
   let transfersOut = 0

@@ -1,18 +1,17 @@
 import { useState } from 'react'
 import { useUpdateTransaction } from '../../hooks/transactions'
-import type { Transaction, TransactionType } from '../../backend/types/transactions'
+import type { Transaction } from '../../backend/types/transactions'
 import { useNotification } from '../../contexts/NotificationContext'
 
 const UpdateTransactionModal = ({ transaction, onClose }: { transaction: Transaction, onClose: () => void }) => {
   const [name, setName] = useState<string>(transaction.name)
-  const [type, setType] = useState<TransactionType>(transaction.type)
   const [amount, setAmount] = useState<string>(transaction.amount.toString())
   const { notify } = useNotification()
   const { mutate: updateTransaction, isPending, error } = useUpdateTransaction()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    updateTransaction({ id: transaction.id, updates: { name, type, amount: parseFloat(amount) } }, {
+    updateTransaction({ id: transaction.id, updates: { name, amount: parseFloat(amount) } }, {
       onSuccess: () => {
         notify('Transaction updated', 'success')
         onClose()
@@ -40,33 +39,6 @@ const UpdateTransactionModal = ({ transaction, onClose }: { transaction: Transac
               placeholder="e.g. Groceries, Salary, Rent"
               className="bg-gray-800 text-white border border-gray-700 rounded px-3 py-2 focus:outline-none focus:border-emerald-400 transition-all placeholder:text-gray-600"
             />
-          </div>
-
-          {/* Type */}
-          <div className="flex flex-col gap-2">
-            <label className="text-sm text-gray-400">Type</label>
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => setType('add')}
-                className={`flex-1 py-2 rounded border transition-all cursor-pointer ${type === 'add'
-                  ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
-                  : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
-                  }`}
-              >
-                + Add
-              </button>
-              <button
-                type="button"
-                onClick={() => setType('withdraw')}
-                className={`flex-1 py-2 rounded border transition-all cursor-pointer ${type === 'withdraw'
-                  ? 'bg-red-500/10 border-red-500 text-red-400'
-                  : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
-                  }`}
-              >
-                - Withdraw
-              </button>
-            </div>
           </div>
 
           {/* Amount */}
