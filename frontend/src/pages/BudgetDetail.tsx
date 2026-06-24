@@ -176,6 +176,7 @@ const SettingsModal = ({ budget, onClose }: { budget: Budget, onClose: () => voi
 const BudgetDetail = () => {
   const { id: budgetId } = useParams()
   const { budget: budgetInfo, isLoading, error } = useBudget(budgetId ?? null)
+  const { balance } = useBudgetBalance(budgetId ?? '')
   const [isEditingName, setIsEditingName] = useState<boolean>(false)
   const [modalState, setModalState] = useState<ModalState | null>(null)
   const { setBackTo } = useNavigation()
@@ -239,9 +240,9 @@ const BudgetDetail = () => {
             </div>
           }
         </div>
-        {budgetInfo && (budgetInfo.balance < 0 || (budgetInfo.balance_threshold !== null && budgetInfo.balance <= budgetInfo.balance_threshold)) && (
+        {budgetInfo && (balance < 0 || (budgetInfo.balance_threshold !== null && balance <= budgetInfo.balance_threshold)) && (
           <div className="mb-6 px-4 py-3 rounded-lg bg-red-900/20 border border-red-900/50 text-red-400 text-sm">
-            {budgetInfo.balance < 0
+            {balance < 0
               ? 'Balance is negative.'
               : 'Balance has reached the alert threshold.'
             }

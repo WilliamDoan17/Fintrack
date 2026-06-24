@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useCreateTransaction } from '../../hooks/transactions'
-import { useBudget } from '../../hooks/budgets'
+import { useBudget, useBudgetBalance } from '../../hooks/budgets'
 import { useNotification } from '../../contexts/NotificationContext'
 
 const TransactionWarningModal = ({ message, onConfirm, onCancel }: {
@@ -41,6 +41,7 @@ const AddTransactionModal = ({ onClose, budgetId, budgetType }: {
   const { notify } = useNotification()
   const { mutate: createTransaction, isPending, error } = useCreateTransaction()
   const { budget } = useBudget(budgetType === 'spending' ? budgetId : null)
+  const { balance } = useBudgetBalance(budgetId)
 
   const submit = () => {
     createTransaction({ name, amount: parseFloat(amount), budget_id: budgetId }, {
@@ -54,13 +55,13 @@ const AddTransactionModal = ({ onClose, budgetId, budgetType }: {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (budget && budgetType === 'spending') {
-      const newBalance = budget.balance - parseFloat(amount)
+    if (budgetType === 'spending') {
+      const newBalance = balance - parseFloat(amount)
       if (newBalance < 0) {
         setWarningMessage('This transaction will result in a negative balance.')
         return
       }
-      if (budget.balance_threshold !== null && newBalance <= budget.balance_threshold) {
+      if (budget?.balance_threshold !== null && budget?.balance_threshold !== undefined && newBalance <= budget.balance_threshold) {
         setWarningMessage('This transaction will push your balance to or below the alert threshold.')
         return
       }
