@@ -14,15 +14,6 @@ export const createBudget = async (input: BudgetInput) => {
   if (error) throw error
 }
 
-export const getAllBudgets = async (): Promise<Budget[]> => {
-  const { data, error } = await supabase
-    .from('budgets')
-    .select('*')
-
-  if (error) throw error
-  return data ?? []
-}
-
 export const getIncomeBudget = async (): Promise<Budget> => {
   const { data, error } = await supabase
     .from('budgets')
@@ -33,7 +24,7 @@ export const getIncomeBudget = async (): Promise<Budget> => {
   return data
 }
 
-export const getAllSpendingBudgets = async (): Promise<Budget[]> => {
+export const getAllBudgets = async (): Promise<Budget[]> => {
   const { data, error } = await supabase
     .from('budgets')
     .select('*')
@@ -43,7 +34,7 @@ export const getAllSpendingBudgets = async (): Promise<Budget[]> => {
   return data ?? []
 }
 
-export const getRootSpendingBudgets = async (): Promise<Budget[]> => {
+export const getRootBudgets = async (): Promise<Budget[]> => {
   const { data, error } = await supabase
     .from('budgets')
     .select('*')

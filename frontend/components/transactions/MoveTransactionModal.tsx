@@ -1,11 +1,11 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import type { Transaction } from '../../backend/types/transactions'
-import { useSpendingBudgetStructure } from '../../hooks/budgets'
+import { useBudgetStructure } from '../../hooks/budgets'
 import { useUpdateTransaction } from '../../hooks/transactions'
 import { useNotification } from '../../contexts/NotificationContext'
 
 const MoveTransactionModal = ({ transaction, onClose }: { transaction: Transaction, onClose: () => void }) => {
-  const { structure, isLoading, error } = useSpendingBudgetStructure()
+  const { structure, isLoading, error } = useBudgetStructure()
   const { mutate: updateTransaction, isPending: moving } = useUpdateTransaction()
   const [input, setInput] = useState('')
   const [open, setOpen] = useState(false)

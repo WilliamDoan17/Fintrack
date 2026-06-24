@@ -16,10 +16,10 @@ This document describes the React hooks in Fintrack's frontend.
 
 | Hook                           | Key                              |
 | ------------------------------ | -------------------------------- |
-| `useSpendingBudgets(parentId)` | `['spending-budgets', parentId]` |
+| `useBudgets(parentId)` | `['budgets', parentId]` |
 | `useBudget(id)`                | `['budget', id]`                 |
 | `useIncomeBudget()`            | `['income-budget']`              |
-| `useSpendingBudgetStructure()` | `['spending-budget-structure']`  |
+| `useBudgetStructure()` | `['budget-structure']`  |
 | `useTransactions(budgetId)`    | `['transactions', budgetId]`     |
 | `useTransfers(budgetId)`       | `['transfers', budgetId]`        |
 | `useIncomes()`                 | `['incomes']`                    |
@@ -40,7 +40,7 @@ Returns the current authenticated user via Supabase auth state subscription. Doe
 
 ## Budget Hooks (`hooks/budgets.ts`)
 
-### `useSpendingBudgets(parentId: string | null)`
+### `useBudgets(parentId: string | null)`
 
 Fetches spending budgets.
 
@@ -49,7 +49,7 @@ Fetches spending budgets.
 
 **Returns:** `{ budgets, isLoading, error }`
 
-**Used by:** `SpendingBudgetContainer`, `BudgetContainer`
+**Used by:** `BudgetContainer`, `BudgetContainer`
 
 ---
 
@@ -85,11 +85,11 @@ Derives the balance for a spending budget from cached query data. Composes `useT
 
 **Returns:** `{ balance, incomes, expenses, transfersIn, transfersOut, isLoading, error }`
 
-**Used by:** `BalanceSummary` (BudgetDetail), `SpendingBudgetCard`
+**Used by:** `BalanceSummary` (BudgetDetail), `BudgetCard`
 
 ---
 
-### `useSpendingBudgetStructure()`
+### `useBudgetStructure()`
 
 Builds a path-based tree of all spending budgets for use as move targets.
 
@@ -101,7 +101,7 @@ Builds a path-based tree of all spending budgets for use as move targets.
 
 ### `useCreateBudget()`
 
-Creates a new spending budget. Invalidates `['spending-budgets']`, `['budget']`, `['spending-budget-structure']` on success.
+Creates a new spending budget. Invalidates `['budgets']`, `['budget']`, `['budget-structure']` on success.
 
 **Returns:** `UseMutationResult<void, Error, BudgetInput>`
 
@@ -111,7 +111,7 @@ Creates a new spending budget. Invalidates `['spending-budgets']`, `['budget']`,
 
 ### `useUpdateBudget()`
 
-Updates an existing budget (name, parent). Invalidates `['spending-budgets']`, `['budget']`, `['income-budget']`, `['spending-budget-structure']` on success.
+Updates an existing budget (name, parent). Invalidates `['budgets']`, `['budget']`, `['income-budget']`, `['budget-structure']` on success.
 
 **Returns:** `UseMutationResult<void, Error, { id: string; updates: Partial<BudgetInput> }>`
 
@@ -121,7 +121,7 @@ Updates an existing budget (name, parent). Invalidates `['spending-budgets']`, `
 
 ### `useDeleteBudget()`
 
-Deletes a budget and its sub-budgets. Invalidates `['spending-budgets']`, `['budget']`, `['spending-budget-structure']` on success.
+Deletes a budget and its sub-budgets. Invalidates `['budgets']`, `['budget']`, `['budget-structure']` on success.
 
 **Returns:** `UseMutationResult<void, Error, string>`
 
@@ -146,7 +146,7 @@ Fetches transactions.
 
 ### `useCreateTransaction()`
 
-Creates a new transaction. Invalidates `['transactions']`, `['budget']`, `['spending-budgets']` on success.
+Creates a new transaction. Invalidates `['transactions']`, `['budget']`, `['budgets']` on success.
 
 **Returns:** `UseMutationResult<void, Error, TransactionInput>`
 
@@ -156,7 +156,7 @@ Creates a new transaction. Invalidates `['transactions']`, `['budget']`, `['spen
 
 ### `useUpdateTransaction()`
 
-Updates an existing transaction. Invalidates `['transactions']`, `['budget']`, `['spending-budgets']` on success.
+Updates an existing transaction. Invalidates `['transactions']`, `['budget']`, `['budgets']` on success.
 
 **Returns:** `UseMutationResult<void, Error, { id: string; updates: Partial<TransactionInput> }>`
 
@@ -166,7 +166,7 @@ Updates an existing transaction. Invalidates `['transactions']`, `['budget']`, `
 
 ### `useDeleteTransaction()`
 
-Deletes a transaction. Invalidates `['transactions']`, `['budget']`, `['spending-budgets']` on success.
+Deletes a transaction. Invalidates `['transactions']`, `['budget']`, `['budgets']` on success.
 
 **Returns:** `UseMutationResult<void, Error, string>`
 
@@ -191,7 +191,7 @@ Fetches transfers.
 
 ### `useCreateTransfer()`
 
-Creates a new transfer between budgets. Invalidates `['transfers']`, `['budget']`, `['spending-budgets']` on success.
+Creates a new transfer between budgets. Invalidates `['transfers']`, `['budget']`, `['budgets']` on success.
 
 **Returns:** `UseMutationResult<void, Error, TransferInput>`
 
@@ -201,7 +201,7 @@ Creates a new transfer between budgets. Invalidates `['transfers']`, `['budget']
 
 ### `useUpdateTransfer()`
 
-Updates an existing transfer. Invalidates `['transfers']`, `['budget']`, `['spending-budgets']` on success.
+Updates an existing transfer. Invalidates `['transfers']`, `['budget']`, `['budgets']` on success.
 
 **Returns:** `UseMutationResult<void, Error, { id: string; updates: Partial<TransferInput> }>`
 
@@ -211,7 +211,7 @@ Updates an existing transfer. Invalidates `['transfers']`, `['budget']`, `['spen
 
 ### `useDeleteTransfer()`
 
-Deletes a transfer. Invalidates `['transfers']`, `['budget']`, `['spending-budgets']` on success.
+Deletes a transfer. Invalidates `['transfers']`, `['budget']`, `['budgets']` on success.
 
 **Returns:** `UseMutationResult<void, Error, string>`
 

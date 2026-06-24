@@ -1,8 +1,8 @@
 import type { Budget } from '../../backend/types/budgets'
-import { useSpendingBudgets, useBudgetBalance } from '../../hooks/budgets'
+import { useBudgets, useBudgetBalance } from '../../hooks/budgets'
 import { useNavigate } from 'react-router-dom'
 
-const SpendingBudgetCard = ({ budget }: { budget: Budget }) => {
+const BudgetCard = ({ budget }: { budget: Budget }) => {
   const navigate = useNavigate()
   const { balance } = useBudgetBalance(budget.id)
   const isPositive = balance >= 0
@@ -29,7 +29,7 @@ const SpendingBudgetCard = ({ budget }: { budget: Budget }) => {
   )
 }
 
-const SpendingBudgetContainerSkeleton = () => (
+const BudgetContainerSkeleton = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     {[...Array(4)].map((_, i) => (
       <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl px-5 py-4 flex flex-col gap-3">
@@ -41,20 +41,20 @@ const SpendingBudgetContainerSkeleton = () => (
   </div>
 )
 
-const SpendingBudgetContainer = ({ parentId = null }: { parentId?: string | null }) => {
-  const { budgets, isLoading, error } = useSpendingBudgets(parentId)
+const BudgetContainer = ({ parentId = null }: { parentId?: string | null }) => {
+  const { budgets, isLoading, error } = useBudgets(parentId)
 
-  if (isLoading) return <SpendingBudgetContainerSkeleton />
+  if (isLoading) return <BudgetContainerSkeleton />
   if (error) return <p className="text-red-400 text-sm">Something went wrong</p>
   if (budgets.length === 0) return <p className="text-gray-500 text-sm">No budgets yet. Create one to get started.</p>
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {budgets.map(budget => (
-        <SpendingBudgetCard key={budget.id} budget={budget} />
+        <BudgetCard key={budget.id} budget={budget} />
       ))}
     </div>
   )
 }
 
-export default SpendingBudgetContainer
+export default BudgetContainer

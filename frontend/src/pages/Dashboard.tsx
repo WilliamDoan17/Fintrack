@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import SpendingBudgetContainer from '../../components/budgets/SpendingBudgetContainer'
+import BudgetContainer from '../../components/budgets/BudgetContainer'
 import CreateBudgetModal from '../../components/budgets/CreateBudgetModal'
 import TransactionContainer from '../../components/transactions/TransactionContainer'
 import TransferContainer from '../../components/transfers/TransferContainer'
@@ -125,7 +125,7 @@ const Dashboard = () => {
                 + Create Budget
               </button>
             </div>
-            <SpendingBudgetContainer />
+            <BudgetContainer />
           </div>
         </div>
       </div>

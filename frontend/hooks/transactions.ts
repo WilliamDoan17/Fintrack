@@ -19,7 +19,7 @@ export const useTransactions = (budgetId: string | null = null) => {
 const TRANSACTION_INVALIDATION_KEYS = [
   ['transactions'],
   ['budget'],
-  ['spending-budgets'],
+  ['budgets'],
 ]
 
 export const useCreateTransaction = () => {

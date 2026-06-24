@@ -59,6 +59,7 @@
 | AM-2c  | `BudgetBalanceSummary` — derive balance as `transfers_in - transfers_out - transactions` client-side                                                          | ✅     |
 | AM-2d  | DB drop — `type` column for `transactions`, drop rows of `transactions` with `.type` = `add`, `.balance` column for `budgets`, balance triggers and functions | ✅     |
 | AM-2e  | `OverallBalanceSummary` — derive dashboard balance as `SUM(incomes) − SUM(all transactions)`                                                                  | ⬜     |
+| AM-2f  | Change naming for budgets in src/ - from `SpendingBudgets` to `Budgets`                                                                                       | ⬜     |
 | AM-3a  | Allocations — schema, RLS, triggers (additive)                                                                                                                | ⬜     |
 | AM-3b  | Allocations — services + types + hooks                                                                                                                        | ⬜     |
 | AM-3c  | Allocations — dev migration (income transfers → allocations)                                                                                                  | ⬜     |

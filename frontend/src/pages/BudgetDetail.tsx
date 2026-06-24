@@ -1,10 +1,10 @@
 import { useParams, Link } from 'react-router-dom'
 import { useState, useEffect, type Dispatch, type SetStateAction } from 'react'
-import { useBudget, useUpdateBudget, useSpendingBudgetStructure, useBudgetBalance } from '../../hooks/budgets'
+import { useBudget, useUpdateBudget, useBudgetStructure, useBudgetBalance } from '../../hooks/budgets'
 import { useNotification } from '../../contexts/NotificationContext'
 import type { Budget } from '../../backend/types/budgets'
 import PageLoader from '../../components/loaders/PageLoader'
-import SpendingBudgetContainer from '../../components/budgets/SpendingBudgetContainer'
+import BudgetContainer from '../../components/budgets/BudgetContainer'
 import CreateBudgetModal from '../../components/budgets/CreateBudgetModal'
 import TransactionContainer from '../../components/transactions/TransactionContainer'
 import TransferContainer from '../../components/transfers/TransferContainer'
@@ -24,11 +24,12 @@ const BalanceSummary = ({ budgetId }: { budgetId: string }) => {
       <p className="text-gray-500 text-sm">Loading balance...</p>
     </div>
   )
+
   if (error) return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 flex items-center justify-center">
       <p className="text-red-400 text-sm">Error loading balance</p>
     </div>
-  }
+  )
 
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 md:p-6 flex flex-col gap-4">
@@ -74,7 +75,7 @@ type ModalState =
   { type: 'settings' }
 
 const BudgetBreadcrumbs = ({ budgetId }: { budgetId: string }) => {
-  const { structure } = useSpendingBudgetStructure()
+  const { structure } = useBudgetStructure()
   const path = structure?.budgetIdToPath.get(budgetId) ?? ''
   const segments = path.split('/').filter(Boolean)
 
@@ -293,7 +294,7 @@ const BudgetDetail = () => {
                 + Create Budget
               </button>
             </div>
-            <SpendingBudgetContainer parentId={budgetId} />
+            <BudgetContainer parentId={budgetId} />
           </div>
         </div>
       </div>

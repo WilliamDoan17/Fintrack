@@ -7,9 +7,16 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
 <details>
   <summary>Jun 24, 2026</summary>
 
-- [ ] Budget Balance - `useBudgetBalance` hook for showing budget balance accross pages and components
-- [ ] `OverallBalanceSummary` — derive dashboard balance as `SUM(incomes) − SUM(all transactions)`
-- [ ] fix uses of `budget.balance` in pages and components
+- [x] Budget Balance - `useBudgetBalance` hook for showing budget balance accross pages and components
+- [x] `OverallBalanceSummary` — derive dashboard balance as `SUM(incomes) − SUM(all transactions)`
+- [x] fix uses of `budget.balance` in pages and components
+- [ ] Change naming for budgets in frontend/ - from `SpendingBudgets` to `Budgets` (write to docs/ also)
+- [ ] Allocations — schema, RLS, triggers (additive)
+- [ ] Allocations — services + types + hooks
+- [ ] Allocations — dev migration (income transfers → allocations)
+- [ ] `IncomeBalanceSummary` — derive income balance as `SUM(incomes) − SUM(allocations out)` on /income
+- [ ] `BudgetBalanceSummary` — update to `allocations_in + transfers_in - transfers_out - transactions`
+- [ ] Allocations — UI on /income (create, view, delete + unallocated balance)
 
 </details>
 

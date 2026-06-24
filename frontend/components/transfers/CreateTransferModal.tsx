@@ -1,11 +1,11 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import type { Budget } from '../../backend/types/budgets'
-import { useSpendingBudgetStructure } from '../../hooks/budgets'
+import { useBudgetStructure } from '../../hooks/budgets'
 import { useCreateTransfer } from '../../hooks/transfers'
 import { useNotification } from '../../contexts/NotificationContext'
 
 const CreateTransferModal = ({ budget, onClose }: { budget: Budget, onClose: () => void }) => {
-  const { structure, isLoading, error } = useSpendingBudgetStructure()
+  const { structure, isLoading, error } = useBudgetStructure()
   const { mutate: createTransfer, isPending: submitting } = useCreateTransfer()
   const [toInput, setToInput] = useState('')
   const [amount, setAmount] = useState('')

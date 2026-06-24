@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { useTransactions } from '../../hooks/transactions'
-import { useSpendingBudgetStructure } from '../../hooks/budgets'
+import { useBudgetStructure } from '../../hooks/budgets'
 import type { Transaction } from '../../backend/types/transactions'
 import { formatDate } from '../../utils/time'
 
@@ -25,7 +25,7 @@ const PER_PAGE = 25
 
 const Spending = () => {
   const { transactions, isLoading: txLoading } = useTransactions(null)
-  const { structure, isLoading: structureLoading } = useSpendingBudgetStructure()
+  const { structure, isLoading: structureLoading } = useBudgetStructure()
 
   const [search, setSearch] = useState('')
   const [minAmount, setMinAmount] = useState('')
