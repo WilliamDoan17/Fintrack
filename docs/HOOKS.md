@@ -73,6 +73,22 @@ Fetches the current user's single income budget.
 
 ---
 
+### `useBudgetBalance(budgetId: string)`
+
+Derives the balance for a spending budget from cached query data. Composes `useTransactions` and `useTransfers` — no new query key.
+
+**Formula:** `incomes - expenses + transfersIn - transfersOut`
+- `incomes` — placeholder `0` until allocations are built
+- `expenses` — sum of all transactions for the budget (recursive, via `get_budget_transactions`)
+- `transfersIn` — sum of transfers where `to_budget_id === budgetId`
+- `transfersOut` — sum of transfers where `from_budget_id === budgetId`
+
+**Returns:** `{ balance, incomes, expenses, transfersIn, transfersOut, isLoading, error }`
+
+**Used by:** `BalanceSummary` (BudgetDetail), `SpendingBudgetCard`
+
+---
+
 ### `useSpendingBudgetStructure()`
 
 Builds a path-based tree of all spending budgets for use as move targets.
