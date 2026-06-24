@@ -4,6 +4,7 @@ import type { Income } from '../../backend/types/incomes'
 import Pagination from '../Pagination'
 import UpdateIncomeModal from './UpdateIncomeModal'
 import DeleteIncomeConfirmModal from './DeleteIncomeConfirmModal'
+import { formatDate } from '../../utils/time'
 
 type ModalState =
   | { type: 'update'; income: Income }
@@ -35,7 +36,7 @@ const IncomeCard = ({ income, onEdit, onDelete }: { income: Income; onEdit: () =
     <div className="flex flex-col gap-1">
       <p className="text-white font-medium">{income.name}</p>
       <p className="text-gray-500 text-xs uppercase tracking-widest">
-        {new Date(income.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+        {formatDate(income.created_at)}
       </p>
     </div>
     <div className="flex items-center justify-between sm:justify-end gap-4">
