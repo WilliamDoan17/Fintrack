@@ -5,6 +5,15 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
 ---
 
 <details>
+  <summary>Jun 24, 2026</summary>
+
+- [ ] Budget Balance - `useBudgetBalance` hook for showing budget balance accross pages and components
+- [ ] `OverallBalanceSummary` — derive dashboard balance as `SUM(incomes) − SUM(all transactions)`
+- [ ] fix uses of `budget.balance` in pages and components
+
+</details>
+
+<details>
   <summary>Jun 23, 2026</summary>
 
 - [x] Incomes — UI on /income page

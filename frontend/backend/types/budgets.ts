@@ -4,7 +4,6 @@ export interface Budget {
   created_at: string,
   name: string,
   parent_id: string | null,
-  balance: number,
   balance_threshold: number | null,
   is_income: boolean,
 }
