@@ -54,6 +54,8 @@ This document defines the services for Fintrack.
 - **getAllTransfers()** → `Transfer[]` — fetches all transfers for the current user
 - **getBudgetTransfers(budget_id)** → `Transfer[]` — fetches transfers where the budget is the source or destination (not recursive)
 
+---
+
 ## incomes
 
 - **createIncome(input: IncomeInput)** -> `void` - creates a new income log
@@ -61,3 +63,15 @@ This document defines the services for Fintrack.
 - **deleteIncome(income_id: string)** -> `void` - deletes an income log
 - **getAllIncomes()** -> `Income[]` - fetches all income logs for the current user
 - **getIncome(income_id: string)** -> `Income` - fetches a single income log by id
+
+---
+
+## allocations
+
+- **createAllocation(input: AllocationInput)** → `void` — creates a new allocation
+- **updateAllocation(allocation_id, updates: Partial\<AllocationInput\>)** → `void` — updates fields on an existing allocation
+- **deleteAllocation(allocation_id)** → `void` — deletes an allocation
+- **getAllAllocations()** → `Allocation[]` — fetches all allocations for the current user
+- **getAllocation(allocation_id)** → `Allocation` — fetches a single allocation by id
+
+---
