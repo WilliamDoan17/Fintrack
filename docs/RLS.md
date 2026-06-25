@@ -60,3 +60,18 @@ This document defines the Row Level Security (RLS) policies for Fintrack's Supab
   - `USING`: `user_id = auth.uid()`
   - `WITH CHECK`: `user_id = auth.uid()`
 - DELETE: `user_id = auth.uid()`
+
+---
+
+## allocations
+
+- SELECT: `user_id = auth.uid()`
+- INSERT:
+  - `user_id = auth.uid()`
+  - user must own budget: (there exists a budget with `id = to_budget_id` && `user_id = auth.uid()`)
+- UPDATE:
+  - `USING`: `user_id = auth.uid()`
+  - `WITH CHECK`:
+    - `user_id = auth.uid()`
+    - user must own the new budget: there exists a budget with `id = to_budget_id` && `user_id = auth.uid()`
+- DELETE: `user_id = auth.uid()`

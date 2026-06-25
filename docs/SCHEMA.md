@@ -89,3 +89,23 @@ This document states the data schema for Fintrack project.
 | name       | text           | not null, check (name <> '')                     |
 | amount     | numeric(15, 2) | not null, check (amount > 0)                     |
 | created_at | timestamptz    | not null, default now()                          |
+
+---
+
+### allocations
+
+#### Interface
+
+| Field        | Type           | Constraints                                      |
+| ------------ | -------------- | ------------------------------------------------ |
+| id           | uuid           | primary key, default gen_random_uuid()           |
+| user_id      | uuid           | not null, FK -> auth.users(id) on delete cascade |
+| to_budget_id | uuid           | not null, FK -> budgets(id) on delete cascade    |
+| amount       | numeric(15, 2) | not null, check (amount > 0)                     |
+| created_at   | timestamptz    | not null, default now()                          |
+
+#### Indexes
+
+| Name                           | Column       | Method |
+| ------------------------------ | ------------ | ------ |
+| idx_allocations_to_budget_id   | to_budget_id | btree  |
