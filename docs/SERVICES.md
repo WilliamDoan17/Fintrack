@@ -72,6 +72,7 @@ This document defines the services for Fintrack.
 - **updateAllocation(allocation_id, updates: Partial\<AllocationInput\>)** → `void` — updates fields on an existing allocation
 - **deleteAllocation(allocation_id)** → `void` — deletes an allocation
 - **getAllAllocations()** → `Allocation[]` — fetches all allocations for the current user
+- **getBudgetAllocations(budget_id)** → `Allocation[]` — fetches allocations for a specific budget (`to_budget_id`)
 - **getAllocation(allocation_id)** → `Allocation` — fetches a single allocation by id
 
 ---
