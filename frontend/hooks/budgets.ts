@@ -3,7 +3,6 @@ import {
   getRootBudgets,
   getChildBudgets,
   getBudget,
-  getIncomeBudget,
   getAllBudgets,
   createBudget,
   updateBudget,
@@ -27,14 +26,6 @@ export const useBudget = (id: string | null) => {
     queryKey: ['budget', id],
     queryFn: () => getBudget(id!),
     enabled: id !== null,
-  })
-  return { budget, isLoading, error }
-}
-
-export const useIncomeBudget = () => {
-  const { data: budget = null, isLoading, error } = useQuery<Budget>({
-    queryKey: ['income-budget'],
-    queryFn: getIncomeBudget,
   })
   return { budget, isLoading, error }
 }
@@ -92,7 +83,6 @@ export const useBudgetStructure = () => {
 const BUDGET_KEYS = [
   ['budgets'],
   ['budget'],
-  ['income-budget'],
   ['budget-structure'],
 ]
 
