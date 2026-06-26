@@ -3,6 +3,8 @@ import Tabs from '../../components/Tabs'
 import { useNavigation } from '../../contexts/NavigationContext'
 import IncomeContainer from '../../components/incomes/IncomeContainer'
 import CreateIncomeModal from '../../components/incomes/CreateIncomeModal'
+import AllocationContainer from '../../components/allocations/AllocationContainer'
+import CreateAllocationModal from '../../components/allocations/CreateAllocationModal'
 import { useIncomes } from '../../hooks/incomes'
 import { useAllocations } from '../../hooks/allocations'
 
@@ -54,6 +56,7 @@ const IncomeBalanceSummary = () => {
 const IncomeDetail = () => {
   const { setBackTo } = useNavigation()
   const [showCreateIncome, setShowCreateIncome] = useState(false)
+  const [showCreateAllocation, setShowCreateAllocation] = useState(false)
 
   useEffect(() => {
     setBackTo('/dashboard')
@@ -84,13 +87,26 @@ const IncomeDetail = () => {
             },
             {
               label: 'Allocations',
-              content: <p className="text-gray-500 text-sm">Allocations coming soon.</p>,
+              content: (
+                <div className="flex flex-col gap-4">
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => setShowCreateAllocation(true)}
+                      className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      + Allocate
+                    </button>
+                  </div>
+                  <AllocationContainer />
+                </div>
+              ),
             },
           ]} />
         </div>
       </div>
 
       {showCreateIncome && <CreateIncomeModal onClose={() => setShowCreateIncome(false)} />}
+      {showCreateAllocation && <CreateAllocationModal onClose={() => setShowCreateAllocation(false)} />}
     </div>
   )
 }
