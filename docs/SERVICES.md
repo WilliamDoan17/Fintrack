@@ -23,13 +23,12 @@ This document defines the services for Fintrack.
 
 ## budgets
 
-- **createBudget(input: BudgetInput)** → `void` — creates a new budget for the current user (`is_income` is always false, enforced by RLS)
-- **updateBudget(budget_id, updates: Partial<BudgetInput>)** → `void` — updates fields on an existing budget (cannot flip `is_income`, enforced by RLS)
-- **deleteBudget(budget_id)** → `void` — deletes a budget and all its sub-budgets (cascade); fails if target is the income budget (enforced by RLS)
+- **createBudget(input: BudgetInput)** → `void` — creates a new budget for the current user
+- **updateBudget(budget_id, updates: Partial<BudgetInput>)** → `void` — updates fields on an existing budget
+- **deleteBudget(budget_id)** → `void` — deletes a budget and all its sub-budgets (cascade)
 - **getBudget(budget_id)** → `Budget` — fetches a single budget by id
-- **getIncomeBudget()** → `Budget` — fetches the current user's income budget (`is_income = true`)
-- **getAllBudgets()** → `Budget[]` — fetches all spending budgets (`is_income = false`) for the current user
-- **getRootBudgets()** → `Budget[]` — fetches top-level spending budgets (no parent, `is_income = false`) for the current user
+- **getAllBudgets()** → `Budget[]` — fetches all budgets for the current user
+- **getRootBudgets()** → `Budget[]` — fetches top-level budgets (no parent) for the current user
 - **getChildBudgets(parent_id)** → `Budget[]` — fetches direct children of a given budget
 
 ---

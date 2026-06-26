@@ -14,15 +14,17 @@ This document describes the React hooks in Fintrack's frontend.
 
 ## Query Keys
 
-| Hook                           | Key                              |
-| ------------------------------ | -------------------------------- |
-| `useBudgets(parentId)` | `['budgets', parentId]` |
-| `useBudget(id)`                | `['budget', id]`                 |
-| `useIncomeBudget()`            | `['income-budget']`              |
-| `useBudgetStructure()` | `['budget-structure']`  |
-| `useTransactions(budgetId)`    | `['transactions', budgetId]`     |
-| `useTransfers(budgetId)`       | `['transfers', budgetId]`        |
-| `useIncomes()`                 | `['incomes']`                    |
+| Hook                             | Key                          |
+| -------------------------------- | ---------------------------- |
+| `useBudgets(parentId)`           | `['budgets', parentId]`      |
+| `useBudget(id)`                  | `['budget', id]`             |
+| `useBudgetStructure()`           | `['budget-structure']`       |
+| `useTransactions(budgetId)`      | `['transactions', budgetId]` |
+| `useTransfers(budgetId)`         | `['transfers', budgetId]`    |
+| `useIncomes()`                   | `['incomes']`                |
+| `useAllocations()`               | `['allocations']`            |
+| `useBudgetAllocations(budgetId)` | `['allocations', budgetId]`  |
+| `useAllocation(id)`              | `['allocation', id]`         |
 
 ---
 
@@ -59,26 +61,17 @@ Fetches a single budget by id. Query is disabled when `id` is null.
 
 **Returns:** `{ budget, isLoading, error }`
 
-**Used by:** `BudgetDetail`, `IncomeBudgetDetail`
-
----
-
-### `useIncomeBudget()`
-
-Fetches the current user's single income budget.
-
-**Returns:** `{ budget, isLoading, error }`
-
-**Used by:** `Dashboard`, `IncomeBudgetDetail`
+**Used by:** `BudgetDetail`
 
 ---
 
 ### `useBudgetBalance(budgetId: string)`
 
-Derives the balance for a spending budget from cached query data. Composes `useTransactions` and `useTransfers` — no new query key.
+Derives the balance for a spending budget from cached query data. Composes `useTransactions`, `useTransfers`, and `useBudgetAllocations` — no new query key.
 
-**Formula:** `incomes - expenses + transfersIn - transfersOut`
-- `incomes` — placeholder `0` until allocations are built
+**Formula:** `allocationsIn - expenses + transfersIn - transfersOut`
+
+- `allocationsIn` — sum of all allocations where `to_budget_id === budgetId`
 - `expenses` — sum of all transactions for the budget (recursive, via `get_budget_transactions`)
 - `transfersIn` — sum of transfers where `to_budget_id === budgetId`
 - `transfersOut` — sum of transfers where `from_budget_id === budgetId`
@@ -111,7 +104,7 @@ Creates a new spending budget. Invalidates `['budgets']`, `['budget']`, `['budge
 
 ### `useUpdateBudget()`
 
-Updates an existing budget (name, parent). Invalidates `['budgets']`, `['budget']`, `['income-budget']`, `['budget-structure']` on success.
+Updates an existing budget (name, parent). Invalidates `['budgets']`, `['budget']`, `['budget-structure']` on success.
 
 **Returns:** `UseMutationResult<void, Error, { id: string; updates: Partial<BudgetInput> }>`
 
@@ -248,6 +241,56 @@ Updates an existing income log. Invalidates `['incomes']` on success.
 ### `useDeleteIncome()`
 
 Deletes an income log. Invalidates `['incomes']` on success.
+
+**Returns:** `UseMutationResult<void, Error, string>`
+
+---
+
+## Allocation Hooks (`hooks/allocations.ts`)
+
+### `useAllocations()`
+
+Fetches all allocations for the current user. Uses `getAllAllocations()`.
+
+**Returns:** `{ allocations, isLoading, error }`
+
+---
+
+### `useBudgetAllocations(budgetId: string)`
+
+Fetches allocations for a specific budget. Uses `getBudgetAllocations(budgetId)`.
+
+**Returns:** `{ allocations, isLoading, error }`
+
+---
+
+### `useAllocation(allocationId: string | null)`
+
+Fetches a single allocation by id. Query is disabled when `allocationId` is null.
+
+**Returns:** `{ allocation, isLoading, error }`
+
+---
+
+### `useCreateAllocation()`
+
+Creates a new allocation. Invalidates `['allocations']`, `['budgets']` on success.
+
+**Returns:** `UseMutationResult<void, Error, AllocationInput>`
+
+---
+
+### `useUpdateAllocation()`
+
+Updates an existing allocation. Invalidates `['allocations']`, `['budgets']` on success.
+
+**Returns:** `UseMutationResult<void, Error, { id: string; updates: Partial<AllocationInput> }>`
+
+---
+
+### `useDeleteAllocation()`
+
+Deletes an allocation. Invalidates `['allocations']`, `['budgets']` on success.
 
 **Returns:** `UseMutationResult<void, Error, string>`
 
