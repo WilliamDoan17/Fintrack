@@ -9,7 +9,11 @@ import { useTransactions } from '../../hooks/transactions'
 import { useIncomes } from '../../hooks/incomes'
 
 const BalanceSummary = () => {
-  const { transactions, isLoading, error } = useTransactions(null)
+  const { transactions, isLoading: txLoading, error: txError } = useTransactions(null)
+  const { incomes, isLoading: incLoading, error: incError } = useIncomes()
+
+  const isLoading = txLoading || incLoading
+  const error = txError || incError
 
   if (isLoading) return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 flex items-center justify-center">
@@ -22,11 +26,8 @@ const BalanceSummary = () => {
     </div>
   )
 
-  const income = 0
-  let expenses = 0
-  transactions.forEach(({ amount }) => {
-    expenses += amount
-  })
+  const income = incomes.reduce((sum, { amount }) => sum + amount, 0)
+  const expenses = transactions.reduce((sum, { amount }) => sum + amount, 0)
   const balance = income - expenses
 
   return (
