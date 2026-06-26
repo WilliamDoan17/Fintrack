@@ -5,8 +5,7 @@ export interface Budget {
   name: string,
   parent_id: string | null,
   balance_threshold: number | null,
-  is_income: boolean,
 }
 
-export type BudgetInput = Omit<Budget, 'id' | 'created_at' | 'user_id' | 'balance' | 'is_income'>;
+export type BudgetInput = Omit<Budget, 'id' | 'created_at' | 'user_id'>;
 
