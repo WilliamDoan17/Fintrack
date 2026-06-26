@@ -12,6 +12,7 @@ import {
 import type { Budget, BudgetInput } from '../backend/types/budgets'
 import { useTransactions } from './transactions'
 import { useTransfers } from './transfers'
+import { useBudgetAllocations } from './allocations'
 
 export const useBudgets = (parentId: string | null) => {
   const { data: budgets = [], isLoading, error } = useQuery<Budget[]>({
@@ -41,11 +42,12 @@ export const useIncomeBudget = () => {
 export const useBudgetBalance = (budgetId: string) => {
   const { transactions, isLoading: txLoading, error: txError } = useTransactions(budgetId)
   const { transfers, isLoading: trLoading, error: trError } = useTransfers(budgetId)
+  const { allocations, isLoading: alLoading, error: alError } = useBudgetAllocations(budgetId)
 
-  const isLoading = txLoading || trLoading
-  const error = txError || trError
+  const isLoading = txLoading || trLoading || alLoading
+  const error = txError || trError || alError
 
-  const incomes = 0
+  const incomes = allocations.reduce((sum, { amount }) => sum + amount, 0)
   const expenses = transactions.reduce((sum, { amount }) => sum + amount, 0)
   let transfersIn = 0
   let transfersOut = 0
