@@ -23,7 +23,6 @@ This document states the data schema for Fintrack project.
 | parent_id         | uuid           | null, FK → budgets(id) on delete cascade        |
 | balance           | numeric(15, 2) | not null, default 0                             |
 | balance_threshold | numeric(15, 2) | null, check balance_threshold >= 0              |
-| is_income         | boolean        | not null, default false                         |
 
 #### Indexes
 
@@ -106,6 +105,6 @@ This document states the data schema for Fintrack project.
 
 #### Indexes
 
-| Name                           | Column       | Method |
-| ------------------------------ | ------------ | ------ |
-| idx_allocations_to_budget_id   | to_budget_id | btree  |
+| Name                         | Column       | Method |
+| ---------------------------- | ------------ | ------ |
+| idx_allocations_to_budget_id | to_budget_id | btree  |
