@@ -66,7 +66,7 @@
 | AM-3d  | `IncomeBalanceSummary` — derive income balance as `SUM(incomes) − SUM(allocations out)` on /income                                                            | ⬜     |
 | AM-3e  | `BudgetBalanceSummary` — update to `allocations_in + transfers_in - transfers_out - transactions`                                                             | ⬜     |
 | AM-3f  | Allocations — UI on /income (create, view, delete + unallocated balance)                                                                                      | ⬜     |
-| AM-3g  | Remove `is_income` from app — services, hooks, UI                                                                                                             | ⬜     |
+| AM-3g  | Remove `is_income` from app — services, hooks, UI                                                                                                             | ✅     |
 | AM-3h  | Allocations — prod migration                                                                                                                                  | ⬜     |
 | AM-3   | DB drop — `is_income` column, income budget row, related triggers                                                                                             | ⬜     |
 | AM-4   | `updated_at` column on every table and trigger                                                                                                                | ⬜     |
