@@ -10,10 +10,16 @@ This document describes the PostgreSQL triggers in Fintrack's Supabase database.
 
 ---
 
-## Update Trigger (AM-4)
+## Timestamp Update Trigger
 
-**Function**: `on_update()`
+**Function:** `update_timestamp_on_update()`
 
-**Handling**:
+Keeps `updated_at` current on every row mutation without requiring callers to pass the value.
 
-- **On UPDATE**: fires — updates the `updated_at` column of the row to `now()`
+**Operation handling:**
+
+- **On UPDATE**: sets `NEW.updated_at = now()` and returns `NEW`
+
+**Trigger:**
+
+- `on_update` — fires `BEFORE UPDATE` on `budgets`, `transactions`, `transfers`, `incomes`, `allocations`, FOR EACH ROW
