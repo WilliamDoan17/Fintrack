@@ -58,18 +58,18 @@
 | AM-2b  | Remove transaction type — stop reading `type`, drop from TypeScript types                                                                                     | ✅     |
 | AM-2c  | `BudgetBalanceSummary` — derive balance as `transfers_in - transfers_out - transactions` client-side                                                          | ✅     |
 | AM-2d  | DB drop — `type` column for `transactions`, drop rows of `transactions` with `.type` = `add`, `.balance` column for `budgets`, balance triggers and functions | ✅     |
-| AM-2e  | `OverallBalanceSummary` — derive dashboard balance as `SUM(incomes) − SUM(all transactions)`                                                                  | ⬜     |
-| AM-2f  | Change naming for budgets in src/ - from `SpendingBudgets` to `Budgets`                                                                                       | ⬜     |
-| AM-3a  | Allocations — schema, RLS, triggers (additive)                                                                                                                | ⬜     |
-| AM-3b  | Allocations — services + types + hooks                                                                                                                        | ⬜     |
-| AM-3c  | Allocations — dev migration (income transfers → allocations)                                                                                                  | ⬜     |
-| AM-3d  | `IncomeBalanceSummary` — derive income balance as `SUM(incomes) − SUM(allocations out)` on /income                                                            | ⬜     |
-| AM-3e  | `BudgetBalanceSummary` — update to `allocations_in + transfers_in - transfers_out - transactions`                                                             | ⬜     |
-| AM-3f  | Allocations — UI on /income (create, view, delete + unallocated balance)                                                                                      | ⬜     |
+| AM-2e  | `OverallBalanceSummary` — derive dashboard balance as `SUM(incomes) − SUM(all transactions)`                                                                  | ✅     |
+| AM-2f  | Change naming for budgets in src/ - from `SpendingBudgets` to `Budgets`                                                                                       | ✅     |
+| AM-3a  | Allocations — schema, RLS, triggers (additive)                                                                                                                | ✅     |
+| AM-3b  | Allocations — services + types + hooks                                                                                                                        | ✅     |
+| AM-3c  | Allocations — dev migration (income transfers → allocations)                                                                                                  | ✅     |
+| AM-3d  | `IncomeBalanceSummary` — derive income balance as `SUM(incomes) − SUM(allocations out)` on /income                                                            | ✅     |
+| AM-3e  | `BudgetBalanceSummary` — update to `allocations_in + transfers_in - transfers_out - transactions`                                                             | ✅     |
+| AM-3f  | Allocations — UI on /income (create, view, delete + unallocated balance)                                                                                      | ✅     |
 | AM-3g  | Remove `is_income` from app — services, hooks, UI                                                                                                             | ✅     |
-| AM-3h  | Allocations — prod migration                                                                                                                                  | ⬜     |
-| AM-3   | DB drop — `is_income` column, income budget row, related triggers                                                                                             | ⬜     |
-| AM-4   | `updated_at` column on every table and trigger                                                                                                                | ⬜     |
+| AM-3h  | Allocations — prod migration                                                                                                                                  | ✅     |
+| AM-3   | DB drop — `is_income` column, income budget row, related triggers                                                                                             | ✅     |
+| AM-4   | `updated_at` column on every table and trigger                                                                                                                | ✅     |
 
 ---
 
