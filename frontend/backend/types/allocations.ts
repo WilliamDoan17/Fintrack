@@ -4,6 +4,7 @@ export interface Allocation {
   to_budget_id: string
   amount: number
   created_at: string
+  updated_at: string
 }
 
-export type AllocationInput = Omit<Allocation, 'id' | 'user_id' | 'created_at'>
+export type AllocationInput = Omit<Allocation, 'id' | 'user_id' | 'created_at' | 'updated_at'>

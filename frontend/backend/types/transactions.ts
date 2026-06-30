@@ -5,7 +5,8 @@ export interface Transaction {
   amount: number,
   name: string,
   created_at: string,
+  updated_at: string,
 }
 
-export type TransactionInput = Omit<Transaction, 'id' | 'user_id' | 'created_at'>
+export type TransactionInput = Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'updated_at'>
 

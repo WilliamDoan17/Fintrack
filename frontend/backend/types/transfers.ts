@@ -6,6 +6,7 @@ export interface Transfer {
   amount: number;
   name: string;
   created_at: string;
+  updated_at: string;
 }
 
-export type TransferInput = Omit<Transfer, 'id' | 'user_id' | 'created_at'>
+export type TransferInput = Omit<Transfer, 'id' | 'user_id' | 'created_at' | 'updated_at'>
