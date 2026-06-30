@@ -2,7 +2,7 @@ import { useState, useMemo, useRef, useEffect } from 'react'
 import type { Transfer } from '../../backend/types/transfers'
 import { useUpdateTransfer } from '../../hooks/transfers'
 import { useNotification } from '../../contexts/NotificationContext'
-import { useBudget, useSpendingBudgetStructure } from '../../hooks/budgets'
+import { useBudget, useBudgetStructure } from '../../hooks/budgets'
 
 const UpdateTransferModal = ({ transfer, onClose }: { transfer: Transfer, onClose: () => void }) => {
   const [name, setName] = useState(transfer.name)
@@ -13,7 +13,7 @@ const UpdateTransferModal = ({ transfer, onClose }: { transfer: Transfer, onClos
   const containerRef = useRef<HTMLDivElement>(null)
   const { notify } = useNotification()
   const { mutate: updateTransfer, isPending, error } = useUpdateTransfer()
-  const { structure, isLoading: structureLoading, error: structureError } = useSpendingBudgetStructure()
+  const { structure, isLoading: structureLoading, error: structureError } = useBudgetStructure()
   const { budget: fromBudget, isLoading: fromBudgetLoading } = useBudget(transfer.from_budget_id)
 
   const fromPath = structure?.budgetIdToPath.get(transfer.from_budget_id) ?? ''

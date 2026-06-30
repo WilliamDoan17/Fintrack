@@ -1,12 +1,11 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { useTransactions } from '../../hooks/transactions'
-import { useSpendingBudgetStructure } from '../../hooks/budgets'
+import { useBudgetStructure } from '../../hooks/budgets'
 import type { Transaction } from '../../backend/types/transactions'
+import { formatDate } from '../../utils/time'
 
 const SpendingRow = ({ transaction, budgetPath }: { transaction: Transaction, budgetPath: string }) => {
-  const date = new Date(transaction.created_at).toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric', year: 'numeric',
-  })
+  const date = formatDate(transaction.created_at)
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-gray-900 border border-gray-800 rounded-xl px-5 py-4 hover:border-gray-700 transition-all">
@@ -26,7 +25,7 @@ const PER_PAGE = 25
 
 const Spending = () => {
   const { transactions, isLoading: txLoading } = useTransactions(null)
-  const { structure, isLoading: structureLoading } = useSpendingBudgetStructure()
+  const { structure, isLoading: structureLoading } = useBudgetStructure()
 
   const [search, setSearch] = useState('')
   const [minAmount, setMinAmount] = useState('')
@@ -40,11 +39,6 @@ const Spending = () => {
   const pathRef = useRef<HTMLDivElement>(null)
 
   const isLoading = txLoading || structureLoading
-
-  const withdrawals = useMemo(
-    () => transactions.filter(t => t.type === 'withdraw'),
-    [transactions]
-  )
 
   const pathHints = useMemo(() => {
     if (!structure) return []
@@ -69,7 +63,7 @@ const Spending = () => {
   }, [])
 
   const filtered = useMemo(() => {
-    return withdrawals.filter(t => {
+    return transactions.filter(t => {
       if (search && !t.name.toLowerCase().includes(search.toLowerCase())) return false
       if (minAmount && t.amount < parseFloat(minAmount)) return false
       if (maxAmount && t.amount > parseFloat(maxAmount)) return false
@@ -81,7 +75,7 @@ const Spending = () => {
       }
       return true
     })
-  }, [withdrawals, search, minAmount, maxAmount, fromDate, toDate, pathInput, structure])
+  }, [transactions, search, minAmount, maxAmount, fromDate, toDate, pathInput, structure])
 
   const totalSpent = useMemo(() => filtered.reduce((sum, t) => sum + t.amount, 0), [filtered])
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE))

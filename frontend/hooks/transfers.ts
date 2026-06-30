@@ -19,7 +19,7 @@ export const useTransfers = (budgetId: string | null = null) => {
 const TRANSFER_INVALIDATION_KEYS = [
   ['transfers'],
   ['budget'],
-  ['spending-budgets'],
+  ['budgets'],
 ]
 
 export const useCreateTransfer = () => {

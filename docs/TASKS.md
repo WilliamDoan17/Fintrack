@@ -5,9 +5,75 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
 ---
 
 <details>
+  <summary>Jun 30, 2026</summary>
+
+- [x] `updated_at` column on every table and trigger
+  - update schema and types docs with `updated_at`
+  - write migration code to add updated_at column to every table
+  - write trigger `on_update`
+  - implement them in ts
+
+</details>
+
+<details>
+  <summary>Jun 26, 2026</summary>
+
+- [x] Allocations — services + types + hooks
+- [ ] Allocations — dev migration (income transfers → allocations)
+  - transfers to be migrated: transfers with `from_budget_id` pointing to the old income budget
+    - migrate: copy `user_id`, `to_budget_id`, `amount`
+- [x] `IncomeBalanceSummary` — derive income balance as `SUM(incomes) − SUM(allocations out)` on /income
+- [x] `BudgetBalanceSummary` — update to `allocations_in + transfers_in - transfers_out - transactions`
+- [x] Allocations — UI on /income (create, view, delete + unallocated balance)
+- [x] Remove `is_income` from app — types, services, hooks, UI
+- [x] Allocations — prod migration
+- [x] DB drop — `is_income` column, income budget row, related triggers
+
+</details>
+
+<details>
+  <summary>Jun 24, 2026</summary>
+
+- [x] Budget Balance - `useBudgetBalance` hook for showing budget balance accross pages and components
+- [x] `OverallBalanceSummary` — derive dashboard balance as `SUM(incomes) − SUM(all transactions)`
+- [x] fix uses of `budget.balance` in pages and components
+- [x] Change naming for budgets in frontend/ - from `SpendingBudgets` to `Budgets` (write to docs/ also)
+- [x] Allocations — schema, RLS, triggers (additive)
+
+</details>
+
+<details>
+  <summary>Jun 23, 2026</summary>
+
+- [x] Incomes — UI on /income page
+  - Create new Components for Incomes (for now, use only in `IncomeDetail` so make it in file)
+    - `IncomeContainer`
+  - Use Tabs for `IncomeContainer` with label `income` and another tab left blank (Allocations)
+  - `/income` page now use add income buttons and update, delete income within the card in container
+  - Wire income hooks to `/income`
+- [x] Remove transaction type — stop writing `type` (services + UI)
+- [x] Remove transaction type — stop reading `type`, drop from TypeScript types
+- [x] `BudgetBalanceSummary` — derive balance as `transfers_in - transfers_out - transactions` client-side
+- [x] DB drop — `type` column for `transactions`, drop rows of `transactions` with `.type` = `add`, `.balance` column for `budgets`, balance triggers and functions
+  - drop rows of `transactions` with `.type` = `add`
+  - drop transactions `type` column
+  - remove balance calculation triggers and functions
+  - drop budgets `balance` column
+
+</details>
+
+<details>
+  <summary>Jun 22, 2026</summary>
+
+- [x] update docs to prepare for new architecture (commit: `docs: update new architecture`)
+- [x] Incomes — schema, RLS, triggers
+- [x] Incomes — services + types + hooks
+- [x] Incomes — migrate `type: 'add'` transactions (dev)
+
+<details>
   <summary>Jun 19, 2026</summary>
   
-- [ ] UI update for Transfers and Transaction (branch: `fix/ui-transactions-transfers`
+- [x] UI update for Transfers and Transaction (branch: `fix/ui-transactions-transfers`
   - TransferCard: show from/to budget names
   - UpdateTransfer: display from_budget (read-only), allow editing to_budget
   - split TransferContainer from TransactionContainer

@@ -23,14 +23,12 @@ This document defines the services for Fintrack.
 
 ## budgets
 
-- **createBudget(input: BudgetInput)** → `void` — creates a new budget for the current user (`is_income` is always false, enforced by RLS)
-- **updateBudget(budget_id, updates: Partial<BudgetInput>)** → `void` — updates fields on an existing budget (cannot flip `is_income`, enforced by RLS)
-- **deleteBudget(budget_id)** → `void` — deletes a budget and all its sub-budgets (cascade); fails if target is the income budget (enforced by RLS)
+- **createBudget(input: BudgetInput)** → `void` — creates a new budget for the current user
+- **updateBudget(budget_id, updates: Partial<BudgetInput>)** → `void` — updates fields on an existing budget
+- **deleteBudget(budget_id)** → `void` — deletes a budget and all its sub-budgets (cascade)
 - **getBudget(budget_id)** → `Budget` — fetches a single budget by id
-- **getIncomeBudget()** → `Budget` — fetches the current user's income budget (`is_income = true`)
-- **getAllBudgets()** → `Budget[]` — fetches all budgets (income + spending) for the current user
-- **getAllSpendingBudgets()** → `Budget[]` — fetches all spending budgets (`is_income = false`) for the current user
-- **getRootSpendingBudgets()** → `Budget[]` — fetches top-level spending budgets (no parent, `is_income = false`) for the current user
+- **getAllBudgets()** → `Budget[]` — fetches all budgets for the current user
+- **getRootBudgets()** → `Budget[]` — fetches top-level budgets (no parent) for the current user
 - **getChildBudgets(parent_id)** → `Budget[]` — fetches direct children of a given budget
 
 ---
@@ -55,6 +53,8 @@ This document defines the services for Fintrack.
 - **getAllTransfers()** → `Transfer[]` — fetches all transfers for the current user
 - **getBudgetTransfers(budget_id)** → `Transfer[]` — fetches transfers where the budget is the source or destination (not recursive)
 
+---
+
 ## incomes
 
 - **createIncome(input: IncomeInput)** -> `void` - creates a new income log
@@ -62,3 +62,16 @@ This document defines the services for Fintrack.
 - **deleteIncome(income_id: string)** -> `void` - deletes an income log
 - **getAllIncomes()** -> `Income[]` - fetches all income logs for the current user
 - **getIncome(income_id: string)** -> `Income` - fetches a single income log by id
+
+---
+
+## allocations
+
+- **createAllocation(input: AllocationInput)** → `void` — creates a new allocation
+- **updateAllocation(allocation_id, updates: Partial\<AllocationInput\>)** → `void` — updates fields on an existing allocation
+- **deleteAllocation(allocation_id)** → `void` — deletes an allocation
+- **getAllAllocations()** → `Allocation[]` — fetches all allocations for the current user
+- **getBudgetAllocations(budget_id)** → `Allocation[]` — fetches allocations for a specific budget (`to_budget_id`)
+- **getAllocation(allocation_id)** → `Allocation` — fetches a single allocation by id
+
+---

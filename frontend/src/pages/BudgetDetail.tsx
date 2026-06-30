@@ -1,56 +1,35 @@
 import { useParams, Link } from 'react-router-dom'
 import { useState, useEffect, type Dispatch, type SetStateAction } from 'react'
-import { useBudget, useUpdateBudget, useSpendingBudgetStructure } from '../../hooks/budgets'
+import { useBudget, useUpdateBudget, useBudgetStructure, useBudgetBalance } from '../../hooks/budgets'
 import { useNotification } from '../../contexts/NotificationContext'
 import type { Budget } from '../../backend/types/budgets'
 import PageLoader from '../../components/loaders/PageLoader'
-import SpendingBudgetContainer from '../../components/budgets/SpendingBudgetContainer'
+import BudgetContainer from '../../components/budgets/BudgetContainer'
 import CreateBudgetModal from '../../components/budgets/CreateBudgetModal'
 import TransactionContainer from '../../components/transactions/TransactionContainer'
 import TransferContainer from '../../components/transfers/TransferContainer'
 import Tabs from '../../components/Tabs'
 import AddTransactionModal from '../../components/transactions/AddTransactionModal'
 import UpdateBudgetNameInput from '../../components/budgets/UpdateBudgetNameInput'
-import { useTransactions } from '../../hooks/transactions'
-import { useTransfers } from '../../hooks/transfers'
 import DeleteBudgetConfirmModal from '../../components/budgets/DeleteBudgetConfirmModal'
 import MoveBudgetModal from '../../components/budgets/MoveBudgetModal'
 import CreateTransferModal from '../../components/transfers/CreateTransferModal'
 import { useNavigation } from '../../contexts/NavigationContext'
 
 const BalanceSummary = ({ budgetId }: { budgetId: string }) => {
-  const { transactions, isLoading: txLoading, error: txError } = useTransactions(budgetId)
-  const { transfers, isLoading: trLoading, error: trError } = useTransfers(budgetId)
-
-  const isLoading = txLoading || trLoading
-  const error = txError || trError
+  const { balance, incomes, expenses, transfersIn, transfersOut, isLoading, error } = useBudgetBalance(budgetId)
 
   if (isLoading) return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 flex items-center justify-center">
       <p className="text-gray-500 text-sm">Loading balance...</p>
     </div>
   )
+
   if (error) return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 flex items-center justify-center">
       <p className="text-red-400 text-sm">Error loading balance</p>
     </div>
   )
-
-  let income = 0
-  let expenses = 0
-  transactions.forEach(({ type, amount }) => {
-    if (type === 'add') income += amount
-    else expenses += amount
-  })
-
-  let transfersIn = 0
-  let transfersOut = 0
-  transfers.forEach(({ from_budget_id, amount }) => {
-    if (from_budget_id === budgetId) transfersOut += amount
-    else transfersIn += amount
-  })
-
-  const balance = income - expenses + transfersIn - transfersOut
 
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 md:p-6 flex flex-col gap-4">
@@ -64,7 +43,7 @@ const BalanceSummary = ({ budgetId }: { budgetId: string }) => {
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col items-center">
           <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Income</p>
-          <p className="text-emerald-400 font-semibold text-base md:text-lg">+${income.toFixed(2)}</p>
+          <p className="text-emerald-400 font-semibold text-base md:text-lg">+${incomes.toFixed(2)}</p>
         </div>
         <div className="flex flex-col items-center">
           <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Expenses</p>
@@ -96,7 +75,7 @@ type ModalState =
   { type: 'settings' }
 
 const BudgetBreadcrumbs = ({ budgetId }: { budgetId: string }) => {
-  const { structure } = useSpendingBudgetStructure()
+  const { structure } = useBudgetStructure()
   const path = structure?.budgetIdToPath.get(budgetId) ?? ''
   const segments = path.split('/').filter(Boolean)
 
@@ -198,6 +177,7 @@ const SettingsModal = ({ budget, onClose }: { budget: Budget, onClose: () => voi
 const BudgetDetail = () => {
   const { id: budgetId } = useParams()
   const { budget: budgetInfo, isLoading, error } = useBudget(budgetId ?? null)
+  const { balance } = useBudgetBalance(budgetId ?? '')
   const [isEditingName, setIsEditingName] = useState<boolean>(false)
   const [modalState, setModalState] = useState<ModalState | null>(null)
   const { setBackTo } = useNavigation()
@@ -261,9 +241,9 @@ const BudgetDetail = () => {
             </div>
           }
         </div>
-        {budgetInfo && (budgetInfo.balance < 0 || (budgetInfo.balance_threshold !== null && budgetInfo.balance <= budgetInfo.balance_threshold)) && (
+        {budgetInfo && (balance < 0 || (budgetInfo.balance_threshold !== null && balance <= budgetInfo.balance_threshold)) && (
           <div className="mb-6 px-4 py-3 rounded-lg bg-red-900/20 border border-red-900/50 text-red-400 text-sm">
-            {budgetInfo.balance < 0
+            {balance < 0
               ? 'Balance is negative.'
               : 'Balance has reached the alert threshold.'
             }
@@ -314,7 +294,7 @@ const BudgetDetail = () => {
                 + Create Budget
               </button>
             </div>
-            <SpendingBudgetContainer parentId={budgetId} />
+            <BudgetContainer parentId={budgetId} />
           </div>
         </div>
       </div>

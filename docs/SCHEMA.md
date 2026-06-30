@@ -23,7 +23,7 @@ This document states the data schema for Fintrack project.
 | parent_id         | uuid           | null, FK → budgets(id) on delete cascade        |
 | balance           | numeric(15, 2) | not null, default 0                             |
 | balance_threshold | numeric(15, 2) | null, check balance_threshold >= 0              |
-| is_income         | boolean        | not null, default false                         |
+| updated_at        | timestamptz    | not null, default now()                         |
 
 #### Indexes
 
@@ -52,6 +52,7 @@ This document states the data schema for Fintrack project.
 | amount     | numeric(15, 2)   | not null, check amount > 0                      |
 | name       | text             | not null, check name <> ''                      |
 | created_at | timestamptz      | not null, default now()                         |
+| updated_at | timestamptz      | not null, default now()                         |
 
 ---
 
@@ -68,6 +69,7 @@ This document states the data schema for Fintrack project.
 | amount         | numeric(15, 2) | not null, check amount > 0                       |
 | name           | text           | not null, check name <> ''                       |
 | created_at     | timestamptz    | not null, default now()                          |
+| updated_at     | timestamptz    | not null, default now()                          |
 
 #### Indexes
 
@@ -89,3 +91,25 @@ This document states the data schema for Fintrack project.
 | name       | text           | not null, check (name <> '')                     |
 | amount     | numeric(15, 2) | not null, check (amount > 0)                     |
 | created_at | timestamptz    | not null, default now()                          |
+| updated_at | timestamptz    | not null, default now()                          |
+
+---
+
+### allocations
+
+#### Interface
+
+| Field        | Type           | Constraints                                      |
+| ------------ | -------------- | ------------------------------------------------ |
+| id           | uuid           | primary key, default gen_random_uuid()           |
+| user_id      | uuid           | not null, FK -> auth.users(id) on delete cascade |
+| to_budget_id | uuid           | not null, FK -> budgets(id) on delete cascade    |
+| amount       | numeric(15, 2) | not null, check (amount > 0)                     |
+| created_at   | timestamptz    | not null, default now()                          |
+| updated_at   | timestamptz    | not null, default now()                          |
+
+#### Indexes
+
+| Name                         | Column       | Method |
+| ---------------------------- | ------------ | ------ |
+| idx_allocations_to_budget_id | to_budget_id | btree  |

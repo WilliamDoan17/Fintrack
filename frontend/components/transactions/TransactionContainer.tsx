@@ -13,8 +13,6 @@ type ModalState =
   | { type: 'delete', transaction: Transaction }
   | { type: 'move', transaction: Transaction }
 
-const PER_PAGE = 10
-
 const TransactionContainerSkeleton = () => (
   <div className="flex flex-col gap-3">
     {[...Array(3)].map((_, i) => (

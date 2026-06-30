@@ -1,20 +1,22 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  getRootSpendingBudgets,
+  getRootBudgets,
   getChildBudgets,
   getBudget,
-  getIncomeBudget,
-  getAllSpendingBudgets,
+  getAllBudgets,
   createBudget,
   updateBudget,
   deleteBudget,
 } from '../backend/services/budgets'
 import type { Budget, BudgetInput } from '../backend/types/budgets'
+import { useTransactions } from './transactions'
+import { useTransfers } from './transfers'
+import { useBudgetAllocations } from './allocations'
 
-export const useSpendingBudgets = (parentId: string | null) => {
+export const useBudgets = (parentId: string | null) => {
   const { data: budgets = [], isLoading, error } = useQuery<Budget[]>({
-    queryKey: ['spending-budgets', parentId],
-    queryFn: () => parentId ? getChildBudgets(parentId) : getRootSpendingBudgets(),
+    queryKey: ['budgets', parentId],
+    queryFn: () => parentId ? getChildBudgets(parentId) : getRootBudgets(),
   })
   return { budgets, isLoading, error }
 }
@@ -28,19 +30,32 @@ export const useBudget = (id: string | null) => {
   return { budget, isLoading, error }
 }
 
-export const useIncomeBudget = () => {
-  const { data: budget = null, isLoading, error } = useQuery<Budget>({
-    queryKey: ['income-budget'],
-    queryFn: getIncomeBudget,
+export const useBudgetBalance = (budgetId: string) => {
+  const { transactions, isLoading: txLoading, error: txError } = useTransactions(budgetId)
+  const { transfers, isLoading: trLoading, error: trError } = useTransfers(budgetId)
+  const { allocations, isLoading: alLoading, error: alError } = useBudgetAllocations(budgetId)
+
+  const isLoading = txLoading || trLoading || alLoading
+  const error = txError || trError || alError
+
+  const incomes = allocations.reduce((sum, { amount }) => sum + amount, 0)
+  const expenses = transactions.reduce((sum, { amount }) => sum + amount, 0)
+  let transfersIn = 0
+  let transfersOut = 0
+  transfers.forEach(({ from_budget_id, amount }) => {
+    if (from_budget_id === budgetId) transfersOut += amount
+    else transfersIn += amount
   })
-  return { budget, isLoading, error }
+  const balance = incomes - expenses + transfersIn - transfersOut
+
+  return { balance, incomes, expenses, transfersIn, transfersOut, isLoading, error }
 }
 
-export const useSpendingBudgetStructure = () => {
+export const useBudgetStructure = () => {
   const { data: structure = null, isLoading, error } = useQuery({
-    queryKey: ['spending-budget-structure'],
+    queryKey: ['budget-structure'],
     queryFn: async () => {
-      const budgets = await getAllSpendingBudgets()
+      const budgets = await getAllBudgets()
       const budgetIdToPath = new Map<string, string>()
       const pathToBudgetId = new Map<string, string>()
       const paths: string[] = ['/']
@@ -66,10 +81,9 @@ export const useSpendingBudgetStructure = () => {
 }
 
 const BUDGET_KEYS = [
-  ['spending-budgets'],
+  ['budgets'],
   ['budget'],
-  ['income-budget'],
-  ['spending-budget-structure'],
+  ['budget-structure'],
 ]
 
 export const useCreateBudget = () => {

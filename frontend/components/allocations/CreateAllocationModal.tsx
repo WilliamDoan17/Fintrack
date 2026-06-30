@@ -1,33 +1,29 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
-import type { Budget } from '../../backend/types/budgets'
 import { useBudgetStructure } from '../../hooks/budgets'
-import { useCreateTransfer } from '../../hooks/transfers'
+import { useCreateAllocation } from '../../hooks/allocations'
 import { useNotification } from '../../contexts/NotificationContext'
 
-const CreateTransferModal = ({ budget, onClose }: { budget: Budget, onClose: () => void }) => {
+const CreateAllocationModal = ({ onClose }: { onClose: () => void }) => {
   const { structure, isLoading, error } = useBudgetStructure()
-  const { mutate: createTransfer, isPending: submitting } = useCreateTransfer()
+  const { mutate: createAllocation, isPending: submitting } = useCreateAllocation()
   const [toInput, setToInput] = useState('')
   const [amount, setAmount] = useState('')
-  const [name, setName] = useState('')
   const [open, setOpen] = useState(false)
   const [focusedIndex, setFocusedIndex] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
   const { notify } = useNotification()
 
-  const currentPath = structure?.budgetIdToPath.get(budget.id) ?? ''
-
   const hints = useMemo(() => {
     if (!structure) return []
     const query = toInput.trim()
     return structure.paths.filter(path => {
-      if (path === '/' || path === currentPath) return false
+      if (path === '/') return false
       if (!path.startsWith(query)) return false
       const remainder = path.slice(query.length)
       const nextSlash = remainder.indexOf('/')
       return nextSlash === -1 || nextSlash === remainder.length - 1
     })
-  }, [toInput, structure, currentPath])
+  }, [toInput, structure])
 
   useEffect(() => {
     setFocusedIndex(-1)
@@ -68,14 +64,14 @@ const CreateTransferModal = ({ budget, onClose }: { budget: Budget, onClose: () 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!structure) return
-    const toBudgetId = structure.pathToBudgetId.get(toInput.trim())
-    if (!toBudgetId) {
+    const to_budget_id = structure.pathToBudgetId.get(toInput.trim())
+    if (!to_budget_id) {
       notify('No budget found at that path', 'error')
       return
     }
-    createTransfer({ from_budget_id: budget.id, to_budget_id: toBudgetId, amount: parseFloat(amount), name }, {
+    createAllocation({ to_budget_id, amount: parseFloat(amount) }, {
       onSuccess: () => {
-        notify('Transfer successful', 'success')
+        notify('Allocation created', 'success')
         onClose()
       },
       onError: (err) => notify(err.message, 'error'),
@@ -85,14 +81,10 @@ const CreateTransferModal = ({ budget, onClose }: { budget: Budget, onClose: () 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
       <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 md:p-8 w-full max-w-md shadow-xl">
-        <h2 className="text-white text-xl font-semibold mb-1">Transfer</h2>
-        <p className="text-gray-500 text-sm mb-6">
-          Move money from <span className="text-gray-300">{budget.name}</span> to another budget.
-        </p>
+        <h2 className="text-white text-xl font-semibold mb-1">Allocate</h2>
+        <p className="text-gray-500 text-sm mb-6">Allocate income to a budget.</p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-
-          {/* To */}
           <div className="flex flex-col gap-1">
             <label className="text-sm text-gray-400">To</label>
             <div ref={containerRef} className="relative">
@@ -114,7 +106,7 @@ const CreateTransferModal = ({ budget, onClose }: { budget: Budget, onClose: () 
                       className={`px-4 py-2 text-sm cursor-pointer transition-all ${index === focusedIndex
                         ? 'bg-emerald-500/20 text-white'
                         : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                        }`}
+                      }`}
                     >
                       {path}
                     </li>
@@ -126,19 +118,6 @@ const CreateTransferModal = ({ budget, onClose }: { budget: Budget, onClose: () 
             {error && <p className="text-red-400 text-xs">Failed to load budgets</p>}
           </div>
 
-          {/* Name */}
-          <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-400">Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              placeholder="e.g. Monthly allocation"
-              className="bg-gray-800 text-white border border-gray-700 rounded px-3 py-2 focus:outline-none focus:border-emerald-400 transition-all placeholder:text-gray-600"
-            />
-          </div>
-
-          {/* Amount */}
           <div className="flex flex-col gap-1">
             <label className="text-sm text-gray-400">Amount</label>
             <div className="relative">
@@ -153,7 +132,6 @@ const CreateTransferModal = ({ budget, onClose }: { budget: Budget, onClose: () 
             </div>
           </div>
 
-          {/* Actions */}
           <div className="flex gap-3 justify-end mt-2">
             <button
               type="button"
@@ -164,17 +142,16 @@ const CreateTransferModal = ({ budget, onClose }: { budget: Budget, onClose: () 
             </button>
             <button
               type="submit"
-              disabled={submitting || !toInput.trim() || !amount || !name}
+              disabled={submitting || !toInput.trim() || !amount}
               className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {submitting ? 'Transferring...' : 'Transfer'}
+              {submitting ? 'Allocating...' : 'Allocate'}
             </button>
           </div>
-
         </form>
       </div>
     </div>
   )
 }
 
-export default CreateTransferModal
+export default CreateAllocationModal

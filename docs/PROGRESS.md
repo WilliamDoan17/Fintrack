@@ -45,47 +45,55 @@
 
 ## Architecture Migration — Clean Data Model
 
-| Phase | Description                                                                                      | Status |
-| ----- | ------------------------------------------------------------------------------------------------ | ------ |
-| AM-0  | Frontend fixes — TransferCard from/to names, UpdateTransferModal to_budget editable, split containers | ⬜     |
-| AM-0.5 | Document rewrite — SCOPE, BUILD_PLAN, PROGRESS, ARCHITECTURE updated for new model             | ✅     |
-| AM-1a | Incomes — schema, RLS, triggers                                                                  | ⬜     |
-| AM-1b | Incomes — services + types + hooks                                                               | ⬜     |
-| AM-1c | Incomes — migrate `type: 'add'` transactions (dev)                                              | ⬜     |
-| AM-1d | Incomes — UI on /income page                                                                     | ⬜     |
-| AM-2a | Remove transaction type — update balance calculation                                             | ⬜     |
-| AM-2b | Remove transaction type — drop from database, schema, types                                      | ⬜     |
-| AM-2c | Remove transaction type — update create/update transaction UI                                    | ⬜     |
-| AM-3a | Allocations — schema, RLS, triggers                                                              | ⬜     |
-| AM-3b | Allocations — services + types + hooks                                                           | ⬜     |
-| AM-3c | Allocations — migrate income transfers → allocations                                             | ⬜     |
-| AM-3d | Allocations — update balance calculation                                                         | ⬜     |
-| AM-3e | Allocations — remove `is_income` budgets and column                                              | ⬜     |
-| AM-3f | Allocations — UI on /income (create, view, delete + unallocated balance)                        | ⬜     |
+| Phase  | Description                                                                                                                                                   | Status |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| AM-0   | Frontend fixes — TransferCard from/to names, UpdateTransferModal to_budget editable, split containers                                                         | ✅     |
+| AM-0.5 | Document rewrite — SCOPE, BUILD_PLAN, PROGRESS, ARCHITECTURE updated for new model                                                                            | ✅     |
+| AM-1a  | Incomes — schema, RLS, triggers (additive)                                                                                                                    | ✅     |
+| AM-1b  | Incomes — services + types + hooks                                                                                                                            | ✅     |
+| AM-1c  | Incomes — dev migration (`type: 'add'` transactions → incomes)                                                                                                | ✅     |
+| AM-1d  | Incomes — UI on /income page                                                                                                                                  | ✅     |
+| AM-1e  | Incomes — prod migration                                                                                                                                      | ✅     |
+| AM-2a  | Remove transaction type — stop writing `type` (services + UI)                                                                                                 | ✅     |
+| AM-2b  | Remove transaction type — stop reading `type`, drop from TypeScript types                                                                                     | ✅     |
+| AM-2c  | `BudgetBalanceSummary` — derive balance as `transfers_in - transfers_out - transactions` client-side                                                          | ✅     |
+| AM-2d  | DB drop — `type` column for `transactions`, drop rows of `transactions` with `.type` = `add`, `.balance` column for `budgets`, balance triggers and functions | ✅     |
+| AM-2e  | `OverallBalanceSummary` — derive dashboard balance as `SUM(incomes) − SUM(all transactions)`                                                                  | ✅     |
+| AM-2f  | Change naming for budgets in src/ - from `SpendingBudgets` to `Budgets`                                                                                       | ✅     |
+| AM-3a  | Allocations — schema, RLS, triggers (additive)                                                                                                                | ✅     |
+| AM-3b  | Allocations — services + types + hooks                                                                                                                        | ✅     |
+| AM-3c  | Allocations — dev migration (income transfers → allocations)                                                                                                  | ✅     |
+| AM-3d  | `IncomeBalanceSummary` — derive income balance as `SUM(incomes) − SUM(allocations out)` on /income                                                            | ✅     |
+| AM-3e  | `BudgetBalanceSummary` — update to `allocations_in + transfers_in - transfers_out - transactions`                                                             | ✅     |
+| AM-3f  | Allocations — UI on /income (create, view, delete + unallocated balance)                                                                                      | ✅     |
+| AM-3g  | Remove `is_income` from app — services, hooks, UI                                                                                                             | ✅     |
+| AM-3h  | Allocations — prod migration                                                                                                                                  | ✅     |
+| AM-3   | DB drop — `is_income` column, income budget row, related triggers                                                                                             | ✅     |
+| AM-4   | `updated_at` column on every table and trigger                                                                                                                | ✅     |
 
 ---
 
 ## Stage 3 — Advanced & Scale
 
-| Phase | Description                                                          | Status |
-| ----- | -------------------------------------------------------------------- | ------ |
-| S3-1  | Multi-Currency                                                       | ⬜     |
-| S3-2  | Scheduled & Recurring Transfers (AutoTransfers)                      | ⬜     |
-| S3-3  | Session Management                                                   | ⬜     |
-| S3-4  | Loan & Owes Tracking (Liabilities)                                   | ⬜     |
-| S3-5  | Bill Splitter                                                        | ⬜     |
-| S3-6  | Profiles                                                             | ⬜     |
-| S3-7  | AI Agent                                                             | ⬜     |
+| Phase | Description                                     | Status |
+| ----- | ----------------------------------------------- | ------ |
+| S3-1  | Multi-Currency                                  | ⬜     |
+| S3-2  | Scheduled & Recurring Transfers (AutoTransfers) | ⬜     |
+| S3-3  | Session Management                              | ⬜     |
+| S3-4  | Loan & Owes Tracking (Liabilities)              | ⬜     |
+| S3-5  | Bill Splitter                                   | ⬜     |
+| S3-6  | Profiles                                        | ⬜     |
+| S3-7  | AI Agent                                        | ⬜     |
 
 ---
 
 ## Stage 4 — Bank Integration
 
-| Phase | Description                                              | Status |
-| ----- | -------------------------------------------------------- | ------ |
-| S4-1  | Bank account linking (Plaid or equivalent)               | ⬜     |
-| S4-2  | Auto-import bank statements as income entries            | ⬜     |
-| S4-3  | Reconcile imported records with manual entries           | ⬜     |
+| Phase | Description                                    | Status |
+| ----- | ---------------------------------------------- | ------ |
+| S4-1  | Bank account linking (Plaid or equivalent)     | ⬜     |
+| S4-2  | Auto-import bank statements as income entries  | ⬜     |
+| S4-3  | Reconcile imported records with manual entries | ⬜     |
 
 ---
 

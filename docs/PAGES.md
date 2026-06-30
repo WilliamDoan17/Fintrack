@@ -31,11 +31,14 @@ Full spending history for authenticated users. Shows only `withdraw` transaction
 
 ---
 
-## `/income` — Income Budget Detail (`src/pages/IncomeDetail.tsx`)
-Protected page for the user's income budget. Shows:
-- Income budget name (inline editable, cannot be deleted or moved)
-- `BalanceSummary` (page-local) — full width; includes transfers in/out for this budget
-- Income transactions list with add transaction and create transfer buttons; Move button is hidden (income transactions cannot be reassigned to a spending budget)
+## `/income` — Income (`src/pages/IncomeDetail.tsx`)
+Protected page for the user's income records. Data comes from the `incomes` table via `useIncomes`. Shows:
+- Static "Income" header
+- `+ Add Income` button — opens `CreateIncomeModal` (in-file)
+- **Tabs:**
+  - **Income** — `IncomeContainer` (in-file): paginated list of `IncomeCard` rows, each with inline edit (`UpdateIncomeModal`) and delete (`DeleteIncomeConfirmModal`) actions
+  - **Allocations** — placeholder, coming soon
+- Back navigation to `/dashboard` via `NavigationContext`
 
 ---
 

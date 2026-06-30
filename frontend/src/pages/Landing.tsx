@@ -58,7 +58,7 @@ const Landing = () => {
               </svg>
             </div>
             <h3 className="text-white font-semibold">Transaction Tracking</h3>
-            <p className="text-gray-500 text-sm">Log income and withdrawals per budget. Every transaction is tracked and reflected in your balance instantly.</p>
+            <p className="text-gray-500 text-sm">Log income and transactions per budget. Every transaction is tracked and reflected in your balance instantly.</p>
           </div>
 
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 flex flex-col gap-3 hover:border-gray-700 transition-all">

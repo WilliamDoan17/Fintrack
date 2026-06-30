@@ -49,7 +49,7 @@ non architecture problem:
     - UpdateTransfer: display from_budget (read-only), allow editing to_budget
     - split TransferContainer from TransactionContainer
   0.5 document rewrite: 
-    - rewrite scope, build_plan, progress & architecture to use this
+    - rewrite scope, build_plan, progress & architecture to include the new architecture
   1. introduce incomes 
     - write incomes schema, hooks, services, types, rls
     - migrate any transaction type 'add' to income (dev stage, no worries)

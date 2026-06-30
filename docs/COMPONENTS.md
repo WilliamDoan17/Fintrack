@@ -8,9 +8,9 @@ Source files live in `frontend/components/`.
 
 ## Budget Components (`components/budgets/`)
 
-### `SpendingBudgetContainer`
+### `BudgetContainer`
 
-Grid container for spending budgets. Renders a local `SpendingBudgetCard` for each budget — card navigates to `/budget/:id` on click, displays an inline Alert tag (`bg-red-900/50 text-red-400`) when `balance ≤ balance_threshold`. Accepts an optional `parentId` to scope to sub-budgets. Handles loading skeleton and empty state.
+Grid container for spending budgets. Renders a local `BudgetCard` for each budget — card navigates to `/budget/:id` on click, displays an inline Alert tag (`bg-red-900/50 text-red-400`) when `balance ≤ balance_threshold`. Accepts an optional `parentId` to scope to sub-budgets. Handles loading skeleton and empty state.
 
 **Props:** `{ parentId?: string | null }`
 
@@ -36,7 +36,7 @@ Confirmation modal for deleting a spending budget (cascades to sub-budgets).
 
 ### `MoveBudgetModal`
 
-Modal with path-based autocomplete for moving a spending budget to a new parent. Uses `useSpendingBudgetStructure` — income budget is excluded from valid move targets.
+Modal with path-based autocomplete for moving a spending budget to a new parent. Uses `useBudgetStructure` — income budget is excluded from valid move targets.
 
 **Props:** `{ budget: Budget, onClose: () => void }`
 
@@ -112,7 +112,7 @@ Confirmation modal for deleting a transaction. Action is irreversible.
 
 ### `MoveTransactionModal`
 
-Modal with path-based autocomplete for reassigning a transaction to a different spending budget. Pre-fills with the transaction's current budget path. Uses `useSpendingBudgetStructure`.
+Modal with path-based autocomplete for reassigning a transaction to a different spending budget. Pre-fills with the transaction's current budget path. Uses `useBudgetStructure`.
 
 **Props:** `{ transaction: Transaction, onClose: () => void }`
 
@@ -120,11 +120,55 @@ Modal with path-based autocomplete for reassigning a transaction to a different 
 
 ---
 
+## Income Components (`components/incomes/`)
+
+### `IncomeContainer`
+
+Paginated list of income entries for the current user. Fetches via `useIncomes`. Renders `IncomeCard` rows (defined in the same file) with inline edit and delete actions. Manages its own `UpdateIncomeModal` / `DeleteIncomeConfirmModal` modal state.
+
+`IncomeCard` displays name, formatted date, amount (always emerald `+$X.XX`), and edit/delete icon buttons (`EditButton`, `DeleteButton` — defined in the same file).
+
+**Props:** `{ limit?: number }` (default 10)
+
+**Used by:** `IncomeDetail`
+
+---
+
+### `CreateIncomeModal`
+
+Modal form for adding a new income entry. Fields: name, amount. Uses `useCreateIncome`.
+
+**Props:** `{ onClose: () => void }`
+
+**Used by:** `IncomeDetail`
+
+---
+
+### `UpdateIncomeModal`
+
+Modal form for editing an existing income entry's name and amount. Pre-fills with current values. Uses `useUpdateIncome`.
+
+**Props:** `{ income: Income, onClose: () => void }`
+
+**Used by:** `IncomeContainer`
+
+---
+
+### `DeleteIncomeConfirmModal`
+
+Confirmation modal for deleting an income entry. Action is irreversible. Uses `useDeleteIncome`.
+
+**Props:** `{ income: Income, onClose: () => void }`
+
+**Used by:** `IncomeContainer`
+
+---
+
 ## Transfer Components (`components/transfers/`)
 
 ### `CreateTransferModal`
 
-Modal for creating a transfer between two budgets. Uses path-based autocomplete via `useSpendingBudgetStructure`.
+Modal for creating a transfer between two budgets. Uses path-based autocomplete via `useBudgetStructure`.
 
 **Props:** `{ budget: Budget, onClose: () => void }`
 
@@ -132,7 +176,7 @@ Modal for creating a transfer between two budgets. Uses path-based autocomplete 
 
 ### `TransferContainer`
 
-Standalone container for displaying transfers for a specific budget. Shows from/to budget names on each row using `useSpendingBudgetStructure` for path lookups. Manages its own update/delete modal state.
+Standalone container for displaying transfers for a specific budget. Shows from/to budget names on each row using `useBudgetStructure` for path lookups. Manages its own update/delete modal state.
 
 `TransferCard` is exported for reuse if needed.
 
@@ -144,7 +188,7 @@ Standalone container for displaying transfers for a specific budget. Shows from/
 
 ### `UpdateTransferModal`
 
-Modal form for editing an existing transfer. Displays `from_budget` read-only (by name), provides path-based autocomplete for changing `to_budget`, and allows editing name and amount. Uses `useSpendingBudgetStructure`.
+Modal form for editing an existing transfer. Displays `from_budget` read-only (by name), provides path-based autocomplete for changing `to_budget`, and allows editing name and amount. Uses `useBudgetStructure`.
 
 **Props:** `{ transfer: Transfer, onClose: () => void }`
 
