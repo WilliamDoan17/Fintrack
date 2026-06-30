@@ -8,6 +8,20 @@ This document describes the PostgreSQL functions in Fintrack's Supabase database
 
 ---
 
+## Trigger Functions
+
+### `update_timestamp_on_update()`
+
+**Returns:** `trigger`
+
+**What it does:**
+Sets `NEW.updated_at = now()` and returns `NEW`. Attached as a `BEFORE UPDATE` trigger on every table so that `updated_at` is always current without the caller needing to pass it.
+
+**Used by triggers:**
+- `on_update` — fires `BEFORE UPDATE` on `budgets`, `transactions`, `transfers`, `incomes`, `allocations`
+
+---
+
 ## RPC Functions
 
 ### `get_budget_transactions(p_budget_id uuid)`
