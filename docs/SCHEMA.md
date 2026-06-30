@@ -23,6 +23,7 @@ This document states the data schema for Fintrack project.
 | parent_id         | uuid           | null, FK → budgets(id) on delete cascade        |
 | balance           | numeric(15, 2) | not null, default 0                             |
 | balance_threshold | numeric(15, 2) | null, check balance_threshold >= 0              |
+| updated_at        | timestamptz    | not null, default now()                         |
 
 #### Indexes
 
@@ -51,6 +52,7 @@ This document states the data schema for Fintrack project.
 | amount     | numeric(15, 2)   | not null, check amount > 0                      |
 | name       | text             | not null, check name <> ''                      |
 | created_at | timestamptz      | not null, default now()                         |
+| updated_at | timestamptz      | not null, default now()                         |
 
 ---
 
@@ -67,6 +69,7 @@ This document states the data schema for Fintrack project.
 | amount         | numeric(15, 2) | not null, check amount > 0                       |
 | name           | text           | not null, check name <> ''                       |
 | created_at     | timestamptz    | not null, default now()                          |
+| updated_at     | timestamptz    | not null, default now()                          |
 
 #### Indexes
 
@@ -88,6 +91,7 @@ This document states the data schema for Fintrack project.
 | name       | text           | not null, check (name <> '')                     |
 | amount     | numeric(15, 2) | not null, check (amount > 0)                     |
 | created_at | timestamptz    | not null, default now()                          |
+| updated_at | timestamptz    | not null, default now()                          |
 
 ---
 
@@ -102,6 +106,7 @@ This document states the data schema for Fintrack project.
 | to_budget_id | uuid           | not null, FK -> budgets(id) on delete cascade    |
 | amount       | numeric(15, 2) | not null, check (amount > 0)                     |
 | created_at   | timestamptz    | not null, default now()                          |
+| updated_at   | timestamptz    | not null, default now()                          |
 
 #### Indexes
 
