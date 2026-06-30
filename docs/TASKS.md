@@ -5,6 +5,17 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
 ---
 
 <details>
+  <summary>Jun 30, 2026</summary>
+
+- [x] `updated_at` column on every table and trigger
+  - update schema and types docs with `updated_at`
+  - write migration code to add updated_at column to every table
+  - write trigger `on_update`
+  - implement them in ts
+
+</details>
+
+<details>
   <summary>Jun 26, 2026</summary>
 
 - [x] Allocations — services + types + hooks
@@ -15,9 +26,8 @@ Daily log of tasks worked on. One `<details>` block per day, newest on top.
 - [x] `BudgetBalanceSummary` — update to `allocations_in + transfers_in - transfers_out - transactions`
 - [x] Allocations — UI on /income (create, view, delete + unallocated balance)
 - [x] Remove `is_income` from app — types, services, hooks, UI
-- [ ] Allocations — prod migration
-- [ ] DB drop — `is_income` column, income budget row, related triggers
-- [ ] `updated_at` column on every table and trigger
+- [x] Allocations — prod migration
+- [x] DB drop — `is_income` column, income budget row, related triggers
 
 </details>
 
