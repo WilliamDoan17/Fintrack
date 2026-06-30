@@ -15,13 +15,14 @@ Source files live in `frontend/backend/types/`.
 | id                | string (uuid)          |
 | user_id           | string (uuid)          |
 | created_at        | string (ISO timestamp) |
+| updated_at        | string (ISO timestamp) |
 | name              | string                 |
 | parent_id         | string \| null         |
 | balance_threshold | number \| null         |
 
 ### `BudgetInput`
 
-Shape passed to `createBudget` / `updateBudget`. Equivalent to `Omit<Budget, 'id' \| 'created_at' \| 'user_id'>`:
+Shape passed to `createBudget` / `updateBudget`. Equivalent to `Omit<Budget, 'id' \| 'user_id' \| 'created_at' \| 'updated_at'>`:
 
 | Field             | Type           |
 | ----------------- | -------------- |
@@ -44,10 +45,11 @@ Shape passed to `createBudget` / `updateBudget`. Equivalent to `Omit<Budget, 'id
 | amount     | number                 |
 | name       | string                 |
 | created_at | string (ISO timestamp) |
+| updated_at | string (ISO timestamp) |
 
 ### `TransactionInput`
 
-Shape passed to `createTransaction` / `updateTransaction`. Equivalent to `Omit<Transaction, 'id' \| 'user_id' \| 'created_at'>`:
+Shape passed to `createTransaction` / `updateTransaction`. Equivalent to `Omit<Transaction, 'id' \| 'user_id' \| 'created_at' \| 'updated_at'>`:
 
 | Field     | Type            |
 | --------- | --------------- |
@@ -71,10 +73,11 @@ Shape passed to `createTransaction` / `updateTransaction`. Equivalent to `Omit<T
 | amount         | number                 |
 | name           | string                 |
 | created_at     | string (ISO timestamp) |
+| updated_at     | string (ISO timestamp) |
 
 ### `TransferInput`
 
-Shape passed to `createTransfer` / `updateTransfer`. Equivalent to `Omit<Transfer, 'id' \| 'user_id' \| 'created_at'>`:
+Shape passed to `createTransfer` / `updateTransfer`. Equivalent to `Omit<Transfer, 'id' \| 'user_id' \| 'created_at' \| 'updated_at'>`:
 
 | Field          | Type          |
 | -------------- | ------------- |
@@ -96,10 +99,11 @@ Shape passed to `createTransfer` / `updateTransfer`. Equivalent to `Omit<Transfe
 | name       | string                 |
 | amount     | number                 |
 | created_at | string (ISO timestamp) |
+| updated_at | string (ISO timestamp) |
 
 ### IncomeInput
 
-Shape passed to `createIncome` and `updateIncome`. Equivalent to `Omit<Income, 'id' \| 'user_id' \| 'created_at'>`
+Shape passed to `createIncome` and `updateIncome`. Equivalent to `Omit<Income, 'id' \| 'user_id' \| 'created_at' \| 'updated_at'>`
 
 | Field  | Type   |
 | ------ | ------ |
@@ -119,10 +123,11 @@ Shape passed to `createIncome` and `updateIncome`. Equivalent to `Omit<Income, '
 | to_budget_id | string (uuid)          |
 | amount       | number                 |
 | created_at   | string (ISO timestamp) |
+| updated_at   | string (ISO timestamp) |
 
 ### AllocationInput
 
-Shape passed to `createAllocation` and `updateAllocation`. Equivalent to `Omit<Allocation, 'id' \| 'user_id' \| 'created_at'>`
+Shape passed to `createAllocation` and `updateAllocation`. Equivalent to `Omit<Allocation, 'id' \| 'user_id' \| 'created_at' \| 'updated_at'>`
 
 | Field        | Type          |
 | ------------ | ------------- |
