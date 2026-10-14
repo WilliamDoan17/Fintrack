@@ -70,15 +70,9 @@ All project docs live in [`docs/`](./docs/):
 
 | File | Purpose |
 |------|---------|
-| [SCOPE.md](./docs/SCOPE.md) | Full feature scope by category |
-| [BUILD_PLAN.md](./docs/BUILD_PLAN.md) | Development philosophy, stages, and per-phase task breakdown |
-| [PROGRESS.md](./docs/PROGRESS.md) | Status of each phase (✅ / ⬜ / Partial) |
-| [TASKS.md](./docs/TASKS.md) | Daily task log |
-| [PAGES.md](./docs/PAGES.md) | Routes and page-level features |
-| [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Frontend structure (hooks, contexts, components, conventions) |
-| [SERVICES.md](./docs/SERVICES.md) | Backend service functions (auth, budgets, transactions) |
-| [TYPES.md](./docs/TYPES.md) | TypeScript types used across the frontend |
-| [SCHEMA.md](./docs/SCHEMA.md) | Database tables, types, and indexes |
-| [RLS.md](./docs/RLS.md) | Row Level Security policies |
-| [TRIGGERS.md](./docs/TRIGGERS.md) | PostgreSQL triggers and when they fire |
-| [DB_FUNCTIONS.md](./docs/DB_FUNCTIONS.md) | PostgreSQL functions (RPC and trigger functions) |
+| [SCOPE.md](./docs/SCOPE.md) | Purpose, thesis, ordered roadmap, and non-goals |
+| [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Data model and why, layout rules, conventions, and request flows |
+| [SPRINTS.md](./docs/SPRINTS.md) | Sprint log, retros, and backlog |
+| [FRICTION.md](./docs/FRICTION.md) | Complaints from real use, the input to sprint triage |
+
+The database schema, RLS policies, triggers, and functions live as SQL in [`supabase/migrations/`](./supabase/migrations/).

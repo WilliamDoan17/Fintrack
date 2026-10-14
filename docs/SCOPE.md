@@ -1,89 +1,80 @@
-# Scope
+# SCOPE
 
-Fintrack is a personal finance web application focused on clarity, control, and an honest view of financial condition. It follows a strict separation between income management and spending management, designed for future integration with bank APIs and liability tracking.
+## Purpose
 
-## Budget Management
+Fintrack is a personal finance app built primarily as a **tool I actually use** to
+manage my own money, and secondarily as a portfolio project.
 
-- Create, update, and delete spending budgets and sub-budgets
-- View and organize budgets in a navigable hierarchy/tree
-- Set spending limits with configurable warnings and alerts
-- View real-time balance on each budget
-- Move budgets between parents
-- Manage budgets across multiple currencies
+That ordering decides arguments. When a feature would look good in a demo but I
+wouldn't use it on a Tuesday, it loses.
 
-## Incomes
+## Thesis
 
-- Log income entries as independent records (not tied to a budget)
-- Update and delete income entries
-- View income history and totals on the /income page
-- Unallocated balance: income minus all allocations to budgets
+Envelope budgeting is good at telling you what money you **have**. It is bad at
+money that is **owed** — to you or by you. A friend owes you for dinner, you owe
+a roommate for rent, a card statement isn't due yet. Every envelope app either
+ignores this or makes you fake it with a placeholder envelope.
 
-## Allocations
+**Fintrack is envelope budgeting that knows about money in transit.**
 
-- Allocate income to spending budgets (the sole entry point for money into budgets)
-- Update and delete allocations
-- View allocation history per income source and per budget
-- Enforce that budget balance only grows through allocations (strict envelope model)
+Everything in the roadmap either strengthens the envelope core or tracks a claim.
+Nothing else earns a place.
 
-## Transactions
+## Outcomes
 
-- Log spending transactions on spending budgets only
-- Update and delete transactions
-- View recent transactions and total balances per budget
-- Move transactions between budgets
-- Paginate and search/filter transactions (by amount, name, etc.)
-- Schedule one-time and recurring transactions (AutoPay)
-- Split bills and track participant shares
+What "working" means, stated as things I can do rather than features that exist:
 
-## Transfers
+1. I can see, in one number, how much money is actually free to spend.
+2. Every unit of money is either unallocated or sitting in exactly one envelope —
+   the app makes it impossible to spend money I never assigned.
+3. I can log a transaction on my phone, standing at a register, in under 15 seconds.
+4. I know who owes me and who I owe, without keeping it in my head or a notes app.
+5. I stop hand-typing transactions that my bank already has a record of.
 
-- Transfer money between spending budgets
-- Update and delete transfers
-- View transfer history per budget (with from/to context)
+## Current state
 
-## Liabilities *(planned)*
+The envelope core works end to end: incomes, allocations, budgets (nested),
+transactions, transfers, derived balances, and per-budget alert thresholds.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the data model and why it looks like this.
 
-- Track loans and debts (money lent and owed)
-- Link liabilities to transactions
-- Mark liabilities as settled, view outstanding overview
+Outcome 2 is not met yet: nothing stops spending from an unfunded budget (see
+[FRICTION.md](FRICTION.md), 2026-10-09). Outcome 1 depends on which number counts as
+"free to spend", which is undecided. The app is deployed (Vercel), so outcome 3 is reachable but
+unproven: it hasn't yet tracked real money from a phone. Outcomes 4 and 5 are
+not started.
 
-## User Interface & Experience
+## Roadmap
 
-- Fully responsive UI for seamless use on both desktop and mobile devices
-- Light and dark mode toggle with persistent theme preference
-- Collapsible sidebar with quick access to features
-- Modal dialogs for all create, edit, and delete flows
-- Skeleton loaders and optimized loading states for a smooth experience
-- Toast notification system for immediate feedback on actions
+In order. The order is the point — each item is either required by the next or
+unblocks feedback.
 
-## User Accounts & Security
+| #   | Item                                    | Why now                                                                                                                                                                                          |
+| --- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | **Phone UI pass, then use it for real** | Outcome 3. Deployed but never dogfooded. Use is the only feedback source, so real use runs in the background of every sprint after this one, feeding [FRICTION.md](FRICTION.md).                 |
+| 2   | **Month boundaries**                    | The missing envelope primitive. Allocations are currently timeless; real envelope budgeting funds envelopes per month and rolls over or reassigns what's left. Schema-adjacent, so design first. |
+| 3   | **Liabilities**                         | Outcome 4, and the first half of the claims thesis. One counterparty, one direction, settle/unsettle.                                                                                            |
+| 4   | **Bill splits**                         | Second half of claims — reuses the liabilities table. Conditional: build only if I'm actually splitting bills regularly, otherwise it's scope creep wearing a thesis.                            |
+| 5   | **CSV / statement import**              | Outcome 5 without depending on anyone's approval. Parse the file the bank already gives me, match against existing transactions, confirm the rest.                                               |
+| 6   | **Bank API auto-import**                | Same destination as 5, behind the same import path. Last because it's gated by things outside my control (production API access, whether my bank is supported at all).                           |
 
-- Secure sign up, login, and logout
-- Account and session management (list active sessions, revoke access, device information)
-- User profile management (avatar, display name, account settings)
-- Protected routes and layouts to enforce user authentication
+Deferred, not rejected: dark/light toggle, stats and charts, transaction
+scheduling and recurrence.
 
-## Analytics & Insights
+## Non-goals
 
-- Budget spending dashboard with charts and breakdowns
-- Per-budget analytics, category breakdowns, and time-based spending charts
-- Income versus allocated/spent analysis
-- Budget limits and low-balance warnings
+Cut deliberately. Each of these was on an earlier plan.
 
-## Advanced & Collaboration
+| Not doing                                   | Because                                                                                                                |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Multi-currency                              | I hold one currency. Pure complexity — it touches every balance calculation in the app for zero personal benefit.      |
+| AI agent / assistant                        | Doesn't serve the thesis. An agent that writes transactions for me is a trust problem I don't want in my own finances. |
+| Budget sharing / collaborative budgets      | Single-user tool. Splits cover the shared-money case without a permissions model.                                      |
+| User profiles, avatars, display names       | I know who I am.                                                                                                       |
+| Session management UI (device list, revoke) | Supabase auth already handles the security part; a UI for it is resume garnish.                                        |
+| Onboarding flow                             | One user, already onboarded.                                                                                           |
 
-- Bill splitting among multiple participants, with per-user transaction tracking
-- Data export/import (CSV), backup, and restore
-- Onboarding flow for new users
-- Budget sharing (collaborative/group budgets)
+---
 
-## AI Assistance
-
-- Integrated AI agent for budget analysis, spending insights, and planning recommendations
-- (Planned) Secure agent-driven automation to create/move budgets and transactions, with confirmation flows
-
-## Bank Integration *(planned)*
-
-- Link bank accounts via Plaid or similar APIs
-- Auto-import bank statements as income entries
-- Reconcile imported records with manual entries
+**Review cadence:** revisit this doc at the end of any sprint that changes the
+roadmap order, not on a schedule. If a non-goal keeps coming back, that's evidence
+the thesis is wrong — change the thesis, not the list.

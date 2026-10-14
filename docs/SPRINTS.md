@@ -27,8 +27,8 @@ The **delta between the sketch and what shipped** is the most valuable line in t
 entry. That's the thing no plan could have told me.
 
 ---
-
-## 1 — Phone UI + new workflow
+<details>
+  <summary>## 1 — Phone UI + new workflow</summary>
 
 **Opened:** 2026-09-29
 **Closed:** —
@@ -67,24 +67,28 @@ the phone over this list.
 - [x] Pull the database into the repo, at `supabase/migrations/` (repo root, not
       inside `frontend/`)
   - [ ] Commit `supabase/config.toml` and `supabase/migrations/`. No service-role key.
-- [ ] Read the pulled SQL and confirm it covers every table, RLS policy, trigger and
+- [x] Read the pulled SQL and confirm it covers every table, RLS policy, trigger and
       function that `SCHEMA.md`, `RLS.md`, `TRIGGERS.md` and `DB_FUNCTIONS.md` describe
-- [ ] Read `get_budget_transactions` in the pulled SQL. Does it recurse into
-      sub-budgets? If so, `useBudgetBalance` is inconsistent (see Known drift below)
-- [ ] Write `CLAUDE.md` at the repo root: ~10 lines pointing at the three docs
-- [ ] Delete the documents that duplicate code or are replaced:
-  - [ ] Now: `COMPONENTS.md`, `HOOKS.md`, `SERVICES.md`, `TYPES.md`, `PAGES.md`,
+- [x] Read `get_budget_transactions` in the pulled SQL. Does it recurse into
+      sub-budgets? If so, `useBudgetBalance` is inconsistent (see Known drift below).
+      Result: it recurses, and the bug is real. Logged in `ARCHITECTURE.md` Known drift #2
+- [x] Write `CLAUDE.md` at the repo root: ~10 lines pointing at the three docs
+- [x] Delete the documents that duplicate code or are replaced:
+  - [x] Now: `COMPONENTS.md`, `HOOKS.md`, `SERVICES.md`, `TYPES.md`, `PAGES.md`,
         `PROGRESS.md`, `TASKS.md`, `BUILD_PLAN.md`, `TEMP_NOTES.txt`
-  - [ ] Only after the SQL check above passes: `SCHEMA.md`, `RLS.md`,
+  - [x] Only after the SQL check above passes: `SCHEMA.md`, `RLS.md`,
         `TRIGGERS.md`, `DB_FUNCTIONS.md`
 - [ ] Update `README.md` to state the thesis in `SCOPE.md` (optional, cosmetic)
 
 **Session plan** (a guide, not a promise): 1 = walk the screens and triage, 2 = fix the
 picked items, 3 = Part B.
 
-**Review:** —
+**Review:**
 
-**Retro:** —
+**Retro:**
+
+  <summary>#2 - </summary>
+</details>
 
 ---
 
