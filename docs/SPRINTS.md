@@ -27,6 +27,7 @@ The **delta between the sketch and what shipped** is the most valuable line in t
 entry. That's the thing no plan could have told me.
 
 ---
+
 <details>
   <summary>## 1 — Phone UI + new workflow</summary>
 
@@ -87,7 +88,87 @@ picked items, 3 = Part B.
 
 **Retro:**
 
-  <summary>#2 - </summary>
+  <summary>#2 — Envelope numbers agree + sidebar fix</summary>
+
+**Opened:** 2026-10-14
+**Closed:** —
+**Budget:** 2 sessions (adjust)
+
+**Triage:** FRICTION.md had 10 open entries (3 broken, 1 missing, 6 cosmetic), all at
+Hits = 1, so frequency doesn't separate them; picked by severity and by what blocks
+trusting the numbers.
+
+- Picked: `/income` vs `/dashboard` — spending from a never-allocated budget lowers
+  Balance but not Unallocated (broken, money math)
+- Picked (FIRST): sub-budget create fails — `on_budgets_insert` RLS policy compares
+  `b.id = b.parent_id`, never true for a non-null parent (broken; blocks creating
+  sub-budgets and testing the rollup below)
+- Picked: `/budget/:id` — a budget's balance doesn't include its sub-budgets' balances
+  (broken, money math; same area as Known drift #2 in `ARCHITECTURE.md`)
+- Picked: `/dashboard` Income card — shows total of all income rows, unclear whether it
+  should show unallocated (missing; a decision that pairs with the one above)
+- Picked: sidebar — menu and collapse buttons both visible on phone, first collapse
+  press permanently toggles collapsed (cosmetic, but hit on every phone launch)
+- Left open: 5 cosmetic entries (`/landing` scrollbar margin, `/auth` x3, budget search
+  label)
+
+**Outcome:** the dashboard and `/income` show numbers that agree, and the rule for what
+counts as spendable is decided and enforced. The sidebar behaves predictably on a phone.
+
+**Flow sketch:** (write BEFORE coding — touches money math)
+
+- Decide: should a transaction on a budget with no allocation be blocked, warned, or
+  allowed? Where is it enforced (service, RPC, or DB)?
+  A transaction on a budget with no allocations should be warned, but softly:
+  3 cases:
+  - user says don't make it
+  - user says make it and allocate to
+  - user says make it but don't allocate
+  => service layer, since using db layer cannot reach this
+- Decide: what does the dashboard Income card show — total income, or unallocated?
+  - should it exist, if we can read everything from balance for now? For now, the only thing that gives us money is income, so balance = min(unallocated, total income - total transfers)
+
+- Which formulas in `ARCHITECTURE.md` change?
+  
+### Log a transaction
+
+```
+BudgetDetail  → modalState { type: 'addTransaction' }
+  → AddTransactionModal
+      pre-submit guards (client-side, warn-only):
+        newBalance < 0                    → confirm "negative balance"
+        newBalance <= balance_threshold   → confirm "at or below alert threshold"
+        CHANGES: confirm 'put an allocation to this budget (if unallocated > 0)'
+      reads useBudgetBalance(budgetId) + useBudget(budgetId) for those checks
+  -> useCreateAllocation (if user confirm create allocation)
+  → useCreateTransaction
+  → transactions.createTransaction()      injects user_id from auth.getUser()
+  → INSERT transactions                   RLS: user_id = auth.uid()
+  → on_update trigger maintains updated_at
+  → invalidate ['transactions'] ['budget'] ['budgets']
+  → every visible balance recomputes from fresh cache
+```
+
+- Decide: how can balance rollup for budget be computed
+
+**Questions**:
+
+- Should unallocated be a query key, such that it is easier to
+
+**Work:**
+
+- [x] **FIRST:** fix `on_budgets_insert` policy — new migration
+      (`npx supabase migration new fix_budgets_insert_policy`), then `db push`
+- [ ] Write the flow sketch above
+  - [ ] Decide no-allocation behavior
+- [ ] Money fix
+- [ ] Sub-budget balance rollup
+- [ ] Income card
+- [ ] Sidebar: one control visible at a time on phone
+
+**Review:**
+
+**Retro:**
 </details>
 
 ---
