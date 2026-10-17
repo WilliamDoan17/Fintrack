@@ -125,45 +125,141 @@ counts as spendable is decided and enforced. The sidebar behaves predictably on 
   - user says make it and allocate to
   - user says make it but don't allocate
   => service layer, since using db layer cannot reach this
-- Decide: what does the dashboard Income card show — total income, or unallocated?
-  - should it exist, if we can read everything from balance for now? For now, the only thing that gives us money is income, so balance = min(unallocated, total income - total transfers)
 
+  **Trigger:** `newBalance <= (balance_threshold ?? 0)`. One condition, so it also
+  covers `newBalance < 0`. Fires on funded-but-low budgets too, not only unallocated
+  ones.
+
+  **Warnings** (one dialog, one line chosen by case):
+  - `newBalance < 0`: "This will put {budget} at −$X, which is more than you've
+    assigned to it."
+  - `0 <= newBalance <= threshold`: "This will leave {budget} at $X, at or below its
+    alert threshold of $T."
+  - `unallocated = 0` (added as a second line): "There is no unallocated income to
+    cover this."
+
+  **Options** (same three for both warnings):
+  1. Cancel: don't make it
+  2. Allocate $S and add. S = `min(unallocated, max(0, threshold) − newBalance)`.
+     Disabled when `unallocated = 0`.
+  3. Add without allocating (case 3, allowed)
+
+  Compute S when the dialog opens and again at confirm, so a background refetch
+  can't change the amount silently. Disable submit until budget balance and
+  unallocated have both loaded.
+- Decide: what does the dashboard Income card show — total income, or unallocated?
+  **Decided:** the total-income card should not exist. If a card stays, it shows
+  Unallocated only. Total income is not a number I act on; Unallocated is.
+  - should it exist, if we can read everything from balance for now? For now, the only
+    thing that gives us money is income, so
+    balance = min(unallocated, total income − total transactions)
+  - Case 3 is shown by the numbers, not blocked: Overall = `I − T` drops, Unallocated
+    (`I − A`) doesn't. Add derived `useAvailable()` = `min(Unallocated, Overall)` and a
+    small "N budgets overspent" line under it so the gap has a visible reason.
+    `min` is exact only for one overspent envelope; the exact form is
+    `Unallocated − Σ max(0, −balance_b)`. Name it "Available", not "Balance" (Overall
+    already means `I − T`).
 - Which formulas in `ARCHITECTURE.md` change?
-  
+  - Overall: renamed/complemented by Available (above)
+  - Unallocated: unchanged
+  - Per budget: changes only if rollup is chosen (allocations + transfers recursive
+    like `get_budget_transactions`)
+
 ### Log a transaction
 
 ```
 BudgetDetail  → modalState { type: 'addTransaction' }
   → AddTransactionModal
-      pre-submit guards (client-side, warn-only):
-        newBalance < 0                    → confirm "negative balance"
-        newBalance <= balance_threshold   → confirm "at or below alert threshold"
-        CHANGES: confirm 'put an allocation to this budget (if unallocated > 0)'
-      reads useBudgetBalance(budgetId) + useBudget(budgetId) for those checks
-  -> useCreateAllocation (if user confirm create allocation)
-  → useCreateTransaction
+      pre-submit guard (client-side, warn-only), one dialog:
+        newBalance <= (balance_threshold ?? 0)  → warning line by case (see above)
+        unallocated = 0                         → extra line, option 2 disabled
+        options: cancel | allocate $S and add | add without allocating
+      reads useBudgetBalance(budgetId) + useBudget(budgetId) + useUnallocated()
+  → one service call → RPC create_transaction_with_allocation (option 2)
+      allocation + transaction in one DB transaction; not two hooks in the modal,
+      so a failed second insert can't leave a stray allocation
+  → useCreateTransaction                                      (options 3)
   → transactions.createTransaction()      injects user_id from auth.getUser()
   → INSERT transactions                   RLS: user_id = auth.uid()
   → on_update trigger maintains updated_at
-  → invalidate ['transactions'] ['budget'] ['budgets']
+  → invalidate ['transactions'] ['allocations'] ['budget'] ['budgets']
   → every visible balance recomputes from fresh cache
 ```
 
 - Decide: how can balance rollup for budget be computed
+  **Decided: roll up.** A budget's balance covers its whole subtree, so all three
+  inputs (allocations, transactions, transfers) must be subtree-wide. Today only
+  transactions are (`get_budget_transactions` recurses).
+  Subtree balance = `allocations_in − transactions + transfers_in − transfers_out`,
+  with every input taken over the whole subtree. A transfer with both ends inside the
+  subtree nets to zero, so it needs no special handling beyond being left out of in/out.
+  The current `useBudgetBalance` classifies by `from_budget_id === budgetId`, which
+  would misfile a transfer between two descendants as "in" with no matching "out".
+
+  **How to get the subtree: RPCs, one definition in SQL**, mirroring
+  `get_budget_transactions` (recursive CTE, `SECURITY INVOKER` so RLS applies, takes
+  only `budget_id`). No `getDescendantIds` helper, no ids in the query key.
+  - `get_budget_allocations(budget_id)`: allocations with `to_budget_id` in the subtree
+  - `get_budget_transfers_in(budget_id)`: `to_budget_id` in the subtree, `from_budget_id`
+    outside it
+  - `get_budget_transfers_out(budget_id)`: `from_budget_id` in the subtree,
+    `to_budget_id` outside it
+  Split in/out instead of one transfers RPC with a `direction` column: each returns
+  plain `SETOF transfers`, so no column list to keep in sync with the table, and
+  `transfersIn` / `transfersOut` are just the sum of each result.
+  - Because the key no longer carries the subtree, anything that changes the tree must
+    invalidate `['allocations']`, `['transfers']`, `['transactions']`: create/delete
+    budget and `MoveBudgetModal`.
+  - Additive migrations first, then the code that calls them.
+  - Rule: everything that affects balance is recursive. In and out are both
+    subtree-wide (the RPCs walk the tree). Transfers with both ends inside are left out
+    because they net to zero and don't affect balance. `TransferContainer` lists
+    in + out, so a parent shows its descendants' boundary transfers, the same way
+    transactions already behave.
 
 **Questions**:
 
-- Should unallocated be a query key, such that it is easier to
+- Should unallocated be a query key? Answer: no, a derived hook `useUnallocated()`
+  composing the incomes and allocations queries. A key would need invalidating from
+  both mutations, which is the drift "derived, never stored" avoids.
+- Hook values: a changed key (`budgetId`) returns the new key's data or `undefined`
+  while loading; same key refetched updates and re-renders. Don't copy hook output
+  into `useState`; compute in render.
 
 **Work:**
 
 - [x] **FIRST:** fix `on_budgets_insert` policy — new migration
       (`npx supabase migration new fix_budgets_insert_policy`), then `db push`
-- [ ] Write the flow sketch above
-  - [ ] Decide no-allocation behavior
-- [ ] Money fix
-- [ ] Sub-budget balance rollup
-- [ ] Income card
+- [x] Write the flow sketch above
+  - [x] Decide no-allocation behavior (warn, three options, service layer)
+  - [x] Decide rollup: roll up
+  - [x] Decide Income card: no total-income card; Unallocated only
+- [ ] Sub-budget balance rollup (do first: the warning below reads this balance)
+  - [ ] Migration (additive): `get_budget_allocations`, `get_budget_transfers_in`,
+        `get_budget_transfers_out`, each recursive like `get_budget_transactions`
+  - [ ] `npx supabase db push` before deploying the code that calls them
+  - [ ] Services: `getBudgetAllocations`, `getBudgetTransfersIn`,
+        `getBudgetTransfersOut` call the RPCs
+  - [ ] Hooks (`hooks/allocations.ts`, `hooks/transfers.ts`): wrap them; add
+        `useTransfersIn` / `useTransfersOut`
+  - [ ] `useBudgetBalance`: `transfersIn` / `transfersOut` from the two hooks; drop the
+        `from_budget_id === budgetId` classification
+  - [ ] Invalidate `['allocations']` `['transfers']` `['transactions']` on budget
+        create, delete and move
+  - [ ] `TransferContainer` lists in + out (hook combining the two)
+  - [ ] Check by hand: parent with a funded child, a transfer parent → child, a
+        transfer child → sibling, a transfer from outside into a grandchild
+  - [ ] `ARCHITECTURE.md`: update Per budget formula and close Known drift #2
+- [ ] `useUnallocated()` derived hook, `useAvailable()` = `min(Unallocated, Overall)`
+- [ ] Money fix: warning dialog (three options) in `AddTransactionModal`
+  - [ ] Migration (additive): RPC `create_transaction_with_allocation`. Takes the
+        transaction fields and the allocation amount S from the dialog, uses
+        `auth.uid()` for `user_id`, `SECURITY INVOKER`, writes both rows in one DB
+        transaction. It does not re-decide the warning; that stays in the service layer.
+  - [ ] `db push` before deploying the code that calls it
+  - [ ] Service `createTransactionWithAllocation` calls the RPC; hook wraps it
+  - [ ] Invalidate `['allocations']` as well
+- [ ] Income card: remove, or show Unallocated only
 - [ ] Sidebar: one control visible at a time on phone
 
 **Review:**

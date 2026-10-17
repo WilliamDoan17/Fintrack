@@ -265,6 +265,7 @@ BudgetDetail  → CreateTransferModal  (from_budget_id, to_budget_id, amount)
 useTransactions(budgetId)
   → transactions.getBudgetTransactions()
   → supabase.rpc('get_budget_transactions', { budget_id })
+
 ```
 
 The only RPC in the app. Its definition lives in Supabase, not in the repo — see
