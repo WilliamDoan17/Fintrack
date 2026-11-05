@@ -250,13 +250,13 @@ BudgetDetail  → modalState { type: 'addTransaction' }
   - [x] `npx supabase db push` before deploying the code that calls them
   - [x] Services: `getBudgetAllocations`, `getBudgetTransfersIn`,
         `getBudgetTransfersOut` call the RPCs
-  - [ ] Hooks (`hooks/allocations.ts`, `hooks/transfers.ts`): wrap them; add
+  - [x] Hooks (`hooks/allocations.ts`, `hooks/transfers.ts`): wrap them; add
         `useTransfersIn` / `useTransfersOut`
-  - [ ] `useBudgetBalance`: `transfersIn` / `transfersOut` from the two hooks; drop the
+  - [x] `useBudgetBalance`: `transfersIn` / `transfersOut` from the two hooks; drop the
         `from_budget_id === budgetId` classification
-  - [ ] Invalidate `['allocations']` `['transfers']` `['transactions']` on budget
+  - [x] Invalidate `['allocations']` `['transfers']` `['transactions']` on budget
         create, delete and move
-  - [ ] `TransferContainer` lists in + out (hook combining the two; dedupe by id
+  - [x] `TransferContainer` lists in + out (hook combining the two; dedupe by id
         later if the duplicates look wrong in the app)
   - [ ] Check by hand: parent with a funded child, a transfer parent → child (the
         parent's balance must not change), a transfer child → sibling, a transfer
