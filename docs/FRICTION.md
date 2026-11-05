@@ -37,6 +37,7 @@ triage. It is not a to-do list: an entry here is evidence, not a commitment.
 | 2026-10-14 | All    | `/budget/:id`            | A budget's balance doesn't include its sub-budgets' balances | 2    | broken   | sprint 2 |
 | 2026-10-14 | All    | budget create (sub-budget) | Creating a sub-budget fails; `on_budgets_insert` RLS check compares `b.id = b.parent_id` so it's never true for a non-null parent | 1    | broken   | sprint 2 |
 | 2026-11-05 | All    | CreateTransferModal       | Can't transfer from a parent budget to its own child. The budget structure picker blocks the budget's own name, so the parent can't be chosen as source | 1    | broken   | sprint 2 |
+| 2026-11-05 | All    | `CreateTransferModal`     | Transferring more than the source budget's balance triggers no warning | 1    | broken   | open |
 
 ## Notes for triage
 
