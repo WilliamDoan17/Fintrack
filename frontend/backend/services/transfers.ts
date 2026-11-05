@@ -48,11 +48,17 @@ export const getAllTransfers = async (): Promise<Transfer[]> => {
   return data ?? []
 }
 
-export const getBudgetTransfers = async (budgetId: string): Promise<Transfer[]> => {
+export const getBudgetTransfersIn = async (budgetId: string): Promise<Transfer[]> => {
   const { data, error } = await supabase
-    .from('transfers')
-    .select('*')
-    .or(`from_budget_id.eq.${budgetId},to_budget_id.eq.${budgetId}`)
+    .rpc('get_budget_transfers_in', { budget_id: budgetId})
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data ?? []
+}
+
+export const getBudgetTransfersOut = async (budgetId: string): Promise<Transfer[]> => {
+  const { data, error } = await supabase
+    .rpc('get_budget_transfers_out', { budget_id: budgetId})
     .order('created_at', { ascending: false })
   if (error) throw error
   return data ?? []

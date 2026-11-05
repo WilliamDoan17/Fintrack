@@ -50,9 +50,7 @@ export const getAllAllocations = async (): Promise<Allocation[]> => {
 
 export const getBudgetAllocations = async (budgetId: string): Promise<Allocation[]> => {
   const { data, error } = await supabase
-    .from('allocations')
-    .select('*')
-    .eq('to_budget_id', budgetId)
+    .rpc('get_budget_allocations', { budget_id: budgetId})
     .order('created_at', { ascending: false })
   if (error) throw error
   return data ?? []

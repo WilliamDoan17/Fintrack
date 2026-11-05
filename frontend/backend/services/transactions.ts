@@ -28,9 +28,8 @@ export const getAllTransactions = async (): Promise<Transaction[]> => {
 
 export const getBudgetTransactions = async (budgetId: string): Promise<Transaction[]> => {
   const { data, error } = await supabase
-    .rpc("get_budget_transactions", { 'budget_id': budgetId })
+    .rpc("get_budget_transactions", { budget_id: budgetId })
     .order('created_at', { ascending: false })
-
   if (error) throw error
   return data ?? []
 }
