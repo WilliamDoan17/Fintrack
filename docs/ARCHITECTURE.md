@@ -136,7 +136,9 @@ Provider nesting in `App.tsx`, outer to inner:
 | `useBudget(id)`                                 | `['budget', id]`                          |
 | `useBudgetStructure()`                          | `['budget-structure']`                    |
 | `useTransactions(budgetId \| null)`             | `['transactions', budgetId]`              |
-| `useTransfers(budgetId \| null)`                | `['transfers', budgetId]`                 |
+| `useTransfersIn(budgetId)`                      | `['transfersIn', budgetId]`               |
+| `useTransfersOut(budgetId)`                     | `['transfersOut', budgetId]`              |
+| `useTransferList(budgetId \| null)`             | `['transfers']` (all) or in + out above   |
 | `useAllocations()` / `useBudgetAllocations(id)` | `['allocations']` / `['allocations', id]` |
 | `useIncomes()`                                  | `['incomes']`                             |
 
@@ -145,6 +147,15 @@ Mutations invalidate at **prefix level** (`['transactions']`, not
 of its budget _and_ every ancestor budget, so narrow invalidation would leave stale
 numbers up the tree. Domains with multiple keys declare a shared
 `*_INVALIDATION_KEYS` array at the top of the hook file.
+
+Prefix matching is on whole array elements, so `['transfers']` does **not** match
+`['transfersIn', id]` or `['transfersOut', id]`. The transfer mutations list all three
+in `TRANSFER_INVALIDATION_KEYS`. A new key family needs adding there, or its data goes
+stale.
+
+Transfer reads are subtree-wide RPCs (`get_budget_transfers_in` / `_out`), so the keys
+carry only `budgetId`, not the subtree. Anything that changes the tree (create, delete
+or move a budget) must invalidate them too.
 
 ### Modal state
 
@@ -253,9 +264,8 @@ the envelope guarantee in [SCOPE.md](SCOPE.md) is broken and the thesis needs re
 ```
 BudgetDetail  → CreateTransferModal  (from_budget_id, to_budget_id, amount)
   → useCreateTransfer  →  INSERT transfers
-  → invalidate ['transfers'] ['budget'] ['budgets']
-  → useBudgetBalance counts it as transfers_out for the source,
-    transfers_in for the destination
+  → invalidate ['transfers'] ['transfersIn'] ['transfersOut'] ['budget'] ['budgets']
+  → useBudgetBalance sums useTransfersIn / useTransfersOut over the budget's subtree
   → overall balance unchanged (internal move)
 ```
 
