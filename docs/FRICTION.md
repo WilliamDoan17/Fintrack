@@ -36,6 +36,16 @@ triage. It is not a to-do list: an entry here is evidence, not a commitment.
 | 2026-10-09 | All    | `/dashboard`              | Income card shows the total of every income row, not the unallocated amount. Unclear which number it should show                                                                                                        | 1    | missing  | sprint 2 |
 | 2026-10-14 | All    | `/budget/:id`            | A budget's balance doesn't include its sub-budgets' balances | 2    | broken   | sprint 2 |
 | 2026-10-14 | All    | budget create (sub-budget) | Creating a sub-budget fails; `on_budgets_insert` RLS check compares `b.id = b.parent_id` so it's never true for a non-null parent | 1    | broken   | sprint 2 |
+| 2026-11-05 | All    | CreateTransferModal       | Can't transfer from a parent budget to its own child. The budget structure picker blocks the budget's own name, so the parent can't be chosen as source | 1    | broken   | sprint 2 |
+
+## Notes for triage
+
+Guesses about fixes, kept apart from the evidence above so the table stays honest. Not
+commitments; read them at triage, then delete or move them into a sprint.
+
+- 2026-11-05 `CreateTransferModal` (parent → child): allow the budget's own name in the
+  structure picker, then disable the transfer button when source and destination are the
+  same budget.
 
 ## Closed
 

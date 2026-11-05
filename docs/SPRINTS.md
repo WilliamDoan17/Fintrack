@@ -94,9 +94,10 @@ picked items, 3 = Part B.
 **Closed:** —
 **Budget:** 2 sessions (adjust)
 
-**Triage:** FRICTION.md had 10 open entries (3 broken, 1 missing, 6 cosmetic), all at
-Hits = 1, so frequency doesn't separate them; picked by severity and by what blocks
-trusting the numbers.
+**Triage:** FRICTION.md had 10 open entries (3 broken, 1 missing, 6 cosmetic) when the sprint
+opened. Nearly all at Hits = 1, so frequency doesn't separate them; picked by severity
+and by what blocks trusting the numbers. One more `broken` entry was added mid-sprint
+(below).
 
 - Picked: `/income` vs `/dashboard` — spending from a never-allocated budget lowers
   Balance but not Unallocated (broken, money math)
@@ -107,6 +108,10 @@ trusting the numbers.
   (broken, money math; same area as Known drift #2 in `ARCHITECTURE.md`)
 - Picked: `/dashboard` Income card — shows total of all income rows, unclear whether it
   should show unallocated (missing; a decision that pairs with the one above)
+- Added mid-sprint (2026-11-05): can't transfer parent → child in `CreateTransferModal`;
+  the structure picker blocks the budget's own name (broken). Pulled in because it
+  blocks verifying the rollup through the app (the parent → child transfer is a
+  required check) and blocks recording that kind of transfer. Costs one Work slot.
 - Picked: sidebar — menu and collapse buttons both visible on phone, first collapse
   press permanently toggles collapsed (cosmetic, but hit on every phone launch)
 - Left open: 5 cosmetic entries (`/landing` scrollbar margin, `/auth` x3, budget search
@@ -192,7 +197,8 @@ BudgetDetail  → modalState { type: 'addTransaction' }
   transactions are (`get_budget_transactions` recurses).
   Subtree balance = `allocations_in − transactions + transfers_in − transfers_out`,
   with every input taken over the whole subtree. A transfer with both ends inside the
-  subtree nets to zero, so it needs no special handling beyond being left out of in/out.
+  subtree is counted by both `in` and `out` (+x and −x), so it cancels in
+  `transfers_in − transfers_out` and needs no special handling.
   The current `useBudgetBalance` classifies by `from_budget_id === budgetId`, which
   would misfile a transfer between two descendants as "in" with no matching "out".
 
@@ -200,10 +206,10 @@ BudgetDetail  → modalState { type: 'addTransaction' }
   `get_budget_transactions` (recursive CTE, `SECURITY INVOKER` so RLS applies, takes
   only `budget_id`). No `getDescendantIds` helper, no ids in the query key.
   - `get_budget_allocations(budget_id)`: allocations with `to_budget_id` in the subtree
-  - `get_budget_transfers_in(budget_id)`: `to_budget_id` in the subtree, `from_budget_id`
-    outside it
-  - `get_budget_transfers_out(budget_id)`: `from_budget_id` in the subtree,
-    `to_budget_id` outside it
+  - `get_budget_transfers_in(budget_id)`: `to_budget_id` in the subtree
+  - `get_budget_transfers_out(budget_id)`: `from_budget_id` in the subtree
+  Neither filters the other end. Both must stay unfiltered the same way: filtering only
+  one breaks the cancellation and the balance goes wrong.
   Split in/out instead of one transfers RPC with a `direction` column: each returns
   plain `SETOF transfers`, so no column list to keep in sync with the table, and
   `transfersIn` / `transfersOut` are just the sum of each result.
@@ -212,10 +218,14 @@ BudgetDetail  → modalState { type: 'addTransaction' }
     budget and `MoveBudgetModal`.
   - Additive migrations first, then the code that calls them.
   - Rule: everything that affects balance is recursive. In and out are both
-    subtree-wide (the RPCs walk the tree). Transfers with both ends inside are left out
-    because they net to zero and don't affect balance. `TransferContainer` lists
-    in + out, so a parent shows its descendants' boundary transfers, the same way
-    transactions already behave.
+    subtree-wide (the RPCs walk the tree). Transfers with both ends inside appear in
+    both results and cancel in the balance.
+  - Known side effects, accepted for now, revisit after seeing it in the app:
+    - `transfersIn` / `transfersOut` totals on the budget page include internal
+      transfers, so each is larger than the money that actually crossed the boundary.
+      The balance is still right.
+    - `TransferContainer` lists in + out, so an internal transfer shows twice; dedupe by
+      transfer id when merging.
 
 **Questions**:
 
@@ -235,10 +245,10 @@ BudgetDetail  → modalState { type: 'addTransaction' }
   - [x] Decide rollup: roll up
   - [x] Decide Income card: no total-income card; Unallocated only
 - [ ] Sub-budget balance rollup (do first: the warning below reads this balance)
-  - [ ] Migration (additive): `get_budget_allocations`, `get_budget_transfers_in`,
+  - [x] Migration (additive): `get_budget_allocations`, `get_budget_transfers_in`,
         `get_budget_transfers_out`, each recursive like `get_budget_transactions`
-  - [ ] `npx supabase db push` before deploying the code that calls them
-  - [ ] Services: `getBudgetAllocations`, `getBudgetTransfersIn`,
+  - [x] `npx supabase db push` before deploying the code that calls them
+  - [x] Services: `getBudgetAllocations`, `getBudgetTransfersIn`,
         `getBudgetTransfersOut` call the RPCs
   - [ ] Hooks (`hooks/allocations.ts`, `hooks/transfers.ts`): wrap them; add
         `useTransfersIn` / `useTransfersOut`
@@ -246,10 +256,15 @@ BudgetDetail  → modalState { type: 'addTransaction' }
         `from_budget_id === budgetId` classification
   - [ ] Invalidate `['allocations']` `['transfers']` `['transactions']` on budget
         create, delete and move
-  - [ ] `TransferContainer` lists in + out (hook combining the two)
-  - [ ] Check by hand: parent with a funded child, a transfer parent → child, a
-        transfer child → sibling, a transfer from outside into a grandchild
+  - [ ] `TransferContainer` lists in + out (hook combining the two; dedupe by id
+        later if the duplicates look wrong in the app)
+  - [ ] Check by hand: parent with a funded child, a transfer parent → child (the
+        parent's balance must not change), a transfer child → sibling, a transfer
+        from outside into a grandchild
   - [ ] `ARCHITECTURE.md`: update Per budget formula and close Known drift #2
+- [ ] Transfer picker: allow a budget's own name in the structure picker, disable the
+      transfer button when source and destination are the same budget. Do before the
+      rollup hand-check, which needs a parent → child transfer through the app.
 - [ ] `useUnallocated()` derived hook, `useAvailable()` = `min(Unallocated, Overall)`
 - [ ] Money fix: warning dialog (three options) in `AddTransactionModal`
   - [ ] Migration (additive): RPC `create_transaction_with_allocation`. Takes the
