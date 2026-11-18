@@ -72,7 +72,8 @@ All project docs live in [`docs/`](./docs/):
 |------|---------|
 | [SCOPE.md](./docs/SCOPE.md) | Purpose, thesis, ordered roadmap, and non-goals |
 | [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Data model and why, layout rules, conventions, and request flows |
-| [SPRINTS.md](./docs/SPRINTS.md) | Sprint log, retros, and backlog |
-| [FRICTION.md](./docs/FRICTION.md) | Complaints from real use, the input to sprint triage |
+| [decisions/](./docs/decisions/) | Architecture Decision Records: why the expensive-to-reverse choices were made |
+
+Sprint planning, the backlog, and the friction log (complaints from real use) are kept in Notion.
 
 The database schema, RLS policies, triggers, and functions live as SQL in [`supabase/migrations/`](./supabase/migrations/).

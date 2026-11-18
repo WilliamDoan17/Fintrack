@@ -8,8 +8,21 @@ React Query on the frontend, Supabase (Postgres + RLS) behind it, deployed on Ve
 
 - `docs/SCOPE.md` — purpose, thesis, ordered roadmap, non-goals
 - `docs/ARCHITECTURE.md` — data model and why, layout rules, conventions, flows
-- `docs/SPRINTS.md` — current sprint, backlog, retros
-- `docs/FRICTION.md` — raw complaints from real use; input to sprint triage
+- `docs/decisions/` — ADRs: why the expensive-to-reverse choices were made
+
+Work in progress lives in **Notion** (read and write it through the Notion MCP tools):
+
+- [Fintrack](https://app.notion.com/p/41cbb60f820581b59685f76f8c323a99) — home page, sprint
+  and friction rules
+- [Sprints](https://app.notion.com/p/41cbb60f820581bf9fe1c0a08d128e1b) — one page per
+  sprint (triage, sketch, work, review, retro); backlog items are rows with Status
+  `Backlog`
+- [Friction](https://app.notion.com/p/41cbb60f820581fe9c0ffdbea5ea4574) — raw complaints
+  from real use; input to sprint triage
+
+**Repo vs Notion:** durable decisions go in the repo, work in progress goes in Notion. When
+a decision settles in a sprint, promote it: write an ADR (or update `ARCHITECTURE.md` if it
+changes a formula or rule) and link it from the sprint page.
 
 Don't recreate docs that list components, hooks, types, services or schema. The code and
 `supabase/migrations/` are the source of truth for those.
@@ -21,7 +34,8 @@ Don't recreate docs that list components, hooks, types, services or schema. The 
   - `hooks/` wrap services in React Query; `components/` call hooks; pages compose
 - `supabase/migrations/` — the database, as SQL. Source of truth for schema, RLS,
   triggers and functions
-- `docs/` — the four docs above, nothing else
+- `docs/` — `SCOPE.md`, `ARCHITECTURE.md`, `decisions/`. No sprint logs, task lists or
+  friction logs here; those are in Notion
 
 ## Commands
 
@@ -53,9 +67,12 @@ From the repo root: `npx supabase migration new <name>`, `npx supabase db push`.
 
 ## Working style
 
-- One feature per sprint; the sprint's flow sketch goes in `SPRINTS.md` before coding
-  when the work crosses layers or touches money math.
-- When I report an annoyance while using the app, add it to `docs/FRICTION.md` instead
-  of fixing it on the spot, unless it blocks recording money.
-- Don't rewrite docs unprompted. Update `SPRINTS.md` and `FRICTION.md` as work
-  happens; touch `SCOPE.md` only when the roadmap order changes.
+- One feature per sprint; the sprint's flow sketch goes on its Notion sprint page before
+  coding when the work crosses layers or touches money math. Money sketches include a
+  worked numeric example with a transfer in it.
+- When I report an annoyance while using the app, add it to the Notion Friction database
+  (bump Hits if it's already there) instead of fixing it on the spot, unless it blocks
+  recording money.
+- Don't rewrite docs unprompted. Update the current Notion sprint page and Friction
+  entries as work happens; write an ADR when a decision settles; touch `SCOPE.md` only
+  when the roadmap order changes.
