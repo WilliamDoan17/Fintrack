@@ -15,19 +15,20 @@ const CreateTransferModal = ({ budget, onClose }: { budget: Budget, onClose: () 
   const containerRef = useRef<HTMLDivElement>(null)
   const { notify } = useNotification()
 
-  const currentPath = structure?.budgetIdToPath.get(budget.id) ?? ''
+  const toBudgetId = structure?.pathToBudgetId.get(toInput.trim())
+  const isSelf = toBudgetId === budget.id
 
   const hints = useMemo(() => {
     if (!structure) return []
     const query = toInput.trim()
     return structure.paths.filter(path => {
-      if (path === '/' || path === currentPath) return false
+      if (path === '/') return false
       if (!path.startsWith(query)) return false
       const remainder = path.slice(query.length)
       const nextSlash = remainder.indexOf('/')
       return nextSlash === -1 || nextSlash === remainder.length - 1
     })
-  }, [toInput, structure, currentPath])
+  }, [toInput, structure])
 
   useEffect(() => {
     setFocusedIndex(-1)
@@ -67,10 +68,12 @@ const CreateTransferModal = ({ budget, onClose }: { budget: Budget, onClose: () 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!structure) return
-    const toBudgetId = structure.pathToBudgetId.get(toInput.trim())
     if (!toBudgetId) {
       notify('No budget found at that path', 'error')
+      return
+    }
+    if (isSelf) {
+      notify('Choose a different budget to transfer to', 'error')
       return
     }
     createTransfer({ from_budget_id: budget.id, to_budget_id: toBudgetId, amount: parseFloat(amount), name }, {
@@ -122,6 +125,7 @@ const CreateTransferModal = ({ budget, onClose }: { budget: Budget, onClose: () 
                 </ul>
               )}
             </div>
+            {isSelf && <p className="text-gray-500 text-xs">That's the budget you're transferring from</p>}
             {isLoading && <p className="text-gray-500 text-xs">Loading budgets...</p>}
             {error && <p className="text-red-400 text-xs">Failed to load budgets</p>}
           </div>
@@ -164,7 +168,7 @@ const CreateTransferModal = ({ budget, onClose }: { budget: Budget, onClose: () 
             </button>
             <button
               type="submit"
-              disabled={submitting || !toInput.trim() || !amount || !name}
+              disabled={submitting || !toInput.trim() || !amount || !name || !toBudgetId || isSelf}
               className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? 'Transferring...' : 'Transfer'}

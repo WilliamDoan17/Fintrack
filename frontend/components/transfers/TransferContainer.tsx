@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { Transfer } from '../../backend/types/transfers'
-import { useTransfers } from '../../hooks/transfers'
+import { useTransferList } from '../../hooks/transfers'
 import { useBudget } from '../../hooks/budgets'
 import UpdateTransferModal from './UpdateTransferModal'
 import DeleteTransferConfirmModal from './DeleteTransferConfirmModal'
@@ -92,7 +92,7 @@ const TransferContainer = ({
   limit?: number
   viewAll?: 'paginate'
 }) => {
-  const { transfers, isLoading, error } = useTransfers(budgetId ?? null)
+  const { transfers, isLoading, error } = useTransferList(budgetId ?? null)
   const [modalState, setModalState] = useState<ModalState | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
 

@@ -38,7 +38,7 @@ transactions, transfers, derived balances, and per-budget alert thresholds.
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the data model and why it looks like this.
 
 Outcome 2 is not met yet: nothing stops spending from an unfunded budget (see
-[FRICTION.md](FRICTION.md), 2026-10-09). Outcome 1 depends on which number counts as
+the friction log in Notion, 2026-10-09). Outcome 1 depends on which number counts as
 "free to spend", which is undecided. The app is deployed (Vercel), so outcome 3 is reachable but
 unproven: it hasn't yet tracked real money from a phone. Outcomes 4 and 5 are
 not started.
@@ -50,7 +50,7 @@ unblocks feedback.
 
 | #   | Item                                    | Why now                                                                                                                                                                                          |
 | --- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | **Phone UI pass, then use it for real** | Outcome 3. Deployed but never dogfooded. Use is the only feedback source, so real use runs in the background of every sprint after this one, feeding [FRICTION.md](FRICTION.md).                 |
+| 1   | **Phone UI pass, then use it for real** | Outcome 3. Deployed but never dogfooded. Use is the only feedback source, so real use runs in the background of every sprint after this one, feeding the friction log (Notion).                  |
 | 2   | **Month boundaries**                    | The missing envelope primitive. Allocations are currently timeless; real envelope budgeting funds envelopes per month and rolls over or reassigns what's left. Schema-adjacent, so design first. |
 | 3   | **Liabilities**                         | Outcome 4, and the first half of the claims thesis. One counterparty, one direction, settle/unsettle.                                                                                            |
 | 4   | **Bill splits**                         | Second half of claims — reuses the liabilities table. Conditional: build only if I'm actually splitting bills regularly, otherwise it's scope creep wearing a thesis.                            |
