@@ -27,8 +27,9 @@ export const useTransfersOut = (budgetId: string | null) => {
   return { transfers, isLoading, error }
 }
 
-// Display list: every transfer when no budget, else in + out for the budget's subtree.
-// A transfer inside the subtree appears in both results, so dedupe by id.
+// Display list: every transfer when no budget, else the budget's Own transfers (it is the
+// source or destination). Matches the Own in/out totals on the budget page, and keeps each
+// row's +/- sign correct. The rollup RPCs return the whole subtree, so filter here.
 export const useTransferList = (budgetId: string | null) => {
   const all = useQuery<Transfer[]>({
     queryKey: ['transfers'],
@@ -42,9 +43,11 @@ export const useTransferList = (budgetId: string | null) => {
     return { transfers: all.data ?? [], isLoading: all.isLoading, error: all.error }
   }
 
-  const byId = new Map<string, Transfer>()
-  ;[...transfersIn.transfers, ...transfersOut.transfers].forEach(t => byId.set(t.id, t))
-  const transfers = [...byId.values()].sort((a, b) => b.created_at.localeCompare(a.created_at))
+  // Self-transfers are blocked in the DB, so a row can't be in both lists: no dedupe needed
+  const transfers = [
+    ...transfersIn.transfers.filter(t => t.to_budget_id === budgetId),
+    ...transfersOut.transfers.filter(t => t.from_budget_id === budgetId),
+  ].sort((a, b) => b.created_at.localeCompare(a.created_at))
 
   return {
     transfers,

@@ -4,9 +4,12 @@ import { useNavigate } from 'react-router-dom'
 
 const BudgetCard = ({ budget }: { budget: Budget }) => {
   const navigate = useNavigate()
-  const { balance } = useBudgetBalance(budget.id)
+  const { own, branch } = useBudgetBalance(budget.id)
+  const balance = branch.balance
   const isPositive = balance >= 0
-  const isAlert = balance < 0 || (budget.balance_threshold !== null && balance <= budget.balance_threshold)
+  const isAlert = own.balance < 0 || (budget.balance_threshold !== null && own.balance <= budget.balance_threshold)
+  // Show Own only when it differs from the branch (compared to the cent), so most cards keep one number
+  const showOwn = Math.round(own.balance * 100) !== Math.round(branch.balance * 100)
 
   return (
     <div
@@ -24,6 +27,17 @@ const BudgetCard = ({ budget }: { budget: Budget }) => {
       <p className="text-white font-semibold text-lg mb-2">{budget.name}</p>
       <p className={`font-bold text-xl ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
         {isPositive ? '+' : '-'}${Math.abs(balance).toFixed(2)}
+      </p>
+      <p className="text-xs text-gray-500 mt-0.5">
+        Branch total
+        {showOwn && (
+          <>
+            {' · Available '}
+            <span className={`font-medium ${own.balance >= 0 ? 'text-gray-300' : 'text-red-400'}`}>
+              {own.balance >= 0 ? '+' : '-'}${Math.abs(own.balance).toFixed(2)}
+            </span>
+          </>
+        )}
       </p>
     </div>
   )

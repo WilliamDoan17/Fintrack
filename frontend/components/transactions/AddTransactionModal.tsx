@@ -2,33 +2,7 @@ import { useState } from 'react'
 import { useCreateTransaction } from '../../hooks/transactions'
 import { useBudget, useBudgetBalance } from '../../hooks/budgets'
 import { useNotification } from '../../contexts/NotificationContext'
-
-const TransactionWarningModal = ({ message, onConfirm, onCancel }: {
-  message: string
-  onConfirm: () => void
-  onCancel: () => void
-}) => (
-  <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 md:p-8 w-full max-w-md shadow-xl">
-      <h2 className="text-white text-xl font-semibold mb-1">Are you sure?</h2>
-      <p className="text-gray-400 text-sm mb-6">{message}</p>
-      <div className="flex gap-3 justify-end">
-        <button
-          onClick={onCancel}
-          className="px-4 py-2 rounded text-gray-400 hover:text-white transition-all cursor-pointer"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={onConfirm}
-          className="bg-red-500 hover:bg-red-400 active:bg-red-600 text-white font-medium px-4 py-2 rounded transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
-        >
-          Add Anyway
-        </button>
-      </div>
-    </div>
-  </div>
-)
+import WarningConfirmModal from '../WarningConfirmModal'
 
 const AddTransactionModal = ({ onClose, budgetId, budgetType }: {
   onClose: () => void
@@ -41,7 +15,7 @@ const AddTransactionModal = ({ onClose, budgetId, budgetType }: {
   const { notify } = useNotification()
   const { mutate: createTransaction, isPending, error } = useCreateTransaction()
   const { budget } = useBudget(budgetType === 'spending' ? budgetId : null)
-  const { balance } = useBudgetBalance(budgetId)
+  const { own: { balance } } = useBudgetBalance(budgetId)
 
   const submit = () => {
     createTransaction({ name, amount: parseFloat(amount), budget_id: budgetId }, {
@@ -58,11 +32,11 @@ const AddTransactionModal = ({ onClose, budgetId, budgetType }: {
     if (budgetType === 'spending') {
       const newBalance = balance - parseFloat(amount)
       if (newBalance < 0) {
-        setWarningMessage('This transaction will result in a negative balance.')
+        setWarningMessage('This transaction will make this budget\'s available balance negative.')
         return
       }
       if (budget?.balance_threshold !== null && budget?.balance_threshold !== undefined && newBalance <= budget.balance_threshold) {
-        setWarningMessage('This transaction will push your balance to or below the alert threshold.')
+        setWarningMessage('This transaction will push this budget\'s available balance to or below the alert threshold.')
         return
       }
     }
@@ -134,8 +108,9 @@ const AddTransactionModal = ({ onClose, budgetId, budgetType }: {
       </div>
 
       {warningMessage && (
-        <TransactionWarningModal
+        <WarningConfirmModal
           message={warningMessage}
+          confirmLabel="Add Anyway"
           onConfirm={() => { setWarningMessage(null); submit() }}
           onCancel={() => setWarningMessage(null)}
         />
