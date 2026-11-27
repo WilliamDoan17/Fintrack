@@ -44,14 +44,31 @@ argument for sketching a flow before building one.
 No table has a `balance` column. Every balance is computed client-side from
 React Query cached data:
 
-| Balance     | Formula                                                        | Where                                        |
-| ----------- | -------------------------------------------------------------- | -------------------------------------------- |
-| Overall     | `SUM(incomes) − SUM(all transactions)`                         | `BalanceSummary` in `Dashboard.tsx`          |
-| Unallocated | `SUM(incomes) − SUM(all allocations)`                          | `IncomeBalanceSummary` in `IncomeDetail.tsx` |
-| Per budget  | `allocations_in − transactions + transfers_in − transfers_out` | `useBudgetBalance` in `hooks/budgets.ts`     |
+| Balance                 | Formula                                                                                       | Where                                        |
+| ----------------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| Overall                 | `SUM(incomes) − SUM(all transactions)`                                                        | `BalanceSummary` in `Dashboard.tsx`          |
+| Unallocated             | `SUM(incomes) − SUM(all allocations)`                                                         | `IncomeBalanceSummary` in `IncomeDetail.tsx` |
+| Per budget: Own         | `allocations − transactions + transfers_in − transfers_out`, rows where this budget is the target/source | `useBudgetBalance(id).own`                   |
+| Per budget: Branch total | the same formula over the budget's whole subtree                                             | `useBudgetBalance(id).branch`                |
 
 Transfers are excluded from the overall balance because they're internal moves —
 money changing envelopes doesn't change how much money exists.
+
+**Own vs Branch total** ([ADR 0001](decisions/0001-own-vs-branch-total.md)): every budget
+has both, always labelled. **Own** (shown as "Available") is what the budget can spend or
+transfer, and it is the only number that decides whether an action warns: transaction and
+transfer warnings, alert badge and banner. **Branch total** is reporting only. Both come
+from the same subtree RPC rows: Branch total sums all of them, Own filters them to rows
+where the budget itself is the target or source. Where each shows:
+
+- Budget cards: Branch total as the main number; a small "Available" line when Own differs.
+- Budget page: Own as "Available"; Branch total as a secondary line when the budget has
+  children. The breakdown grid and the transfer list are Own.
+
+**Reconciliation identity**, which must hold:
+`Unallocated + Σ(top-level Branch totals) = Overall`. Transfers cancel across the tree,
+so Σ Branch totals = allocations − transactions. If the identity fails, the balance code
+has a bug.
 
 **Why derived:** a stored balance needs a trigger on every income, allocation,
 transfer, and transaction mutation. That's four write surfaces per balance, each of
@@ -75,7 +92,8 @@ frontend/
   layouts/                ProtectedLayout — app shell (sidebar, back arrow, Outlet)
   routes/                 ProtectedRoute — auth guard
   components/             grouped by domain: budgets/ transactions/ transfers/
-                          incomes/ allocations/ loaders/ + shared (Tabs, Pagination, Toast)
+                          incomes/ allocations/ loaders/ + shared (Tabs, Pagination, Toast,
+                          WarningConfirmModal)
   hooks/                  one file per domain; wraps services in React Query
   contexts/               context definitions (Auth, Navigation, Notification)
   providers/              provider implementations, paired 1:1 with contexts
@@ -138,7 +156,7 @@ Provider nesting in `App.tsx`, outer to inner:
 | `useTransactions(budgetId \| null)`             | `['transactions', budgetId]`              |
 | `useTransfersIn(budgetId)`                      | `['transfersIn', budgetId]`               |
 | `useTransfersOut(budgetId)`                     | `['transfersOut', budgetId]`              |
-| `useTransferList(budgetId \| null)`             | `['transfers']` (all) or in + out above   |
+| `useTransferList(budgetId \| null)`             | `['transfers']` (all) or in + out above, filtered to Own |
 | `useAllocations()` / `useBudgetAllocations(id)` | `['allocations']` / `['allocations', id]` |
 | `useIncomes()`                                  | `['incomes']`                             |
 
@@ -153,9 +171,10 @@ Prefix matching is on whole array elements, so `['transfers']` does **not** matc
 in `TRANSFER_INVALIDATION_KEYS`. A new key family needs adding there, or its data goes
 stale.
 
-Transfer reads are subtree-wide RPCs (`get_budget_transfers_in` / `_out`), so the keys
-carry only `budgetId`, not the subtree. Anything that changes the tree (create, delete
-or move a budget) must invalidate them too.
+A budget's reads are subtree-wide RPCs (`get_budget_transactions`,
+`get_budget_allocations`, `get_budget_transfers_in` / `_out`), so the keys carry only
+`budgetId`, not the subtree. Anything that changes the tree (create, delete or move a
+budget) must invalidate `['transactions']`, `['allocations']` and the transfer keys too.
 
 ### Modal state
 
@@ -222,10 +241,11 @@ layers — then correct it at sprint review and record the delta.
 ```
 BudgetDetail  → modalState { type: 'addTransaction' }
   → AddTransactionModal
-      pre-submit guards (client-side, warn-only):
-        newBalance < 0                    → confirm "negative balance"
-        newBalance <= balance_threshold   → confirm "at or below alert threshold"
-      reads useBudgetBalance(budgetId) + useBudget(budgetId) for those checks
+      pre-submit guards (client-side, warn-only), on the budget's Own balance:
+        newOwn < 0                        → confirm "available balance negative"
+        newOwn <= balance_threshold       → confirm "at or below alert threshold"
+      reads useBudgetBalance(budgetId).own + useBudget(budgetId) for those checks
+      dialog: WarningConfirmModal (shared with the transfer warning)
   → useCreateTransaction
   → transactions.createTransaction()      injects user_id from auth.getUser()
   → INSERT transactions                   RLS: user_id = auth.uid()
@@ -263,23 +283,35 @@ the envelope guarantee in [SCOPE.md](SCOPE.md) is broken and the thesis needs re
 
 ```
 BudgetDetail  → CreateTransferModal  (from_budget_id, to_budget_id, amount)
+      self-transfer blocked (UI, and CHECK constraint in the DB)
+      pre-submit guards (warn-only), on the SOURCE budget's Own balance:
+        newOwn < 0 or newOwn <= balance_threshold → WarningConfirmModal
+      submit disabled until the source balance has loaded
   → useCreateTransfer  →  INSERT transfers
   → invalidate ['transfers'] ['transfersIn'] ['transfersOut'] ['budget'] ['budgets']
-  → useBudgetBalance sums useTransfersIn / useTransfersOut over the budget's subtree
+  → source Own drops, destination Own rises; a transfer inside one branch leaves that
+    branch's total unchanged
   → overall balance unchanged (internal move)
 ```
 
-### Reading a budget's transactions
+The guard checks Own, not Branch total: a parent → child transfer never changes the
+parent's Branch total, so a Branch check would let a parent move money it doesn't have.
+
+### Reading a budget's balance
 
 ```
-useTransactions(budgetId)
-  → transactions.getBudgetTransactions()
-  → supabase.rpc('get_budget_transactions', { budget_id })
-
+useBudgetBalance(budgetId)
+  → useTransactions / useBudgetAllocations / useTransfersIn / useTransfersOut
+  → supabase.rpc('get_budget_transactions' | 'get_budget_allocations'
+                 | 'get_budget_transfers_in' | 'get_budget_transfers_out', { budget_id })
+      each a recursive CTE over the budget's subtree (the budget itself included),
+      SECURITY INVOKER so RLS applies, returning whole rows
+  → branch = sums over all rows
+  → own    = sums over rows where this budget is the target/source
 ```
 
-The only RPC in the app. Its definition lives in Supabase, not in the repo — see
-Known drift.
+The four RPCs are the only ones in the app. Their definitions are in
+`supabase/migrations/`.
 
 ---
 
@@ -288,18 +320,13 @@ Known drift.
 Things that are true today and shouldn't be. Fix or accept, don't let them rot
 silently.
 
-1. **No SQL in the repo.** Schema, RLS, triggers, and `get_budget_transactions` exist
-   only in the Supabase dashboard. `supabase/migrations/` above is the target, not
-   the current state. Run `supabase db pull` to make it real. Until then the database
-   has no version history and dev/prod are hand-synced.
-2. **Parent budget balance is wrong when its children are funded.**
-   `get_budget_transactions` is recursive (confirmed in the migration): a parent's
-   transactions include every descendant's. `getBudgetAllocations` filters on
-   `to_budget_id = budgetId` and `getBudgetTransfers` on `from/to_budget_id = budgetId`,
-   neither recursive. So `useBudgetBalance` for a parent subtracts the children's
-   spending without adding the money allocated or transferred to them. Needs a decision
-   on whether a parent's balance rolls up its children or shows only its own.
-3. **`AddTransactionModal` takes a dead `budgetType: 'spending' | 'income'` prop.**
-   Only ever passed `'spending'` (`BudgetDetail.tsx:306`). Left over from the
+1. **`AddTransactionModal` takes a dead `budgetType: 'spending' | 'income'` prop.**
+   Only ever passed `'spending'` (`BudgetDetail.tsx:319`). Left over from the
    `is_income` era that `AM-3g` was supposed to finish removing. The `'income'` branch
    is unreachable.
+2. **The budget page's transactions list is subtree-wide**, while the Expenses figure
+   above it is Own, and transaction rows don't show which budget they belong to. The
+   transfer list was made Own-only in sprint 3; transactions weren't.
+
+Resolved: "No SQL in the repo" (migrations pulled in sprint 1) and "Parent budget balance
+is wrong when its children are funded" (Own + Branch total, sprint 3, ADR 0001).
