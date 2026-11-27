@@ -30,6 +30,35 @@ export const useBudget = (id: string | null) => {
   return { budget, isLoading, error }
 }
 
+type BalanceBreakdown = {
+  balance: number
+  allocations: number
+  expenses: number
+  transfersIn: number
+  transfersOut: number
+}
+
+const sumAmount = (rows: { amount: number }[]): number => rows.reduce((s: number, { amount }) => s + amount, 0)
+
+const breakdownBalance = (
+  a: { amount: number }[],
+  t: { amount: number }[],
+  tin: { amount: number }[],
+  tout: { amount: number }[],
+): BalanceBreakdown => {
+  const allocations = sumAmount(a)
+  const expenses = sumAmount(t)
+  const transfersIn = sumAmount(tin)
+  const transfersOut = sumAmount(tout)
+  return {
+    balance: allocations - expenses + transfersIn - transfersOut,
+    allocations,
+    expenses,
+    transfersIn,
+    transfersOut
+  }
+}
+
 export const useBudgetBalance = (budgetId: string) => {
   const { transactions, isLoading: txLoading, error: txError } = useTransactions(budgetId)
   const { transfers: inTransfers, isLoading: inLoading, error: inError } = useTransfersIn(budgetId)
@@ -39,13 +68,21 @@ export const useBudgetBalance = (budgetId: string) => {
   const isLoading = txLoading || inLoading || outLoading || alLoading
   const error = txError || inError || outError || alError
 
-  const incomes = allocations.reduce((sum, { amount }) => sum + amount, 0)
-  const expenses = transactions.reduce((sum, { amount }) => sum + amount, 0)
-  const transfersIn = inTransfers.reduce((sum, { amount }) => sum + amount, 0)
-  const transfersOut = outTransfers.reduce((sum, { amount }) => sum + amount, 0)
-  const balance = incomes - expenses + transfersIn - transfersOut
+  const own = breakdownBalance(
+    allocations.filter(a => a.to_budget_id === budgetId),
+    transactions.filter(t => t.budget_id === budgetId),
+    inTransfers.filter(t => t.to_budget_id === budgetId),
+    outTransfers.filter(t => t.from_budget_id === budgetId)
+  )
 
-  return { balance, incomes, expenses, transfersIn, transfersOut, isLoading, error }
+  const branch = breakdownBalance(
+    allocations,
+    transactions,
+    inTransfers,
+    outTransfers
+  )
+
+  return { own, branch, isLoading, error }
 }
 
 export const useBudgetStructure = () => {

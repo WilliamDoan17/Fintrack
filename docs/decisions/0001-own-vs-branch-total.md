@@ -1,6 +1,6 @@
 # 0001 — Every budget has two numbers: Own and Branch total
 
-Status: accepted (being built in sprint 3)
+Status: accepted, built (sprint 3, 2026-11-24)
 Date: 2026-11-17 · Sprint: 2 (decided), 3 (built)
 
 ## Context
@@ -65,3 +65,22 @@ Home Own 40, Bills Own 60, Home Branch total 100. Transfer 500 instead: Home Own
   are larger than what crossed its boundary. The balance is still right. The budget page
   shows Own in/out totals for this reason.
 - The UI must keep the two numbers visually distinct, or the model fails in practice.
+
+## Changes while building (sprint 3)
+
+The decision above held. What was added or adjusted once it was in the app:
+
+- **Cards show a small "Available" line when Own differs from Branch total.** With only
+  Branch total, a parent at Own −400 / Branch +100 showed a healthy green number next to
+  a red Alert badge. Compared to the cent; most cards still show one number.
+- **The alert badge (cards) and the alert banner (budget page) check Own**, like the
+  warnings. They are warnings about spendable money.
+- **The budget page's transfer list is Own only** (`useTransferList` filters the subtree
+  rows). Subtree-wide, rows the budget wasn't party to showed a green `+`, including
+  money leaving the branch, and the list didn't reconcile with the Own in/out totals.
+  The transactions list is still subtree-wide (Known drift in `ARCHITECTURE.md`).
+- **The whole budget-page breakdown grid is Own**, not only transfers in/out, so the
+  four figures add up to "Available".
+- **Own is labelled "Available" in the UI.**
+- **Transaction and transfer warnings share one dialog** (`WarningConfirmModal`), and the
+  transfer button is disabled while the source balance loads.

@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { useState, useEffect, type Dispatch, type SetStateAction } from 'react'
-import { useBudget, useUpdateBudget, useBudgetStructure, useBudgetBalance } from '../../hooks/budgets'
+import { useBudget, useBudgets, useUpdateBudget, useBudgetStructure, useBudgetBalance } from '../../hooks/budgets'
 import { useNotification } from '../../contexts/NotificationContext'
 import type { Budget } from '../../backend/types/budgets'
 import PageLoader from '../../components/loaders/PageLoader'
@@ -17,7 +17,11 @@ import CreateTransferModal from '../../components/transfers/CreateTransferModal'
 import { useNavigation } from '../../contexts/NavigationContext'
 
 const BalanceSummary = ({ budgetId }: { budgetId: string }) => {
-  const { balance, incomes, expenses, transfersIn, transfersOut, isLoading, error } = useBudgetBalance(budgetId)
+  const { own, branch, isLoading, error } = useBudgetBalance(budgetId)
+  // Same query key as the Sub-budgets list below, so this reuses its cached data
+  const { budgets: children } = useBudgets(budgetId)
+  const hasChildren = children.length > 0
+  const { balance, allocations, expenses, transfersIn, transfersOut } = own
 
   if (isLoading) return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 flex items-center justify-center">
@@ -34,16 +38,24 @@ const BalanceSummary = ({ budgetId }: { budgetId: string }) => {
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 md:p-6 flex flex-col gap-4">
       <div className="flex flex-col items-center">
-        <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Balance</p>
+        <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Available</p>
         <p className={`font-bold text-2xl md:text-3xl ${balance >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
           {balance >= 0 ? '+' : '-'}${Math.abs(balance).toFixed(2)}
         </p>
+        {hasChildren && (
+          <p className="text-xs text-gray-500 mt-1">
+            Branch total{' '}
+            <span className="text-gray-300 font-medium">
+              {branch.balance >= 0 ? '+' : '-'}${Math.abs(branch.balance).toFixed(2)}
+            </span>
+          </p>
+        )}
       </div>
       <div className="border-t border-gray-800" />
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col items-center">
           <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Income</p>
-          <p className="text-emerald-400 font-semibold text-base md:text-lg">+${incomes.toFixed(2)}</p>
+          <p className="text-emerald-400 font-semibold text-base md:text-lg">+${allocations.toFixed(2)}</p>
         </div>
         <div className="flex flex-col items-center">
           <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Expenses</p>
@@ -177,7 +189,8 @@ const SettingsModal = ({ budget, onClose }: { budget: Budget, onClose: () => voi
 const BudgetDetail = () => {
   const { id: budgetId } = useParams()
   const { budget: budgetInfo, isLoading, error } = useBudget(budgetId ?? null)
-  const { balance } = useBudgetBalance(budgetId ?? '')
+  // The alert banner is a warning about spendable money, so it checks Own
+  const { own: { balance } } = useBudgetBalance(budgetId ?? '')
   const [isEditingName, setIsEditingName] = useState<boolean>(false)
   const [modalState, setModalState] = useState<ModalState | null>(null)
   const { setBackTo } = useNavigation()
@@ -244,8 +257,8 @@ const BudgetDetail = () => {
         {budgetInfo && (balance < 0 || (budgetInfo.balance_threshold !== null && balance <= budgetInfo.balance_threshold)) && (
           <div className="mb-6 px-4 py-3 rounded-lg bg-red-900/20 border border-red-900/50 text-red-400 text-sm">
             {balance < 0
-              ? 'Balance is negative.'
-              : 'Balance has reached the alert threshold.'
+              ? 'Available balance is negative.'
+              : 'Available balance has reached the alert threshold.'
             }
           </div>
         )}

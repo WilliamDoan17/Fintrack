@@ -15,7 +15,7 @@ chosen and what was rejected. When an ADR changes a formula or a rule, update
 
 | #                                         | Decision                                              | Status                       |
 | ----------------------------------------- | ----------------------------------------------------- | ---------------------------- |
-| [0001](0001-own-vs-branch-total.md)       | Every budget has two numbers: Own and Branch total    | Accepted, building (sprint 3) |
+| [0001](0001-own-vs-branch-total.md)       | Every budget has two numbers: Own and Branch total    | Accepted, built (sprint 3)    |
 | [0002](0002-transaction-warning.md)       | Overspend warning: advisory, three options            | Accepted, not built          |
 | [0003](0003-available-and-unallocated.md) | "Available" number, Unallocated derived, no income card | Accepted, not built          |
 
